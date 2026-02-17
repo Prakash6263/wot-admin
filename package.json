@@ -4,8 +4,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
+    "setup": "node setup.mjs",
+    "predev": "npm run setup",
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run setup && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
