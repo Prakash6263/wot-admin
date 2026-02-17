@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="light"  data-sidebar-size="lg" data-sidebar-image="none">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Wot Admin</title>
+      <!-- Favicon -->
+      <link rel="shortcut icon" href="assets/img/favicon.png">
+      <!-- Bootstrap CSS -->
+      <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+      <!-- Fontawesome CSS -->
+      <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+      <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+      <!-- Feather CSS -->
+      <link rel="stylesheet" href="assets/plugins/feather/feather.css">
+      <!-- Datepicker CSS -->
+      <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.min.css">
+      <!-- Datatables CSS -->
+      <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css">
+      <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
+
+      <!-- Main CSS -->
+      <link rel="stylesheet" href="assets/css/style.css">
+      <!-- Layout JS -->
+      <script src="assets/js/layout.js" type="0e2fa082a2170f67f9b374b7-text/javascript"></script>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+   </head>
+   <body>
+      <!-- Main Wrapper -->
+      <div class="main-wrapper">
+         <!-- Header -->
+         <div class="header header-one">
+            <a href="index.html"  class="d-inline-flex d-sm-inline-flex align-items-center d-md-inline-flex d-lg-none align-items-center device-logo">
+            <img src="assets/img/logo.png" class="img-fluid logo2" alt="Logo" style="width:60px">
+            </a>
+            <div class="main-logo d-inline float-start d-lg-flex align-items-center d-none d-sm-none d-md-none">
+               <div class="logo-color">
+                  <a href="index.html">
+                  <img src="assets/img/logo.png" class="img-fluid logo-blue" alt="Logo" style="width:200px">
+                  </a>
+                  <a href="index.html">
+                  <img src="assets/img/logo-small.png" class="img-fluid logo-small" alt="Logo" style="width:80px">
+                  </a>
+               </div>
+            </div>
+            <!-- Sidebar Toggle -->
+            <a href="javascript:void(0);" id="toggle_btn">
+            <span class="toggle-bars">
+            <span class="bar-icons"></span>
+            <span class="bar-icons"></span>
+            <span class="bar-icons"></span>
+            <span class="bar-icons"></span>
+            </span>
+            </a>
+            <!-- /Sidebar Toggle -->
+            <!-- Search -->
+            <div class="top-nav-search">
+               <form>
+                  <input type="text" class="form-control" placeholder="Search dashboard">
+                  <button class="btn" type="submit"><img src="assets/img/icons/search.svg" alt="img"></button>
+               </form>
+            </div>
+            <!-- /Search -->
+            <!-- Mobile Menu Toggle -->
+            <a class="mobile_btn" id="mobile_btn">
+            <i class="fas fa-bars"></i>
+            </a>
+            <!-- /Mobile Menu Toggle -->
+            <!-- Header Menu -->
+            <ul class="nav nav-tabs user-menu">
+              
+              
+               <!-- User Menu -->
+               <li class="nav-item dropdown">
+                  <a href="javascript:void(0)" class="user-link  nav-link" data-bs-toggle="dropdown">
+                  <span class="user-img">
+                  <img src="assets/img/profiles/avatar-07.jpg" alt="img" class="profilesidebar">
+                  <span class="animate-circle"></span>
+                  </span>
+                  <span class="user-content">
+                  <span class="user-details">Admin</span>
+                  <span class="user-name">John Smith</span>
+                  </span>
+                  </a>
+                  <div class="dropdown-menu menu-drop-user">
+                     <div class="profilemenu">
+                        
+                        <div class="subscription-logout">
+                           <ul>
+                              <li class="pb-0">
+                                 <a class="dropdown-item" href="login.html">Log Out</a>
+                              </li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+               </li>
+               <!-- /User Menu -->
+            </ul>
+            <!-- /Header Menu -->
+         </div>
+         <!-- /Header -->
+         <!-- Sidebar -->
+         <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+               <div id="sidebar-menu" class="sidebar-menu">
+
+                  <ul class="sidebar-vertical">
+                    
+                     <li>
+                        <a href="dashboard.html" class="active"> <i class="bi bi-speedometer2"></i> <span> Dashboard</span> </a>
+
+                     </li>
+
+                     
+
+                     <li>
+                        <a href="user-list.html"> <i class="bi bi-people"></i> <span> Users</span> </a>
+
+                     </li>
+
+
+                     <li>
+                        <a href="courses.html"><i class="bi bi-journal-bookmark"></i> <span> Courses</span> </a>
+
+                     </li>
+                     <li>
+                        <a href="lessons.html"><i class="bi bi-list"></i> <span> Lessons</span> </a>
+
+                     </li>
+
+                      <li>
+                        <a href="quizes.html"><i class="bi bi-file"></i> <span> Quizes</span> </a>
+
+                     </li>
+
+                     <li>
+                        <a href="notifications.html"><i class="bi bi-bell"></i> <span> Notifications</span> </a>
+
+                     </li>
+                     
+                     <li>
+                        <a href="settings.html"><i class="fe fe-settings"></i> <span> Settings</span> </a>
+
+                     </li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+         <!-- /Sidebar -->
+         <!-- Page Wrapper -->
+         <div class="page-wrapper">
+            <div class="content container-fluid">
+               <!-- Page Header -->
+               <div class="page-header fade-in">
+                  <div class="row align-items-center">
+                     <div class="col">
+                        <h1 class="page-title">Dashboard</h1>
+                        <p class="text-muted">Consolidated AI Analytics overview across all Lession and courses</p>
+                     </div>
+                     
+                  </div>
+               </div>
+
+               <!-- Financial KPIs -->
+               <div class="stats-grid fade-in">
+                    <!-- KPI Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-3">
+      <div class="card card-financial p-4">
+        <h6 class="fw-bold mb-2 text-white">Total Users</h6>
+        <h3 class="text-white">4,280</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card card-financial p-4">
+        <h6 class="fw-bold mb-2 text-white">Active Courses</h6>
+        <h3 class="text-white">38</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card card-financial p-4">
+        <h6 class="fw-bold mb-2 text-white">Completion Rate</h6>
+        <h3 class="text-white">76%</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card card-financial p-4">
+        <h6 class="fw-bold mb-2 text-white">AI Requests</h6>
+        <h3 class="text-white">12.4k</h3>
+      </div>
+    </div>
+  </div>
+               </div>
+               <!-- Charts -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-8">
+      <div class="card p-4 shadow-soft border-0">
+        <h6 class="mb-3">Learning Progress (Monthly)</h6>
+        <canvas id="progressChart"></canvas>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-4 shadow-soft border-0">
+        <h6 class="mb-3">User Roles</h6>
+        <canvas id="roleChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects + AI -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card p-4 shadow-soft border-0">
+        <h6 class="mb-3">📚 Ongoing Learning Projects</h6>
+
+        <div class="list-group">
+          <div class="list-group-item d-flex align-items-center justify-content-between">
+            <div>
+              <strong>Technical Analysis Mastery</strong><br>
+              <small class="text-muted">Intermediate • 18 Lessons</small>
+            </div>
+            <span class="badge bg-success">72%</span>
+          </div>
+
+          <div class="list-group-item d-flex align-items-center justify-content-between">
+            <div>
+              <strong>Smart Money Concepts</strong><br>
+              <small class="text-muted">Advanced • 12 Lessons</small>
+            </div>
+            <span class="badge bg-warning">45%</span>
+          </div>
+
+          <div class="list-group-item d-flex align-items-center justify-content-between">
+            <div>
+              <strong>Price Action Basics</strong><br>
+              <small class="text-muted">Beginner • 10 Lessons</small>
+            </div>
+            <span class="badge bg-primary">90%</span>
+          </div>
+
+          <div class="list-group-item d-flex align-items-center justify-content-between">
+            <div>
+              <strong>AI-Assisted Trading</strong><br>
+              <small class="text-muted">Simulation Based</small>
+            </div>
+            <span class="badge bg-danger">28%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card p-4 shadow-soft border-0">
+        <h6 class="mb-3">🤖 AI System Insights</h6>
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between">
+            <span>AI Tutor Queries Today</span><strong>1,248</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Chart Analysis Requests</span><strong>620</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>RAG Accuracy</span><strong class="text-success">94%</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Avg Response Time</span><strong>1.3s</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Status</span><span class="badge bg-success">Operational</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recently Updated Courses -->
+  <div class="card p-4 shadow-soft border-0 mb-4">
+    <h6 class="mb-3">🆕 Recently Updated Courses</h6>
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Instructor</th>
+            <th>Last Update</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Market Structure & Trend</td>
+            <td>Rahul Verma</td>
+            <td>01 Feb 2026</td>
+            <td><span class="badge bg-success">Published</span></td>
+          </tr>
+          <tr>
+            <td>Forex Risk Management</td>
+            <td>Sarah Lee</td>
+            <td>31 Jan 2026</td>
+            <td><span class="badge bg-warning">Draft</span></td>
+          </tr>
+          <tr>
+            <td>Crypto Scalping</td>
+            <td>John Carter</td>
+            <td>30 Jan 2026</td>
+            <td><span class="badge bg-success">Published</span></td>
+          </tr>
+          <tr>
+            <td>AI Chart Reading</td>
+            <td>Admin</td>
+            <td>29 Jan 2026</td>
+            <td><span class="badge bg-info">Review</span></td>
+          </tr>
+          <tr>
+            <td>Options Greeks</td>
+            <td>Emma Brown</td>
+            <td>28 Jan 2026</td>
+            <td><span class="badge bg-danger">Blocked</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+              
+
+              
+              
+            </div>
+         </div>
+         <!-- /Page Wrapper -->
+      </div>
+      <!-- /Main Wrapper -->
+ <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" data-cfasync="false"></script>
+<!-- Scripts -->
+<script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('show');
+  }
+
+  new Chart(document.getElementById('progressChart'), {
+    type: 'line',
+    data: {
+      labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+      datasets: [{
+        label: 'Lessons Completed',
+        data: [120,190,300,250,420,500],
+        borderColor: '#0d6efd',
+        tension: 0.4
+      }]
+    }
+  });
+
+  new Chart(document.getElementById('roleChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Learners','Instructors','Admins'],
+      datasets: [{
+        data: [3200,980,100],
+        backgroundColor: ['#0d6efd','#20c997','#ffc107']
+      }]
+    }
+  });
+</script>
+    
+      <!-- jQuery -->
+      <script src="assets/js/jquery-3.7.1.min.js" type="0e2fa082a2170f67f9b374b7-text/javascript"></script>
+      <!-- Bootstrap Core JS -->
+      <script src="assets/js/bootstrap.bundle.min.js" type="0e2fa082a2170f67f9b374b7-text/javascript"></script>
+      <!-- Feather Icon JS -->
+      <script src="assets/js/feather.min.js" type="0e2fa082a2170f67f9b374b7-text/javascript"></script>
+      <!-- Slimscroll JS -->
+      <script src="assets/plugins/slimscroll/jquery.slimscroll.min.js" type="0e2fa082a2170f67f9b374b7-text/javascript"></script>
+      <!-- Theme Settings JS -->
+      <script src="assets/js/theme-settings.js" type="0e2fa082a2170f67f9b374b7-text/javascript"></script>
+      <script src="assets/js/greedynav.js" type="0e2fa082a2170f67f9b374b7-text/javascript"></script>
+      <!-- Custom JS -->
+      <script src="assets/js/script.js" type="0e2fa082a2170f67f9b374b7-text/javascript"></script>
+      <script src="cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="0e2fa082a2170f67f9b374b7-|49" defer></script>
+   </body>
+</html>
