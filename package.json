@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "setup": "node setup.mjs",
+    "setup": "node scripts/setup-assets.js",
     "predev": "npm run setup",
     "dev": "vite",
     "build": "npm run setup && vite build",
