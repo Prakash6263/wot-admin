@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard'
 import Courses from './pages/Courses'
 import AddCourse from './pages/AddCourse'
 import EditCourse from './pages/EditCourse'
+import CourseLessons from './pages/CourseLessons'
 import Lessons from './pages/Lessons'
 import Quizes from './pages/Quizes'
 import UserList from './pages/UserList'
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
         <Route path="/add-course" element={<ProtectedRoute><AddCourse /></ProtectedRoute>} />
         <Route path="/edit-course/:courseId" element={<ProtectedRoute><EditCourse /></ProtectedRoute>} />
+        <Route path="/course/:courseId/lessons" element={<ProtectedRoute><CourseLessons /></ProtectedRoute>} />
         <Route path="/lessons" element={<ProtectedRoute><Lessons /></ProtectedRoute>} />
         <Route path="/quizes" element={<ProtectedRoute><Quizes /></ProtectedRoute>} />
         <Route path="/user-list" element={<ProtectedRoute><UserList /></ProtectedRoute>} />

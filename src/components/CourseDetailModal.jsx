@@ -1,7 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import GlobalLoader from './GlobalLoader';
 
 export default function CourseDetailModal({ show, courseData, isLoading, onClose }) {
+  const navigate = useNavigate();
+
   if (!show) return null;
 
   const getContentTypeIcon = (contentType) => {
@@ -22,6 +25,11 @@ export default function CourseDetailModal({ show, courseData, isLoading, onClose
       audio: 'Audio',
     };
     return labelMap[contentType?.toLowerCase()] || contentType;
+  };
+
+  const handleViewLessons = () => {
+    navigate(`/course/${courseData.id}/lessons`);
+    onClose();
   };
 
   return (
@@ -124,6 +132,14 @@ export default function CourseDetailModal({ show, courseData, isLoading, onClose
           </div>
 
           <div className="modal-footer border-top">
+            <button 
+              type="button" 
+              className="btn btn-info" 
+              onClick={handleViewLessons}
+              disabled={isLoading}
+            >
+              <i className="fa fa-list me-2"></i>View Lessons
+            </button>
             <button 
               type="button" 
               className="btn btn-secondary" 

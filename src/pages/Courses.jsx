@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { getAllCourses, getCourseById, deleteCourse } from '../api/courses';
 import { useAuth } from '../context/AuthContext';
@@ -11,6 +11,7 @@ import Footer from '../components/Footer';
 
 export default function Courses() {
   const { token } = useAuth();
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -225,6 +226,13 @@ export default function Courses() {
                                     title="View Course"
                                   >
                                     <i className="fas fa-eye"></i>
+                                  </button>
+                                  <button 
+                                    className="btn btn-sm btn-outline-info"
+                                    onClick={() => navigate(`/course/${course.id}/lessons`)}
+                                    title="View Lessons"
+                                  >
+                                    <i className="fas fa-list"></i>
                                   </button>
                                   <Link 
                                     to={`/edit-course/${course.id}`}
