@@ -177,7 +177,7 @@ export const updateCourse = async (courseId, courseData, token) => {
 // Delete course
 export const deleteCourse = async (courseId, token) => {
   try {
-    const url = `${API_BASE_URL}/api/courses/${courseId}`;
+    const url = `${API_BASE_URL}/courses/${courseId}/delete`;
     
     const response = await fetch(url, {
       method: 'DELETE',

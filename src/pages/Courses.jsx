@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { getAllCourses, getCourseById } from '../api/courses';
+import { getAllCourses, getCourseById, deleteCourse } from '../api/courses';
 import { useAuth } from '../context/AuthContext';
 import GlobalLoader from '../components/GlobalLoader';
 import CourseDetailModal from '../components/CourseDetailModal';
@@ -60,6 +60,42 @@ export default function Courses() {
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedCourse(null);
+  };
+
+  const handleDeleteCourse = (courseId, courseName) => {
+    Swal.fire({
+      title: 'Delete Course',
+      text: `Are you sure you want to delete "${courseName}"? This action cannot be undone.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'Cancel',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const deleteResult = await deleteCourse(courseId, token);
+
+        if (deleteResult.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted',
+            text: deleteResult.message || 'Course deleted successfully',
+            timer: 1500,
+            timerProgressBar: true,
+            showConfirmButton: false,
+          }).then(() => {
+            fetchCourses();
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Failed to Delete',
+            text: deleteResult.message || 'An error occurred while deleting the course',
+          });
+        }
+      }
+    });
   };
 
   // Map status to badge color
@@ -197,6 +233,13 @@ export default function Courses() {
                                   >
                                     <i className="fas fa-edit"></i>
                                   </Link>
+                                  <button 
+                                    className="btn btn-sm btn-outline-danger"
+                                    onClick={() => handleDeleteCourse(course.id, course.title)}
+                                    title="Delete Course"
+                                  >
+                                    <i className="fas fa-trash"></i>
+                                  </button>
                                 </div>
                               </td>
                             </tr>
