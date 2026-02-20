@@ -1,11 +1,19 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const isActive = (path) =>
     location.pathname === path ? "active" : "";
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="sidebar" id="sidebar">
@@ -60,6 +68,17 @@ export default function Sidebar() {
                 <i className="fas fa-cog me-2"></i>
                 <span>Settings</span>
               </Link>
+            </li>
+
+            <li className="border-top mt-3 pt-3">
+              <button 
+                onClick={handleLogout}
+                className="btn btn-outline-danger w-100"
+                style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', padding: '0.5rem 0.75rem' }}
+              >
+                <i className="fas fa-sign-out-alt me-2"></i>
+                <span>Logout</span>
+              </button>
             </li>
 
           </ul>
