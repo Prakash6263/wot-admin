@@ -70,7 +70,7 @@ export default function CourseLessons() {
   };
 
   const handleViewLesson = (lesson) => {
-    // Build content display based on available URLs
+    // Build content display based on content type and available URLs
     let contentHtml = `
       <div class="text-start">
         <p><strong>Duration:</strong> ${lesson.duration || 'N/A'}</p>
@@ -78,55 +78,64 @@ export default function CourseLessons() {
         <p><strong>Description:</strong> ${lesson.description || 'No description'}</p>
     `;
 
-    // Display available content types
-    if (lesson.allowed_types && Array.isArray(lesson.allowed_types)) {
-      contentHtml += `<p><strong>Content Available In:</strong></p><div class="mb-3">`;
-      
-      lesson.allowed_types.forEach(type => {
-        let icon = '';
-        let label = '';
-        let urlField = `${type}_url`;
-        let url = lesson[urlField];
-
-        switch(type.toLowerCase()) {
-          case 'video':
-            icon = '<i class="fas fa-video text-danger"></i>';
-            label = 'Video';
-            break;
-          case 'audio':
-            icon = '<i class="fas fa-headphones text-primary"></i>';
-            label = 'Audio';
-            break;
-          case 'text':
-            icon = '<i class="fas fa-file-alt text-info"></i>';
-            label = 'Text';
-            break;
-          case 'doc':
-            icon = '<i class="fas fa-file-word text-warning"></i>';
-            label = 'Document';
-            break;
-          case 'pdf':
-            icon = '<i class="fas fa-file-pdf text-secondary"></i>';
-            label = 'PDF';
-            break;
-          default:
-            icon = '<i class="fas fa-file"></i>';
-            label = type;
-        }
-
-        if (url) {
-          contentHtml += `<a href="${url}" target="_blank" class="btn btn-sm btn-outline-primary me-2 mb-2">${icon} Download ${label}</a>`;
-        } else {
-          contentHtml += `<span class="badge bg-light text-dark me-2 mb-2">${icon} ${label} (Not available)</span>`;
-        }
-      });
-
-      contentHtml += `</div>`;
-    }
-
-    // Show text content if available
-    if (lesson.text_content) {
-      contentHtml += `<div class="alert alert-info"><strong>Content:</strong><br/>${lesson.text_content}</div>`;
+    // Display content based on type
+    if (lesson.content_type === 'text' && lesson.content) {
+      contentHtml += `
+        <div class="alert alert-info mt-3">
+          <strong>Content:</strong>
+          <div class="mt-2">${lesson.content}</div>
+        </div>
+      `;
+    } else if (lesson.content_type === 'video' && lesson.video_url) {
+      contentHtml += `
+        <div class="mt-3">
+          <strong>Video:</strong>
+          <div class="mt-2">
+            <video width="100%" height="400" controls style="border-radius: 8px; background: #000;">
+              <source src="${lesson.video_url}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      `;
+    } else if (lesson.content_type === 'audio' && lesson.file_url) {
+      contentHtml += `
+        <div class="mt-3">
+          <strong>Audio:</strong>
+          <div class="mt-2">
+            <audio controls style="width: 100%;">
+              <source src="${lesson.file_url}" type="audio/webm">
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        </div>
+      `;
+    } else if (lesson.content_type === 'doc' && lesson.file_url) {
+      const fileName = lesson.file_url.split('/').pop();
+      contentHtml += `
+        <div class="mt-3">
+          <strong>Document:</strong>
+          <div class="mt-2">
+            <a href="${lesson.file_url}" target="_blank" class="btn btn-outline-primary btn-sm">
+              <i class="fas fa-file-download me-2"></i>Download ${fileName}
+            </a>
+          </div>
+        </div>
+      `;
+    } else if (lesson.content_type === 'pdf' && lesson.file_url) {
+      contentHtml += `
+        <div class="mt-3">
+          <strong>PDF File:</strong>
+          <div class="mt-2">
+            <a href="${lesson.file_url}" target="_blank" class="btn btn-outline-danger btn-sm me-2">
+              <i class="fas fa-file-pdf me-2"></i>View PDF
+            </a>
+            <a href="${lesson.file_url}" download class="btn btn-outline-primary btn-sm">
+              <i class="fas fa-download me-2"></i>Download
+            </a>
+          </div>
+        </div>
+      `;
     }
 
     contentHtml += `</div>`;
@@ -135,7 +144,7 @@ export default function CourseLessons() {
       title: lesson.title,
       html: contentHtml,
       icon: 'info',
-      width: '600px',
+      width: '700px',
       confirmButtonText: 'Close',
     });
   };
