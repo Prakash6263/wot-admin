@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { loginAdmin } from '../api/auth';
 
 const AuthContext = createContext();
 
@@ -21,22 +22,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('https://api.wayoftrading.com/aitredding/api/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'accept': 'application/json',
-        },
-        body: new URLSearchParams({
-          email,
-          password,
-        }),
-      });
+      const result = await loginAdmin(email, password);
 
-      const data = await response.json();
-
-      if (data.status === 1) {
-        const { access_token, token_type, admin_id } = data.data;
+      if (result.success) {
+        const { access_token, token_type, admin_id } = result.data;
         
         // Store in localStorage
         localStorage.setItem('access_token', access_token);
@@ -48,9 +37,9 @@ export const AuthProvider = ({ children }) => {
         setToken(access_token);
         setAdmin({ admin_id, token_type });
 
-        return { success: true, data };
+        return { success: true, data: result.data };
       } else {
-        return { success: false, message: data.message };
+        return { success: false, message: result.message };
       }
     } catch (error) {
       console.error('Login error:', error);
