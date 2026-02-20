@@ -159,6 +159,7 @@ export default function CourseLessons() {
                                     </button>
                                     <button 
                                       className="btn btn-sm btn-outline-warning"
+                                      onClick={() => navigate(`/course/${courseId}/lesson/${lesson.id}/edit`)}
                                       title="Edit Lesson"
                                     >
                                       <i className="fas fa-edit"></i>
