@@ -128,7 +128,7 @@ export const getCourseById = async (courseId, token) => {
 // Update course
 export const updateCourse = async (courseId, courseData, token) => {
   try {
-    const url = `${API_BASE_URL}/api/courses/${courseId}`;
+    const url = `${API_BASE_URL}/courses/${courseId}/update`;
     
     const formData = new FormData();
     formData.append('title', courseData.title);

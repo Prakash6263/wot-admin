@@ -182,12 +182,22 @@ export default function Courses() {
                                 </span>
                               </td>
                               <td>
-                                <button 
-                                  className="btn btn-sm btn-outline-primary"
-                                  onClick={() => handleViewCourse(course.id)}
-                                >
-                                  View
-                                </button>
+                                <div className="d-flex gap-2">
+                                  <button 
+                                    className="btn btn-sm btn-outline-primary"
+                                    onClick={() => handleViewCourse(course.id)}
+                                    title="View Course"
+                                  >
+                                    <i className="fas fa-eye"></i>
+                                  </button>
+                                  <Link 
+                                    to={`/edit-course/${course.id}`}
+                                    className="btn btn-sm btn-outline-warning"
+                                    title="Edit Course"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </Link>
+                                </div>
                               </td>
                             </tr>
                           ))}
