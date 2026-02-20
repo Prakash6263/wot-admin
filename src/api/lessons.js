@@ -156,3 +156,52 @@ export const deleteLesson = async (lessonId, token) => {
     };
   }
 };
+
+// Add new lesson
+export const addLesson = async (courseId, lessonData, token) => {
+  try {
+    const url = `${API_BASE_URL}/courses/${courseId}/lessons/add`;
+    
+    const formData = new FormData();
+    formData.append('title', lessonData.title);
+    formData.append('description', lessonData.description);
+    formData.append('content', lessonData.content);
+    formData.append('content_type', lessonData.content_type);
+    formData.append('duration', lessonData.duration || '');
+    formData.append('order', lessonData.order);
+    
+    if (lessonData.media instanceof File) {
+      formData.append('media', lessonData.media);
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.data,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to add lesson',
+      };
+    }
+  } catch (error) {
+    console.error('Add Lesson API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while adding lesson',
+    };
+  }
+};

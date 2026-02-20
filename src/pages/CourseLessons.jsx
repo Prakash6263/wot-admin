@@ -133,7 +133,7 @@ export default function CourseLessons() {
               <div className="list-btn">
                 <ul className="filter-list">
                   <li>
-                    <Link className="btn btn-primary" to={`/add-lesson?courseId=${courseId}`}>
+                    <Link className="btn btn-primary" to={`/course/${courseId}/add-lesson`}>
                       <i className="fa fa-plus-circle me-2"></i>
                       Add Lesson
                     </Link>

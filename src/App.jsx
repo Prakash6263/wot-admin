@@ -27,6 +27,7 @@ export default function App() {
         <Route path="/edit-course/:courseId" element={<ProtectedRoute><EditCourse /></ProtectedRoute>} />
         <Route path="/course/:courseId/lessons" element={<ProtectedRoute><CourseLessons /></ProtectedRoute>} />
         <Route path="/course/:courseId/lesson/:lessonId/edit" element={<ProtectedRoute><EditLesson /></ProtectedRoute>} />
+        <Route path="/course/:courseId/add-lesson" element={<ProtectedRoute><AddLesson /></ProtectedRoute>} />
         <Route path="/lessons" element={<ProtectedRoute><Lessons /></ProtectedRoute>} />
         <Route path="/quizes" element={<ProtectedRoute><Quizes /></ProtectedRoute>} />
         <Route path="/user-list" element={<ProtectedRoute><UserList /></ProtectedRoute>} />
