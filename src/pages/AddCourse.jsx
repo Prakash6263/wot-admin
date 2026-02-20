@@ -125,6 +125,8 @@ export default function AddCourse() {
 
     setIsLoading(false);
   };
+
+  return (
     <div className="main-wrapper">
       <Header />
       <Sidebar />
