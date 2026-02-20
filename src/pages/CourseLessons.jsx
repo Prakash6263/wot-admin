@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { getLessonsByCourse, getCourseById } from '../api/courses';
+import { getCourseById } from '../api/courses';
+import { getLessonsByCourse } from '../api/lessons';
 import { useAuth } from '../context/AuthContext';
 import GlobalLoader from '../components/GlobalLoader';
 import Header from '../components/Header';
@@ -178,7 +179,8 @@ export default function CourseLessons() {
                                   >
                                     <i className="fas fa-trash"></i>
                                   </button>
-                                </td>
+                                </div>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
