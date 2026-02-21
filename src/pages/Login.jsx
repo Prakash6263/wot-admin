@@ -58,7 +58,7 @@ export default function Login() {
                     <img src="/assets/img/logo.png" className="img-fluid" style={{ maxWidth: '200px' }} alt="Logo" />
                   </div>
 
-                  <h5 className="mb-4">Login to access to your dashboard</h5>
+                  <h5 className="mb-4">Login to access to your dashboards</h5>
 
                   <form onSubmit={handleSubmit}>
                     <div className="form-group">
