@@ -147,7 +147,7 @@ export const getGlossaryById = async (glossaryId, token) => {
 // Update glossary term
 export const updateGlossary = async (glossaryId, glossaryData, token) => {
   try {
-    const url = `${API_BASE_URL}/admin/update-TradingGlossary/${glossaryId}`;
+    const url = `${API_BASE_URL}/admin/update-tradingGlossary/${glossaryId}`;
     
     const payload = {
       term: glossaryData.term,
@@ -166,6 +166,15 @@ export const updateGlossary = async (glossaryId, glossaryData, token) => {
       body: JSON.stringify(payload),
     });
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[v0] Update Glossary HTTP Error:', response.status, errorText);
+      return {
+        success: false,
+        message: `HTTP Error: ${response.status}`,
+      };
+    }
+
     const data = await response.json();
 
     if (data.status === 1) {
@@ -181,7 +190,7 @@ export const updateGlossary = async (glossaryId, glossaryData, token) => {
       };
     }
   } catch (error) {
-    console.error('Update Glossary API Error:', error);
+    console.error('[v0] Update Glossary API Error:', error);
     return {
       success: false,
       message: error.message || 'An error occurred while updating glossary term',
@@ -192,7 +201,7 @@ export const updateGlossary = async (glossaryId, glossaryData, token) => {
 // Delete glossary term
 export const deleteGlossary = async (glossaryId, token) => {
   try {
-    const url = `${API_BASE_URL}/admin/delete-TradingGlossary/${glossaryId}`;
+    const url = `${API_BASE_URL}/admin/delete-tradingGlossary/${glossaryId}`;
     
     const response = await fetch(url, {
       method: 'DELETE',
@@ -201,6 +210,15 @@ export const deleteGlossary = async (glossaryId, token) => {
         'accept': 'application/json',
       },
     });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[v0] Delete Glossary HTTP Error:', response.status, errorText);
+      return {
+        success: false,
+        message: `HTTP Error: ${response.status}`,
+      };
+    }
 
     const data = await response.json();
 
@@ -217,7 +235,7 @@ export const deleteGlossary = async (glossaryId, token) => {
       };
     }
   } catch (error) {
-    console.error('Delete Glossary API Error:', error);
+    console.error('[v0] Delete Glossary API Error:', error);
     return {
       success: false,
       message: error.message || 'An error occurred while deleting glossary term',

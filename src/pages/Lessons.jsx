@@ -15,6 +15,8 @@ export default function Lessons() {
   const [lessons, setLessons] = useState([]);
   const [coursesMap, setCoursesMap] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchLessons();
@@ -49,6 +51,7 @@ export default function Lessons() {
       }
     }
 
+    console.log('[v0] Fetched lessons:', allLessons);
     if (allLessons.length > 0) {
       setLessons(allLessons);
     } else {
@@ -56,6 +59,28 @@ export default function Lessons() {
     }
     
     setIsLoading(false);
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(lessons.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedLessons = lessons.slice(startIndex, endIndex);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePageClick = (pageNum) => {
+    setCurrentPage(pageNum);
   };
 
   const getContentTypeBadge = (contentType) => {
@@ -175,13 +200,14 @@ export default function Lessons() {
                             <th>Type</th>
                             <th>Order</th>
                             <th>Duration</th>
+                            <th>Content</th>
                             <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {lessons.map((lesson) => (
+                          {paginatedLessons && paginatedLessons.length > 0 ? paginatedLessons.map((lesson) => (
                             <tr key={lesson.id}>
-                              <td>{lesson.title}</td>
+                              <td><strong>{lesson.title}</strong></td>
                               <td>
                                 <Link to={`/course/${lesson.courseId}/lessons`} className="text-decoration-none">
                                   {lesson.courseName}
@@ -194,9 +220,18 @@ export default function Lessons() {
                                 </span>
                               </td>
                               <td>
-                                <span className="badge bg-primary">{lesson.order || '-'}</span>
+                                <span className="badge bg-primary">{lesson.order_number || lesson.order || '-'}</span>
                               </td>
                               <td>{lesson.duration || '-'}</td>
+                              <td>
+                                <button 
+                                  className="btn btn-sm btn-outline-info"
+                                  onClick={() => navigate(`/lesson/${lesson.id}/content`)}
+                                  title="View Content"
+                                >
+                                  <i className="fas fa-eye me-1"></i>View
+                                </button>
+                              </td>
                               <td>
                                 <div className="d-flex gap-2">
                                   <Link 
@@ -216,13 +251,58 @@ export default function Lessons() {
                                 </div>
                               </td>
                             </tr>
-                          ))}
+                          )) : (
+                            <tr>
+                              <td colSpan="7" className="text-center py-3 text-muted">
+                                No lessons to display
+                              </td>
+                            </tr>
+                          )}
                         </tbody>
                       </table>
                     </div>
                   )}
                 </div>
               </div>
+
+              {/* Pagination */}
+              {!isLoading && lessons.length > itemsPerPage && (
+                <div className="card">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div className="text-muted">
+                        Showing {startIndex + 1} to {Math.min(endIndex, lessons.length)} of {lessons.length} lessons
+                      </div>
+                      <nav aria-label="Page navigation">
+                        <ul className="pagination mb-0">
+                          <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handlePreviousPage}>
+                              <i className="fa fa-chevron-left"></i> Previous
+                            </button>
+                          </li>
+                          
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+                            <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
+                              <button 
+                                className="page-link"
+                                onClick={() => handlePageClick(pageNum)}
+                              >
+                                {pageNum}
+                              </button>
+                            </li>
+                          ))}
+                          
+                          <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handleNextPage}>
+                              Next <i className="fa fa-chevron-right"></i>
+                            </button>
+                          </li>
+                        </ul>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

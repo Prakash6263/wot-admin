@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useAuth } from '../context/AuthContext';
-import { getCourseById } from '../api/courses';
+import { getCourseById, getLessonsByChapter } from '../api/courses';
 import GlobalLoader from '../components/GlobalLoader';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
@@ -16,6 +16,8 @@ export default function ChapterLessons() {
   const [chapter, setChapter] = useState(null);
   const [course, setCourse] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     if (courseId && categoryId && chapterId) {
@@ -25,6 +27,7 @@ export default function ChapterLessons() {
 
   const fetchData = async () => {
     setIsLoading(true);
+    console.log('[v0] Fetching data for chapter:', chapterId);
     
     // Fetch course details
     const courseResult = await getCourseById(courseId, token);
@@ -32,65 +35,46 @@ export default function ChapterLessons() {
       setCourse(courseResult.data);
     }
     
-    // TODO: Fetch chapter details and lessons from API when endpoint is available
-    // For now using demo data
-    setChapter({
-      id: chapterId,
-      title: 'Chapter 1: Market Structure Basics',
-      description: 'Understanding market structure and price action',
-      order_number: 1
-    });
-
-    const demoLessons = [
-      {
-        id: 1,
-        title: 'Introduction to Market Structure',
-        content_type: 'Video',
-        order_number: 1,
-        duration: '12:45',
-        status: 'Published',
-        created_at: '2024-01-15T10:30:00'
-      },
-      {
-        id: 2,
-        title: 'Identifying Market Trends',
-        content_type: 'Video',
-        order_number: 2,
-        duration: '18:20',
-        status: 'Published',
-        created_at: '2024-01-15T11:00:00'
-      },
-      {
-        id: 3,
-        title: 'Price Action Patterns',
-        content_type: 'Text',
-        order_number: 3,
-        duration: '-',
-        status: 'Published',
-        created_at: '2024-01-15T14:15:00'
-      },
-      {
-        id: 4,
-        title: 'Market Structure Worksheet',
-        content_type: 'PDF',
-        order_number: 4,
-        duration: '-',
-        status: 'Published',
-        created_at: '2024-01-16T09:00:00'
-      },
-      {
-        id: 5,
-        title: 'Live Trading Example',
-        content_type: 'Video',
-        order_number: 5,
-        duration: '25:30',
-        status: 'Review',
-        created_at: '2024-01-16T13:45:00'
-      }
-    ];
-
-    setLessons(demoLessons);
+    // Fetch lessons from API
+    const lessonsResult = await getLessonsByChapter(chapterId, token);
+    if (lessonsResult.success) {
+      setLessons(lessonsResult.data);
+      setChapter({
+        id: chapterId,
+        title: `Chapter ${chapterId}`,
+        description: 'Lessons in this chapter'
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: lessonsResult.message || 'Failed to load lessons',
+      });
+    }
+    
     setIsLoading(false);
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(lessons.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedLessons = lessons.slice(startIndex, endIndex);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePageClick = (pageNum) => {
+    setCurrentPage(pageNum);
   };
 
   const getContentTypeBadge = (contentType) => {
@@ -167,6 +151,14 @@ export default function ChapterLessons() {
                 <ul className="filter-list">
                   <li>
                     <button 
+                      className="btn btn-primary"
+                      onClick={() => navigate(`/course/${courseId}/category/${categoryId}/chapter/${chapterId}/add-lesson`)}
+                    >
+                      <i className="fa fa-plus me-2"></i>Add Lesson
+                    </button>
+                  </li>
+                  <li>
+                    <button 
                       className="btn btn-outline-secondary"
                       onClick={() => navigate(`/course/${courseId}/category/${categoryId}/chapters`)}
                     >
@@ -194,14 +186,6 @@ export default function ChapterLessons() {
                       </div>
                     </div>
                   </li>
-                  <li>
-                    <button 
-                      className="btn btn-primary"
-                      onClick={() => navigate(`/course/${courseId}/category/${categoryId}/chapter/${chapterId}/add-lesson`)}
-                    >
-                      <i className="fa fa-plus-circle me-2"></i>Add Lesson
-                    </button>
-                  </li>
                 </ul>
               </div>
             </div>
@@ -228,11 +212,12 @@ export default function ChapterLessons() {
                             <th>Duration</th>
                             <th>Status</th>
                             <th>Created Date</th>
+                            <th>Content</th>
                             <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {lessons.map((lesson) => (
+                          {paginatedLessons.map((lesson) => (
                             <tr key={lesson.id}>
                               <td>
                                 <div>
@@ -256,6 +241,15 @@ export default function ChapterLessons() {
                               </td>
                               <td>
                                 {lesson.created_at ? new Date(lesson.created_at).toLocaleDateString() : '-'}
+                              </td>
+                              <td>
+                                <button 
+                                  className="btn btn-sm btn-outline-info"
+                                  onClick={() => navigate(`/lesson/${lesson.id}/content`)}
+                                  title="View Content"
+                                >
+                                  <i className="fas fa-eye me-1"></i>View
+                                </button>
                               </td>
                               <td>
                                 <div className="d-flex gap-2">
@@ -283,6 +277,45 @@ export default function ChapterLessons() {
                   )}
                 </div>
               </div>
+
+              {/* Pagination */}
+              {!isLoading && lessons.length > itemsPerPage && (
+                <div className="card">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div className="text-muted">
+                        Showing {startIndex + 1} to {Math.min(endIndex, lessons.length)} of {lessons.length} lessons
+                      </div>
+                      <nav aria-label="Page navigation">
+                        <ul className="pagination mb-0">
+                          <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handlePreviousPage}>
+                              <i className="fa fa-chevron-left"></i> Previous
+                            </button>
+                          </li>
+                          
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+                            <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
+                              <button 
+                                className="page-link"
+                                onClick={() => handlePageClick(pageNum)}
+                              >
+                                {pageNum}
+                              </button>
+                            </li>
+                          ))}
+                          
+                          <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handleNextPage}>
+                              Next <i className="fa fa-chevron-right"></i>
+                            </button>
+                          </li>
+                        </ul>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

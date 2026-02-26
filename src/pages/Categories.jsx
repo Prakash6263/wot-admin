@@ -94,6 +94,14 @@ export default function Categories() {
                 <ul className="filter-list">
                   <li>
                     <button 
+                      className="btn btn-primary"
+                      onClick={() => navigate(`/course/${courseId}/add-category`)}
+                    >
+                      <i className="fas fa-plus me-2"></i>Add Category
+                    </button>
+                  </li>
+                  <li>
+                    <button 
                       className="btn btn-outline-secondary"
                       onClick={() => navigate(`/courses`)}
                     >
@@ -120,14 +128,6 @@ export default function Categories() {
                         </ul>
                       </div>
                     </div>
-                  </li>
-                  <li>
-                    <button 
-                      className="btn btn-primary"
-                      onClick={() => navigate(`/course/${courseId}/add-category`)}
-                    >
-                      <i className="fa fa-plus-circle me-2"></i>Add Category
-                    </button>
                   </li>
                 </ul>
               </div>

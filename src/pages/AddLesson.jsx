@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { addLesson } from '../api/lessons';
+import { createLesson } from '../api/lessons';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
@@ -9,47 +9,48 @@ import Footer from '../components/Footer';
 
 export default function AddLesson() {
   const navigate = useNavigate();
-  const { courseId } = useParams();
+  const { chapterId } = useParams();
   const { token } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [mediaPreview, setMediaPreview] = useState(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    content: '',
-    content_type: 'text',
+    lesson_number: 0,
     duration: '',
-    order: '',
-    media: null,
+    xp_points: 0,
+    reward_points: 0,
+    is_preview: false,
+    is_locked: false,
+    quiz_available: false,
+    status: 'active',
+    order_number: 1,
+    thumbnail: null,
   });
 
   const contentTypeOptions = ['text', 'video', 'audio', 'doc', 'pdf'];
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : (type === 'number' ? parseInt(value) : value),
     }));
   };
 
-  const handleMediaChange = (e) => {
+  const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setFormData(prev => ({
         ...prev,
-        media: file,
+        thumbnail: file,
       }));
-      setMediaPreview(file.name);
+      setThumbnailPreview(file.name);
     }
   };
 
   const handleCancel = () => {
-    if (courseId) {
-      navigate(`/course/${courseId}/lessons`);
-    } else {
-      navigate('/lessons');
-    }
+    navigate(-1);
   };
 
   const handleSubmit = async (e) => {
@@ -74,46 +75,10 @@ export default function AddLesson() {
       return;
     }
 
-    if (!formData.content_type) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Validation Error',
-        text: 'Please select content type',
-      });
-      return;
-    }
-
-    if (!formData.order) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Validation Error',
-        text: 'Please enter lesson order',
-      });
-      return;
-    }
-
-    if (!formData.media) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Validation Error',
-        text: 'Please upload media file',
-      });
-      return;
-    }
-
-    // If content_type is text, content is required
-    if (formData.content_type === 'text' && !formData.content.trim()) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Validation Error',
-        text: 'Please enter text content',
-      });
-      return;
-    }
-
     setIsLoading(true);
+    console.log('[v0] Creating lesson with data:', formData);
 
-    const result = await addLesson(courseId || 1, formData, token);
+    const result = await createLesson(chapterId, formData, token);
 
     if (result.success) {
       Swal.fire({
@@ -124,11 +89,8 @@ export default function AddLesson() {
         timerProgressBar: true,
         showConfirmButton: false,
       }).then(() => {
-        if (courseId) {
-          navigate(`/course/${courseId}/lessons`);
-        } else {
-          navigate('/lessons');
-        }
+        // Navigate back to the chapter lessons list page
+        navigate(-1);
       });
     } else {
       Swal.fire({
@@ -155,12 +117,12 @@ export default function AddLesson() {
               <div className="list-btn">
                 <ul className="filter-list">
                   <li>
-                    <Link 
-                      className="btn btn-primary" 
-                      to={courseId ? `/course/${courseId}/lessons` : '/lessons'}
+                    <button 
+                      className="btn btn-outline-secondary"
+                      onClick={handleCancel}
                     >
-                      <i className="fa fa-plus-circle me-2"></i>View All
-                    </Link>
+                      <i className="fa fa-arrow-left me-2"></i>Back to Lessons
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -186,49 +148,23 @@ export default function AddLesson() {
                     </div>
 
                     <div className="col-md-4">
-                      <label className="form-label">Content Type <span className="text-danger">*</span></label>
-                      <select 
-                        className="form-select"
-                        name="content_type"
-                        value={formData.content_type}
-                        onChange={handleInputChange}
-                      >
-                        {contentTypeOptions.map(type => (
-                          <option key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Lesson Order <span className="text-danger">*</span></label>
+                      <label className="form-label">Lesson Number</label>
                       <input 
                         type="number" 
                         className="form-control" 
-                        placeholder="1"
-                        name="order"
-                        value={formData.order}
+                        placeholder="0"
+                        name="lesson_number"
+                        value={formData.lesson_number}
                         onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Duration</label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
-                        placeholder="e.g., 20 min"
-                        name="duration"
-                        value={formData.duration}
-                        onChange={handleInputChange}
+                        min="0"
                       />
                     </div>
 
                     <div className="col-md-12">
-                      <label className="form-label">Lesson Description <span className="text-danger">*</span></label>
+                      <label className="form-label">Description <span className="text-danger">*</span></label>
                       <textarea 
                         className="form-control" 
-                        rows="3" 
+                        rows="4" 
                         placeholder="Enter lesson description"
                         name="description"
                         value={formData.description}
@@ -237,42 +173,131 @@ export default function AddLesson() {
                       ></textarea>
                     </div>
 
-                    {formData.content_type === 'text' && (
-                      <div className="col-md-12">
-                        <label className="form-label">Content Text <span className="text-danger">*</span></label>
-                        <textarea 
-                          className="form-control" 
-                          rows="5" 
-                          placeholder="Enter text content"
-                          name="content"
-                          value={formData.content}
+                    <div className="col-md-6">
+                      <label className="form-label">Duration</label>
+                      <input 
+                        type="text" 
+                        className="form-control" 
+                        placeholder="e.g., 2 hours"
+                        name="duration"
+                        value={formData.duration}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+
+                    <div className="col-md-6">
+                      <label className="form-label">Order Number</label>
+                      <input 
+                        type="number" 
+                        className="form-control" 
+                        placeholder="1"
+                        name="order_number"
+                        value={formData.order_number}
+                        onChange={handleInputChange}
+                        min="0"
+                      />
+                    </div>
+
+                    <div className="col-md-6">
+                      <label className="form-label">XP Points</label>
+                      <input 
+                        type="number" 
+                        className="form-control" 
+                        placeholder="0"
+                        name="xp_points"
+                        value={formData.xp_points}
+                        onChange={handleInputChange}
+                        min="0"
+                      />
+                    </div>
+
+                    <div className="col-md-6">
+                      <label className="form-label">Reward Points</label>
+                      <input 
+                        type="number" 
+                        className="form-control" 
+                        placeholder="0"
+                        name="reward_points"
+                        value={formData.reward_points}
+                        onChange={handleInputChange}
+                        min="0"
+                      />
+                    </div>
+
+                    <div className="col-md-3">
+                      <label className="form-check-label">
+                        <input 
+                          type="checkbox" 
+                          className="form-check-input"
+                          name="is_preview"
+                          checked={formData.is_preview}
                           onChange={handleInputChange}
-                          required
-                        ></textarea>
-                      </div>
-                    )}
+                        />
+                        Is Preview
+                      </label>
+                    </div>
+
+                    <div className="col-md-3">
+                      <label className="form-check-label">
+                        <input 
+                          type="checkbox" 
+                          className="form-check-input"
+                          name="is_locked"
+                          checked={formData.is_locked}
+                          onChange={handleInputChange}
+                        />
+                        Is Locked
+                      </label>
+                    </div>
+
+                    <div className="col-md-3">
+                      <label className="form-check-label">
+                        <input 
+                          type="checkbox" 
+                          className="form-check-input"
+                          name="quiz_available"
+                          checked={formData.quiz_available}
+                          onChange={handleInputChange}
+                        />
+                        Quiz Available
+                      </label>
+                    </div>
+
+                    <div className="col-md-3">
+                      <label className="form-label">Status</label>
+                      <select 
+                        className="form-select"
+                        name="status"
+                        value={formData.status}
+                        onChange={handleInputChange}
+                      >
+                        <option value="active">Active</option>
+                        <option value="draft">Draft</option>
+                        <option value="archived">Archived</option>
+                      </select>
+                    </div>
 
                     <div className="col-md-12">
-                      <label className="form-label">Media File <span className="text-danger">*</span></label>
+                      <label className="form-label">Thumbnail Image</label>
                       <input 
                         type="file" 
                         className="form-control"
-                        onChange={handleMediaChange}
-                        accept=".mp4,.webm,.mp3,.doc,.docx,.pdf,.jpg,.jpeg,.png,.gif"
-                        required
+                        onChange={handleThumbnailChange}
+                        accept="image/*"
                       />
-                      {mediaPreview && (
+                      {thumbnailPreview && (
                         <div className="mt-2">
-                          <small className="text-muted">Selected: {mediaPreview}</small>
+                          <small className="text-muted">Selected: {thumbnailPreview}</small>
                         </div>
                       )}
                     </div>
 
-                    <div className="col-md-12 text-end mt-3">
+                    <div className="col-md-12">
                       <button 
                         type="button" 
                         className="btn btn-secondary"
                         onClick={handleCancel}
+                        disabled={isLoading}
                       >
                         Cancel
                       </button>
@@ -281,7 +306,7 @@ export default function AddLesson() {
                         className="btn btn-primary ms-2"
                         disabled={isLoading}
                       >
-                        <i className="bi bi-check-circle"></i> {isLoading ? 'Creating...' : 'Create Lesson'}
+                        {isLoading ? 'Creating...' : 'Create Lesson'}
                       </button>
                     </div>
                   </form>

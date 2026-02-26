@@ -18,6 +18,8 @@ export default function CourseLessons() {
   const [courseData, setCourseData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedLessonId, setExpandedLessonId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchData();
@@ -47,6 +49,28 @@ export default function CourseLessons() {
     }
     
     setIsLoading(false);
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(lessons.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedLessons = lessons.slice(startIndex, endIndex);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePageClick = (pageNum) => {
+    setCurrentPage(pageNum);
   };
 
   const getContentTypeIcon = (contentType) => {
@@ -169,7 +193,7 @@ export default function CourseLessons() {
                           </tr>
                         </thead>
                         <tbody>
-                          {lessons.map((lesson) => (
+                          {paginatedLessons.map((lesson) => (
                             <React.Fragment key={lesson.id}>
                               <tr>
                                 <td>
@@ -290,6 +314,45 @@ export default function CourseLessons() {
                   )}
                 </div>
               </div>
+
+              {/* Pagination */}
+              {!isLoading && lessons.length > itemsPerPage && (
+                <div className="card">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div className="text-muted">
+                        Showing {startIndex + 1} to {Math.min(endIndex, lessons.length)} of {lessons.length} lessons
+                      </div>
+                      <nav aria-label="Page navigation">
+                        <ul className="pagination mb-0">
+                          <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handlePreviousPage}>
+                              <i className="fa fa-chevron-left"></i> Previous
+                            </button>
+                          </li>
+                          
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+                            <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
+                              <button 
+                                className="page-link"
+                                onClick={() => handlePageClick(pageNum)}
+                              >
+                                {pageNum}
+                              </button>
+                            </li>
+                          ))}
+                          
+                          <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handleNextPage}>
+                              Next <i className="fa fa-chevron-right"></i>
+                            </button>
+                          </li>
+                        </ul>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

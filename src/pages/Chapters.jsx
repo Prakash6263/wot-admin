@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useAuth } from '../context/AuthContext';
-import { getCourseById } from '../api/courses';
+import { getCourseById, getChaptersByCategory } from '../api/courses';
 import GlobalLoader from '../components/GlobalLoader';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
@@ -32,76 +32,48 @@ export default function Chapters() {
       setCourse(courseResult.data);
     }
     
-    // TODO: Fetch chapters from API when endpoint is available
-    // For now using demo data
-    setCategory({
-      id: categoryId,
-      title: 'Foundations of Technical Analysis',
-      description: 'Learn the basics of technical analysis'
-    });
-
-    const demoChapters = [
-      {
-        id: 1,
-        title: 'Chapter 1: Market Structure Basics',
-        description: 'Understanding market structure and price action',
-        order_number: 1,
-        lesson_count: 5,
-        status: 'Published',
-        created_at: '2024-01-15T10:30:00'
-      },
-      {
-        id: 2,
-        title: 'Chapter 2: Support & Resistance Levels',
-        description: 'Identifying key support and resistance levels',
-        order_number: 2,
-        lesson_count: 4,
-        status: 'Published',
-        created_at: '2024-01-20T14:22:00'
-      },
-      {
-        id: 3,
-        title: 'Chapter 3: Trendlines & Channels',
-        description: 'Drawing and using trendlines effectively',
-        order_number: 3,
-        lesson_count: 3,
-        status: 'Draft',
-        created_at: '2024-02-01T09:15:00'
-      },
-      {
-        id: 4,
-        title: 'Chapter 4: Advanced Price Action',
-        description: 'Advanced techniques in price action trading',
-        order_number: 4,
-        lesson_count: 6,
-        status: 'Published',
-        created_at: '2024-02-05T11:45:00'
-      },
-      {
-        id: 5,
-        title: 'Chapter 5: Market Analysis',
-        description: 'Complete market analysis framework',
-        order_number: 5,
-        lesson_count: 8,
-        status: 'Review',
-        created_at: '2024-02-10T13:20:00'
-      }
-    ];
-
-    setChapters(demoChapters);
+    // Fetch chapters from API
+    const chaptersResult = await getChaptersByCategory(categoryId, token);
+    if (chaptersResult.success) {
+      setChapters(chaptersResult.data);
+      setCategory({
+        id: categoryId,
+        title: `Category ${categoryId}`,
+        description: 'Chapters in this category'
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: chaptersResult.message || 'Failed to load chapters',
+      });
+    }
+    
     setIsLoading(false);
   };
 
   const getStatusBadge = (status) => {
+    // Handle boolean status from API (false = inactive/unpublished, true = active/published)
+    if (typeof status === 'boolean') {
+      return status ? 'bg-success' : 'bg-secondary';
+    }
+    
+    // Handle string status
     const statusMap = {
       active: 'bg-success',
-      inactive: 'bg-danger',
       draft: 'bg-warning',
       published: 'bg-success',
       blocked: 'bg-danger',
       review: 'bg-info',
     };
     return statusMap[status?.toLowerCase()] || 'bg-secondary';
+  };
+
+  const getStatusText = (status) => {
+    if (typeof status === 'boolean') {
+      return status ? 'Active' : 'Inactive';
+    }
+    return status || 'Inactive';
   };
 
   const handleDeleteChapter = (chapterId, chapterTitle) => {
@@ -144,6 +116,14 @@ export default function Chapters() {
                 <ul className="filter-list">
                   <li>
                     <button 
+                      className="btn btn-primary"
+                      onClick={() => navigate(`/course/${courseId}/category/${categoryId}/add-chapter`)}
+                    >
+                      <i className="fas fa-plus me-2"></i>Add Chapter
+                    </button>
+                  </li>
+                  <li>
+                    <button 
                       className="btn btn-outline-secondary"
                       onClick={() => navigate(`/course/${courseId}/categories`)}
                     >
@@ -170,14 +150,6 @@ export default function Chapters() {
                         </ul>
                       </div>
                     </div>
-                  </li>
-                  <li>
-                    <button 
-                      className="btn btn-primary"
-                      onClick={() => navigate(`/course/${courseId}/category/${categoryId}/add-chapter`)}
-                    >
-                      <i className="fa fa-plus-circle me-2"></i>Add Chapter
-                    </button>
                   </li>
                 </ul>
               </div>
@@ -232,7 +204,7 @@ export default function Chapters() {
                               </td>
                               <td>
                                 <span className={`badge ${getStatusBadge(chapter.status)}`}>
-                                  {chapter.status}
+                                  {getStatusText(chapter.status)}
                                 </span>
                               </td>
                               <td>

@@ -271,3 +271,181 @@ export const getCategoriesByCourse = async (courseId, token) => {
     };
   }
 };
+
+// Add new category
+export const addCategory = async (courseId, categoryData, token) => {
+  try {
+    console.log('[v0] Adding category for course:', courseId);
+    const url = `${API_BASE_URL}/courses/admin/course/${courseId}/category`;
+    
+    const formData = new FormData();
+    formData.append('name', categoryData.name);
+    formData.append('description', categoryData.description || '');
+    if (categoryData.order_number !== null && categoryData.order_number !== undefined) {
+      formData.append('order_number', categoryData.order_number);
+    }
+    formData.append('status', categoryData.status || '');
+    if (categoryData.image instanceof File) {
+      formData.append('image', categoryData.image);
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('[v0] Add category response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.data,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to create category',
+      };
+    }
+  } catch (error) {
+    console.error('Add Category API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while adding category',
+    };
+  }
+};
+
+// Get chapters by category ID
+export const getChaptersByCategory = async (categoryId, token) => {
+  try {
+    console.log('[v0] Fetching chapters for category:', categoryId);
+    const url = `${API_BASE_URL}/courses/admin/category/${categoryId}/chapters`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    console.log('[v0] Chapters response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.chapters || [],
+        categoryId: data.category_id,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to fetch chapters',
+      };
+    }
+  } catch (error) {
+    console.error('Get Chapters API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while fetching chapters',
+    };
+  }
+};
+
+// Get lessons by chapter ID
+export const getLessonsByChapter = async (chapterId, token) => {
+  try {
+    console.log('[v0] Fetching lessons for chapter:', chapterId);
+    const url = `${API_BASE_URL}/courses/admin/chapter/${chapterId}/lessons`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    console.log('[v0] Lessons response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.lessons || [],
+        chapterId: data.chapter_id,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to fetch lessons',
+      };
+    }
+  } catch (error) {
+    console.error('Get Lessons API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while fetching lessons',
+    };
+  }
+};
+
+// Create chapter in category
+export const createChapter = async (categoryId, chapterData, token) => {
+  try {
+    console.log('[v0] Creating chapter for category:', categoryId);
+    const url = `${API_BASE_URL}/courses/admin/category/${categoryId}/chapter`;
+    
+    const formData = new FormData();
+    formData.append('title', chapterData.title);
+    formData.append('description', chapterData.description || '');
+    formData.append('chapter_number', chapterData.chapter_number || 0);
+    formData.append('duration', chapterData.duration || '');
+    formData.append('total_duration', chapterData.total_duration || 0);
+    formData.append('is_locked', chapterData.is_locked || false);
+    if (chapterData.order_number !== null && chapterData.order_number !== undefined) {
+      formData.append('order_number', chapterData.order_number);
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('[v0] Create chapter response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.data,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to create chapter',
+      };
+    }
+  } catch (error) {
+    console.error('Create Chapter API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while creating chapter',
+    };
+  }
+};

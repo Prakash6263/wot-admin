@@ -150,15 +150,20 @@ export default function AddGlossary() {
 
                     <div className="col-md-6">
                       <label className="form-label">Category <span className="text-danger">*</span></label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
-                        placeholder="e.g., Cryptocurrency, Trading"
+                      <select 
+                        className="form-select" 
                         name="category"
                         value={formData.category}
                         onChange={handleInputChange}
                         required
-                      />
+                      >
+                        <option value="">Select a category</option>
+                        <option value="SMC">SMC</option>
+                        <option value="Technical Analysis">Technical Analysis</option>
+                        <option value="ICT">ICT</option>
+                        <option value="Price Action">Price Action</option>
+                        <option value="Risk Management">Risk Management</option>
+                      </select>
                     </div>
 
                     <div className="col-md-6">

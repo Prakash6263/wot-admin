@@ -36,12 +36,12 @@ export default function AddCourse() {
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
     let finalValue = value;
-    
+
     // Handle boolean fields from select dropdowns
     if (['is_free', 'is_featured', 'certificate_available'].includes(name)) {
       finalValue = value === 'true' || value === true;
     }
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: finalValue,
@@ -55,7 +55,7 @@ export default function AddCourse() {
         ...prev,
         image: file,
       }));
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -72,7 +72,7 @@ export default function AddCourse() {
         ...prev,
         thumbnail: file,
       }));
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -89,7 +89,7 @@ export default function AddCourse() {
         ...prev,
         intro_video: file,
       }));
-      
+
       setVideoPreview(file.name);
     }
   };
@@ -211,7 +211,7 @@ export default function AddCourse() {
               </div>
             </div>
           </div>
-          
+
           <div className="row">
             <div className="col-sm-12">
               <div className="card">
@@ -219,9 +219,9 @@ export default function AddCourse() {
                   <form onSubmit={handleSubmit} className="row g-3">
                     <div className="col-md-8">
                       <label className="form-label">Course Title <span className="text-danger">*</span></label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
+                      <input
+                        type="text"
+                        className="form-control"
                         placeholder="Enter course title"
                         name="title"
                         value={formData.title}
@@ -232,9 +232,9 @@ export default function AddCourse() {
 
                     <div className="col-md-4">
                       <label className="form-label">Slug <span className="text-danger">*</span></label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
+                      <input
+                        type="text"
+                        className="form-control"
                         placeholder="course-slug"
                         name="slug"
                         value={formData.slug}
@@ -245,7 +245,7 @@ export default function AddCourse() {
 
                     <div className="col-md-4">
                       <label className="form-label">Level <span className="text-danger">*</span></label>
-                      <select 
+                      <select
                         className="form-select"
                         name="level"
                         value={formData.level}
@@ -259,9 +259,9 @@ export default function AddCourse() {
 
                     <div className="col-md-4">
                       <label className="form-label">Duration (minutes) <span className="text-danger">*</span></label>
-                      <input 
-                        type="number" 
-                        className="form-control" 
+                      <input
+                        type="number"
+                        className="form-control"
                         placeholder="e.g., 300"
                         name="duration_in_minutes"
                         value={formData.duration_in_minutes}
@@ -272,9 +272,9 @@ export default function AddCourse() {
 
                     <div className="col-md-4">
                       <label className="form-label">Language <span className="text-danger">*</span></label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
+                      <input
+                        type="text"
+                        className="form-control"
                         placeholder="e.g., English"
                         name="language"
                         value={formData.language}
@@ -285,22 +285,22 @@ export default function AddCourse() {
 
                     <div className="col-md-4">
                       <label className="form-label">Status <span className="text-danger">*</span></label>
-                      <select 
+                      <select
                         className="form-select"
                         name="status"
                         value={formData.status}
                         onChange={handleInputChange}
                       >
                         <option value="draft">Draft</option>
-                        <option value="published">Published</option>
+                        <option value="Published">Published</option>
                       </select>
                     </div>
 
                     <div className="col-md-12">
                       <label className="form-label">Course Description <span className="text-danger">*</span></label>
-                      <textarea 
-                        className="form-control" 
-                        rows="4" 
+                      <textarea
+                        className="form-control"
+                        rows="4"
                         placeholder="Enter detailed course description"
                         name="description"
                         value={formData.description}
@@ -311,9 +311,9 @@ export default function AddCourse() {
 
                     <div className="col-md-12">
                       <label className="form-label">Short Description</label>
-                      <textarea 
-                        className="form-control" 
-                        rows="2" 
+                      <textarea
+                        className="form-control"
+                        rows="2"
                         placeholder="Enter short course description"
                         name="short_description"
                         value={formData.short_description}
@@ -323,9 +323,9 @@ export default function AddCourse() {
 
                     <div className="col-md-12">
                       <label className="form-label">Course Objectives <span className="text-danger">*</span></label>
-                      <textarea 
-                        className="form-control" 
-                        rows="3" 
+                      <textarea
+                        className="form-control"
+                        rows="3"
                         placeholder="Enter course objectives/learning outcomes"
                         name="objectives"
                         value={formData.objectives}
@@ -336,8 +336,8 @@ export default function AddCourse() {
 
                     <div className="col-md-6">
                       <label className="form-label">Price</label>
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         className="form-control"
                         placeholder="0"
                         name="price"
@@ -350,7 +350,7 @@ export default function AddCourse() {
 
                     <div className="col-md-6">
                       <label className="form-label">Is Free?</label>
-                      <select 
+                      <select
                         className="form-select"
                         name="is_free"
                         value={String(formData.is_free)}
@@ -363,7 +363,7 @@ export default function AddCourse() {
 
                     <div className="col-md-6">
                       <label className="form-label">Featured</label>
-                      <select 
+                      <select
                         className="form-select"
                         name="is_featured"
                         value={String(formData.is_featured)}
@@ -376,7 +376,7 @@ export default function AddCourse() {
 
                     <div className="col-md-6">
                       <label className="form-label">Certificate Available</label>
-                      <select 
+                      <select
                         className="form-select"
                         name="certificate_available"
                         value={String(formData.certificate_available)}
@@ -389,8 +389,8 @@ export default function AddCourse() {
 
                     <div className="col-md-12">
                       <label className="form-label">Course Image <span className="text-danger">*</span></label>
-                      <input 
-                        type="file" 
+                      <input
+                        type="file"
                         className="form-control"
                         accept="image/*"
                         onChange={handleImageChange}
@@ -398,9 +398,9 @@ export default function AddCourse() {
                       />
                       {imagePreview && (
                         <div className="mt-3">
-                          <img 
-                            src={imagePreview} 
-                            alt="Image Preview" 
+                          <img
+                            src={imagePreview}
+                            alt="Image Preview"
                             style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '4px' }}
                           />
                         </div>
@@ -409,8 +409,8 @@ export default function AddCourse() {
 
                     <div className="col-md-12">
                       <label className="form-label">Course Thumbnail <span className="text-danger">*</span></label>
-                      <input 
-                        type="file" 
+                      <input
+                        type="file"
                         className="form-control"
                         accept="image/*"
                         onChange={handleThumbnailChange}
@@ -418,9 +418,9 @@ export default function AddCourse() {
                       />
                       {thumbnailPreview && (
                         <div className="mt-3">
-                          <img 
-                            src={thumbnailPreview} 
-                            alt="Thumbnail Preview" 
+                          <img
+                            src={thumbnailPreview}
+                            alt="Thumbnail Preview"
                             style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '4px' }}
                           />
                         </div>
@@ -429,8 +429,8 @@ export default function AddCourse() {
 
                     <div className="col-md-12">
                       <label className="form-label">Intro Video</label>
-                      <input 
-                        type="file" 
+                      <input
+                        type="file"
                         className="form-control"
                         accept="video/*"
                         onChange={handleVideoChange}
@@ -443,15 +443,15 @@ export default function AddCourse() {
                     </div>
 
                     <div className="col-md-12 text-end mt-3">
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         className="btn btn-secondary"
                         onClick={handleCancel}
                       >
                         Cancel
                       </button>
-                      <button 
-                        type="submit" 
+                      <button
+                        type="submit"
                         className="btn btn-primary ms-2"
                         disabled={isLoading}
                       >

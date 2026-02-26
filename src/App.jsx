@@ -9,8 +9,12 @@ import EditCourse from './pages/EditCourse'
 import CourseLessons from './pages/CourseLessons'
 import EditLesson from './pages/EditLesson'
 import Lessons from './pages/Lessons'
+import LessonContent from './pages/LessonContent'
+import AddContent from './pages/AddContent'
 import Categories from './pages/Categories'
+import AddCategory from './pages/AddCategory'
 import Chapters from './pages/Chapters'
+import AddChapter from './pages/AddChapter'
 import ChapterLessons from './pages/ChapterLessons'
 import Quizes from './pages/Quizes'
 import UserList from './pages/UserList'
@@ -34,9 +38,14 @@ export default function App() {
         <Route path="/course/:courseId/lesson/:lessonId/edit" element={<ProtectedRoute><EditLesson /></ProtectedRoute>} />
         <Route path="/course/:courseId/add-lesson" element={<ProtectedRoute><AddLesson /></ProtectedRoute>} />
         <Route path="/course/:courseId/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
+        <Route path="/course/:courseId/add-category" element={<ProtectedRoute><AddCategory /></ProtectedRoute>} />
         <Route path="/course/:courseId/category/:categoryId/chapters" element={<ProtectedRoute><Chapters /></ProtectedRoute>} />
+        <Route path="/course/:courseId/category/:categoryId/add-chapter" element={<ProtectedRoute><AddChapter /></ProtectedRoute>} />
         <Route path="/course/:courseId/category/:categoryId/chapter/:chapterId/lessons" element={<ProtectedRoute><ChapterLessons /></ProtectedRoute>} />
+        <Route path="/course/:courseId/category/:categoryId/chapter/:chapterId/add-lesson" element={<ProtectedRoute><AddLesson /></ProtectedRoute>} />
         <Route path="/lessons" element={<ProtectedRoute><Lessons /></ProtectedRoute>} />
+        <Route path="/lesson/:lessonId/content" element={<ProtectedRoute><LessonContent /></ProtectedRoute>} />
+        <Route path="/lesson/:lessonId/add-content" element={<ProtectedRoute><AddContent /></ProtectedRoute>} />
         <Route path="/quizes" element={<ProtectedRoute><Quizes /></ProtectedRoute>} />
         <Route path="/user-list" element={<ProtectedRoute><UserList /></ProtectedRoute>} />
         <Route path="/add-lesson" element={<ProtectedRoute><AddLesson /></ProtectedRoute>} />

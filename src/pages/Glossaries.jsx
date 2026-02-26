@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { getAllGlossaries, deleteGlossary } from '../api/glossary';
+import { getAllGlossaries, deleteGlossary, updateGlossary } from '../api/glossary';
 import { useAuth } from '../context/AuthContext';
 import GlobalLoader from '../components/GlobalLoader';
 import Header from '../components/Header';
@@ -13,6 +13,14 @@ export default function Glossaries() {
   const [glossaries, setGlossaries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingGlossary, setEditingGlossary] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    term: '',
+    short_form: '',
+    category: '',
+    description: '',
+  });
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -44,6 +52,60 @@ export default function Glossaries() {
 
   const handlePageChange = (newPage) => {
     fetchGlossaries(newPage);
+  };
+
+  const handleEditClick = (glossary) => {
+    setEditingGlossary(glossary);
+    setEditFormData({
+      term: glossary.term,
+      short_form: glossary.short_form,
+      category: glossary.category,
+      description: glossary.description,
+    });
+    setShowEditModal(true);
+  };
+
+  const handleEditInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!editFormData.term || !editFormData.short_form || !editFormData.category || !editFormData.description) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'All fields are required',
+      });
+      return;
+    }
+
+    const updateResult = await updateGlossary(editingGlossary.id, editFormData, token);
+
+    if (updateResult.success) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Updated',
+        text: updateResult.message || 'Glossary updated successfully',
+        timer: 1500,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      }).then(() => {
+        setShowEditModal(false);
+        fetchGlossaries(pagination.page);
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to Update',
+        text: updateResult.message || 'An error occurred while updating the glossary',
+      });
+    }
   };
 
   const handleDeleteGlossary = (glossaryId, glossaryTerm) => {
@@ -148,6 +210,13 @@ export default function Glossaries() {
                               <td>
                                 <div className="d-flex gap-2">
                                   <button 
+                                    className="btn btn-sm btn-outline-primary"
+                                    onClick={() => handleEditClick(glossary)}
+                                    title="Edit Glossary"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </button>
+                                  <button 
                                     className="btn btn-sm btn-outline-danger"
                                     onClick={() => handleDeleteGlossary(glossary.id, glossary.term)}
                                     title="Delete Glossary"
@@ -217,6 +286,80 @@ export default function Glossaries() {
           )}
         </div>
       </div>
+
+      {/* Edit Modal */}
+      <div className={`modal fade ${showEditModal ? 'show' : ''}`} style={{ display: showEditModal ? 'block' : 'none' }} tabIndex="-1" role="dialog">
+        <div className="modal-dialog modal-dialog-centered" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Edit Glossary</h5>
+              <button type="button" className="btn-close" onClick={() => setShowEditModal(false)}></button>
+            </div>
+            <form onSubmit={handleEditSubmit}>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Term <span className="text-danger">*</span></label>
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    name="term"
+                    value={editFormData.term}
+                    onChange={handleEditInputChange}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Short Form <span className="text-danger">*</span></label>
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    name="short_form"
+                    value={editFormData.short_form}
+                    onChange={handleEditInputChange}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Category <span className="text-danger">*</span></label>
+                  <select 
+                    className="form-select" 
+                    name="category"
+                    value={editFormData.category}
+                    onChange={handleEditInputChange}
+                    required
+                  >
+                    <option value="">Select a category</option>
+                    <option value="SMC">SMC</option>
+                    <option value="Technical Analysis">Technical Analysis</option>
+                    <option value="ICT">ICT</option>
+                    <option value="Price Action">Price Action</option>
+                    <option value="Risk Management">Risk Management</option>
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Description <span className="text-danger">*</span></label>
+                  <textarea 
+                    className="form-control" 
+                    rows="4"
+                    name="description"
+                    value={editFormData.description}
+                    onChange={handleEditInputChange}
+                    required
+                  ></textarea>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Backdrop */}
+      {showEditModal && <div className="modal-backdrop fade show"></div>}
+
       <Footer />
     </div>
   );
