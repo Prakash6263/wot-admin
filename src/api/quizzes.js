@@ -1,0 +1,143 @@
+const API_BASE_URL = 'https://api.wayoftrading.com/aitredding/quiz';
+
+// Helper function to get authorization headers
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    console.warn('[v0] No authentication token found in localStorage');
+    return {};
+  }
+  return {
+    'Authorization': `Bearer ${token}`,
+    'accept': 'application/json',
+  };
+};
+
+export const getAllQuizzes = async (page = 1, limit = 10) => {
+  try {
+    console.log('[v0] Fetching all quizzes - Page:', page, 'Limit:', limit);
+    
+    const url = new URL(`${API_BASE_URL}/admin/all-quizzes`);
+    url.searchParams.append('page', page);
+    url.searchParams.append('limit', limit);
+    
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('[v0] Failed to fetch quizzes:', data);
+      return { success: false, error: data.detail || 'Failed to fetch quizzes', status: response.status };
+    }
+
+    console.log('[v0] Quizzes fetched successfully:', data.total_quizzes, 'Page:', data.current_page);
+    return { success: true, data, status: response.status };
+  } catch (error) {
+    console.error('[v0] Error fetching quizzes:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const uploadPdf = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    console.log('[v0] Uploading PDF:', file.name);
+
+    const response = await fetch(`${API_BASE_URL}/upload-pdf`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: formData,
+      // Don't set Content-Type header, browser will set it with boundary for multipart
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+      console.error('[v0] PDF upload failed:', data);
+      return { success: false, error: data.message || 'Failed to upload PDF', status: response.status };
+    }
+
+    console.log('[v0] PDF uploaded successfully:', data.pdf_id);
+    return { success: response.ok, data, status: response.status };
+  } catch (error) {
+    console.error('[v0] PDF Upload Error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const generateQuiz = async (quizData) => {
+  try {
+    const formData = new FormData();
+    
+    // Add all quiz fields to FormData
+    formData.append('pdf_id', quizData.pdf_id);
+    formData.append('title', quizData.title);
+    formData.append('description', quizData.description || '');
+    formData.append('start_datetime', quizData.start_datetime || '');
+    formData.append('end_datetime', quizData.end_datetime || '');
+    formData.append('max_participants', quizData.max_participants || 0);
+    formData.append('entry_type', quizData.entry_type || 'FREE');
+    formData.append('entry_fee', quizData.entry_fee || 0);
+    formData.append('prize_pool', quizData.prize_pool || 0);
+    formData.append('prize_description', quizData.prize_description || '');
+    formData.append('top10_reward_percent', quizData.top10_reward_percent || 100);
+    formData.append('top25_reward_percent', quizData.top25_reward_percent || 60);
+    formData.append('participation_reward_percent', quizData.participation_reward_percent || 10);
+    formData.append('max_attempts', quizData.max_attempts || 2);
+    
+    if (quizData.image) {
+      formData.append('image', quizData.image);
+    }
+
+    console.log('[v0] Creating quiz with title:', quizData.title);
+
+    const response = await fetch(`${API_BASE_URL}/generate`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: formData,
+      // Don't set Content-Type header, browser will set it with boundary for multipart
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('[v0] Quiz generation failed:', data);
+      return { success: false, error: data.message || 'Failed to create quiz', status: response.status };
+    }
+
+    console.log('[v0] Quiz created successfully:', data);
+    return { success: response.ok, data, status: response.status };
+  } catch (error) {
+    console.error('[v0] Quiz Generation Error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const deleteQuiz = async (quizId) => {
+  try {
+    console.log('[v0] Deleting quiz:', quizId);
+
+    const response = await fetch(`${API_BASE_URL}/${quizId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('[v0] Quiz deletion failed:', data);
+      return { success: false, error: data.message || data.detail || 'Failed to delete quiz', status: response.status };
+    }
+
+    console.log('[v0] Quiz deleted successfully:', quizId);
+    return { success: response.ok, data, status: response.status };
+  } catch (error) {
+    console.error('[v0] Quiz Deletion Error:', error);
+    return { success: false, error: error.message };
+  }
+};

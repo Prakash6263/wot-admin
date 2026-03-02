@@ -1,187 +1,135 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import GlobalLoader from '../components/GlobalLoader';
+import QuestionsModal from '../components/QuestionsModal';
+import { getAllQuizzes, deleteQuiz } from '../api/quizzes';
 
 export default function Quizes() {
   const [activeTab, setActiveTab] = useState('all');
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [allQuizzes, setAllQuizzes] = useState([]);
+  const [showQuestionsModal, setShowQuestionsModal] = useState(false);
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalQuizzes, setTotalQuizzes] = useState(0);
+  const itemsPerPage = 10;
 
   useEffect(() => {
-    if (window.DataTable) {
-      new window.DataTable('#quizTable', {});
-    }
-  }, [activeTab]);
+    fetchQuizzes(1);
+  }, []);
 
-  // Static Featured Quizzes Data (for carousel)
-  const featuredQuizzes = [
-    {
-      id: 1,
-      title: 'Sponsored: Advanced Technical Analysis',
-      course: 'Technical Analysis Mastery',
-      type: 'Sponsored',
-      participants: 1250,
-      prize: '500 Coins',
-      description: 'Advanced patterns and market structure analysis with real trading scenarios',
-      image: '🎯',
-      endTime: '12:00 AM Tonight'
-    },
-    {
-      id: 2,
-      title: 'Featured: Smart Money Concepts Deep Dive',
-      course: 'Smart Money Concepts',
-      type: 'Manual Featured',
-      participants: 890,
-      prize: '250 Coins',
-      description: 'Understand institutional trading strategies and market manipulation',
-      image: '💡',
-      endTime: '11:59 PM'
-    },
-    {
-      id: 3,
-      title: 'Price Action Trading Mastery',
-      course: 'Price Action Basics',
-      type: 'Automatic Featured',
-      participants: 756,
-      prize: '200 Coins',
-      description: 'Complete guide to reading candlestick patterns and price action signals',
-      image: '📊',
-      endTime: '2 days left'
+  useEffect(() => {
+    if (window.DataTable && !isLoading) {
+      const dataTable = document.querySelector('#quizTable');
+      if (dataTable) {
+        new window.DataTable('#quizTable', {});
+      }
     }
-  ];
+  }, [activeTab, isLoading]);
 
-  // Static Quizzes Data
-  const allQuizzes = [
-    {
-      id: 1,
-      title: 'TA Basics Quiz',
-      course: 'Technical Analysis',
-      questions: 15,
-      pass: 60,
-      status: 'Active',
-      type: 'Ongoing',
-      entryFee: 50,
-      entryType: 'PAID',
-      participants: 340,
-      rewards: { top10: '50 Coins', top25: '30 Coins', participation: '5 Coins' },
-      leaderboardPos: 'Top 10%: 50 Coins | Top 25%: 30 Coins | Others: 5 Coins',
-      timeLeft: '3 hours'
-    },
-    {
-      id: 2,
-      title: 'SMC Concepts',
-      course: 'Smart Money',
-      questions: 20,
-      pass: 70,
-      status: 'Active',
-      type: 'Ongoing',
-      entryFee: 75,
-      entryType: 'PAID',
-      participants: 210,
-      rewards: { top10: '75 Coins', top25: '45 Coins', participation: '7 Coins' },
-      leaderboardPos: 'Top 10%: 75 Coins | Top 25%: 45 Coins | Others: 7 Coins',
-      timeLeft: '5 hours'
-    },
-    {
-      id: 3,
-      title: 'Risk Management',
-      course: 'Forex Risk',
-      questions: 10,
-      pass: 50,
-      status: 'Draft',
-      type: 'Upcoming',
-      entryFee: 0,
-      entryType: 'FREE',
-      participants: 0,
-      rewards: { top10: '30 Coins', top25: '18 Coins', participation: '3 Coins' },
-      leaderboardPos: 'Top 10%: 30 Coins | Top 25%: 18 Coins | Others: 3 Coins',
-      timeLeft: 'Starts in 2 hours'
-    },
-    {
-      id: 4,
-      title: 'Price Action Indicators',
-      course: 'Price Action',
-      questions: 12,
-      pass: 65,
-      status: 'Active',
-      type: 'Ongoing',
-      entryFee: 60,
-      entryType: 'PAID',
-      participants: 520,
-      rewards: { top10: '60 Coins', top25: '36 Coins', participation: '6 Coins' },
-      leaderboardPos: 'Top 10%: 60 Coins | Top 25%: 36 Coins | Others: 6 Coins',
-      timeLeft: '1 hour'
-    },
-    {
-      id: 5,
-      title: 'AI Trading Fundamentals',
-      course: 'AI Trading',
-      questions: 8,
-      pass: 60,
-      status: 'Review',
-      type: 'Upcoming',
-      entryFee: 100,
-      entryType: 'PAID',
-      participants: 0,
-      rewards: { top10: '100 Coins', top25: '60 Coins', participation: '10 Coins' },
-      leaderboardPos: 'Top 10%: 100 Coins | Top 25%: 60 Coins | Others: 10 Coins',
-      timeLeft: 'Starts in 24 hours'
-    },
-    {
-      id: 6,
-      title: 'Options Greeks Mastery',
-      course: 'Options Trading',
-      questions: 14,
-      pass: 70,
-      status: 'Active',
-      type: 'Ended',
-      entryFee: 85,
-      entryType: 'PAID',
-      participants: 680,
-      rewards: { top10: '85 Coins', top25: '51 Coins', participation: '8 Coins' },
-      leaderboardPos: 'Top 10%: 85 Coins | Top 25%: 51 Coins | Others: 8 Coins',
-      timeLeft: 'Ended'
-    },
-    {
-      id: 7,
-      title: 'Crypto Scalping Signals',
-      course: 'Crypto',
-      questions: 9,
-      pass: 55,
-      status: 'Active',
-      type: 'Ongoing',
-      entryFee: 0,
-      entryType: 'FREE',
-      participants: 420,
-      rewards: { top10: '45 Coins', top25: '27 Coins', participation: '4 Coins' },
-      leaderboardPos: 'Top 10%: 45 Coins | Top 25%: 27 Coins | Others: 4 Coins',
-      timeLeft: '30 mins'
+  const fetchQuizzes = async (page = 1) => {
+    setIsLoading(true);
+    const result = await getAllQuizzes(page, itemsPerPage);
+
+    if (result.success && result.data?.quizzes) {
+      setAllQuizzes(result.data.quizzes);
+      setCurrentPage(result.data.current_page || 1);
+      setTotalPages(result.data.total_pages || 1);
+      setTotalQuizzes(result.data.total_quizzes || 0);
+      console.log('[v0] Quizzes loaded - Page:', result.data.current_page, 'Total:', result.data.total_quizzes);
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to Load Quizzes',
+        text: result.error || 'An error occurred while fetching quizzes',
+      });
+      setAllQuizzes([]);
     }
+    setIsLoading(false);
+  };
+
+  const handleViewQuestions = (quiz) => {
+    console.log('[v0] Viewing questions for quiz:', quiz.quiz_id);
+    setSelectedQuiz(quiz);
+    setShowQuestionsModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowQuestionsModal(false);
+    setSelectedQuiz(null);
+  };
+
+  const handleDeleteQuiz = async (quizId, quizTitle) => {
+    const result = await Swal.fire({
+      title: 'Delete Quiz?',
+      text: `Are you sure you want to delete "${quizTitle}"? This action cannot be undone.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (!result.isConfirmed) return;
+
+    setIsLoading(true);
+    const deleteResult = await deleteQuiz(quizId);
+
+    if (deleteResult.success) {
+      await Swal.fire({
+        icon: 'success',
+        title: 'Deleted',
+        text: 'Quiz has been deleted successfully',
+        timer: 1500,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+      fetchQuizzes(currentPage);
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to Delete',
+        text: deleteResult.error || 'An error occurred while deleting the quiz',
+      });
+      setIsLoading(false);
+    }
+  };
+
+  // Static Featured Quizzes Data (for carousel) - will use first 3 quizzes from API if available
+  const featuredQuizzes = allQuizzes.length > 0 ? allQuizzes.slice(0, 3).map(quiz => ({
+    id: quiz.quiz_id,
+    title: quiz.title,
+    course: 'Trading Course',
+    type: quiz.is_sponsored ? 'Sponsored' : 'Featured',
+    participants: quiz.unique_participants || 0,
+    prize: `${quiz.prize_pool} Coins` || '0 Coins',
+    description: quiz.description || 'Quiz from PDF',
+    image: '📝',
+    endTime: new Date(quiz.end_datetime).toLocaleString()
+  })) : [
   ];
 
   // Filter quizzes based on active tab
   const filteredQuizzes = activeTab === 'all' 
     ? allQuizzes 
-    : allQuizzes.filter(q => q.type.toLowerCase() === activeTab.toLowerCase());
-
-  const getTypeBadgeColor = (type) => {
-    const colors = {
-      'ongoing': 'bg-success',
-      'upcoming': 'bg-info',
-      'ended': 'bg-secondary'
-    };
-    return colors[type.toLowerCase()] || 'bg-secondary';
-  };
+    : allQuizzes.filter(q => q.status.toLowerCase() === activeTab.toLowerCase());
 
   const getStatusBadgeColor = (status) => {
     const colors = {
       'active': 'bg-success',
       'draft': 'bg-warning',
       'review': 'bg-info',
+      'ended': 'bg-secondary',
       'disabled': 'bg-danger'
     };
-    return colors[status.toLowerCase()] || 'bg-secondary';
+    return colors[status?.toLowerCase()] || 'bg-secondary';
   };
 
   const nextSlide = () => {
@@ -378,20 +326,11 @@ export default function Quizes() {
                     </li>
                     <li className="nav-item" role="presentation">
                       <button 
-                        className={`nav-link ${activeTab === 'ongoing' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('ongoing')}
+                        className={`nav-link ${activeTab === 'active' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('active')}
                         type="button"
                       >
-                        Ongoing ({allQuizzes.filter(q => q.type === 'Ongoing').length})
-                      </button>
-                    </li>
-                    <li className="nav-item" role="presentation">
-                      <button 
-                        className={`nav-link ${activeTab === 'upcoming' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('upcoming')}
-                        type="button"
-                      >
-                        Upcoming ({allQuizzes.filter(q => q.type === 'Upcoming').length})
+                        Active ({allQuizzes.filter(q => q.status?.toLowerCase() === 'active').length})
                       </button>
                     </li>
                     <li className="nav-item" role="presentation">
@@ -400,7 +339,16 @@ export default function Quizes() {
                         onClick={() => setActiveTab('ended')}
                         type="button"
                       >
-                        Ended ({allQuizzes.filter(q => q.type === 'Ended').length})
+                        Ended ({allQuizzes.filter(q => q.status?.toLowerCase() === 'ended').length})
+                      </button>
+                    </li>
+                    <li className="nav-item" role="presentation">
+                      <button 
+                        className={`nav-link ${activeTab === 'draft' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('draft')}
+                        type="button"
+                      >
+                        Draft ({allQuizzes.filter(q => q.status?.toLowerCase() === 'draft').length})
                       </button>
                     </li>
                   </ul>
@@ -414,93 +362,156 @@ export default function Quizes() {
             <div className="col-sm-12">
               <div className="card">
                 <div className="card-body">
-                  <div className="table-responsive">
-                    <table id="quizTable" className="table table-striped">
-                      <thead>
-                        <tr>
-                          <th>Quiz Title</th>
-                          <th>Course</th>
-                          <th>Type</th>
-                          <th>Questions</th>
-                          <th>Pass %</th>
-                          <th>Entry Fee</th>
-                          <th>Participants</th>
-                          <th>Rewards</th>
-                          <th>Status</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredQuizzes.map((quiz) => (
-                          <tr key={quiz.id}>
-                            <td>
-                              <strong>{quiz.title}</strong>
-                              <br />
-                              <small className="text-muted">{quiz.timeLeft}</small>
-                            </td>
-                            <td>{quiz.course}</td>
-                            <td>
-                              <span className={`badge ${getTypeBadgeColor(quiz.type)}`}>
-                                {quiz.type}
-                              </span>
-                            </td>
-                            <td>{quiz.questions}</td>
-                            <td>{quiz.pass}%</td>
-                            <td>
-                              {quiz.entryType === 'FREE' ? (
-                                <span className="badge bg-success">FREE</span>
-                              ) : (
-                                <strong>{quiz.entryFee} <small>Coins</small></strong>
-                              )}
-                            </td>
-                            <td>{quiz.participants}</td>
-                            <td>
-                              <small className="text-muted" title={quiz.leaderboardPos}>
-                                {quiz.leaderboardPos}
-                              </small>
-                            </td>
-                            <td>
-                              <span className={`badge ${getStatusBadgeColor(quiz.status)}`}>
-                                {quiz.status}
-                              </span>
-                            </td>
-                            <td>
-                              <div className="d-flex gap-2">
-                                <button 
-                                  className="btn btn-sm btn-outline-primary"
-                                  title="View Details"
-                                >
-                                  <i className="fas fa-eye"></i>
-                                </button>
-                                <button 
-                                  className="btn btn-sm btn-outline-warning"
-                                  title="Edit Quiz"
-                                >
-                                  <i className="fas fa-edit"></i>
-                                </button>
-                                <button 
-                                  className="btn btn-sm btn-outline-info"
-                                  title="Mark as Featured"
-                                >
-                                  <i className="fas fa-star"></i>
-                                </button>
-                                <button 
-                                  className="btn btn-sm btn-outline-danger"
-                                  title="Delete"
-                                >
-                                  <i className="fas fa-trash"></i>
-                                </button>
-                              </div>
-                            </td>
+                  {isLoading ? (
+                    <GlobalLoader visible={true} size="medium" />
+                  ) : filteredQuizzes.length === 0 ? (
+                    <div className="text-center py-5">
+                      <p className="text-muted">No quizzes found</p>
+                    </div>
+                  ) : (
+                    <div className="table-responsive">
+                      <table id="quizTable" className="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Quiz Title</th>
+                            <th>Questions</th>
+                            <th>Entry Type</th>
+                            <th>Participants</th>
+                            <th>Prize Pool</th>
+                            <th>Status</th>
+                            <th>Action</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody>
+                          {filteredQuizzes.map((quiz) => (
+                            <tr key={quiz.quiz_id}>
+                              <td>
+                                <div className="d-flex align-items-center">
+                                  {quiz.image_path && (
+                                    <img 
+                                      src={quiz.image_path} 
+                                      alt={quiz.title}
+                                      style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        borderRadius: '4px',
+                                        marginRight: '10px',
+                                        objectFit: 'cover',
+                                        backgroundColor: '#f0f0f0'
+                                      }}
+                                    />
+                                  )}
+                                  <div>
+                                    <strong>{quiz.title}</strong>
+                                    <br />
+                                    <small className="text-muted">{new Date(quiz.end_datetime).toLocaleString()}</small>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>{quiz.total_questions}</td>
+                              <td>
+                                {quiz.entry_type === 'FREE' ? (
+                                  <span className="badge bg-success">FREE</span>
+                                ) : (
+                                  <strong>{quiz.entry_fee} <small>Coins</small></strong>
+                                )}
+                              </td>
+                              <td>{quiz.unique_participants || 0}</td>
+                              <td>{quiz.prize_pool} Coins</td>
+                              <td>
+                                <span className={`badge ${getStatusBadgeColor(quiz.status)}`}>
+                                  {quiz.status}
+                                </span>
+                              </td>
+                              <td>
+                                <div className="d-flex gap-2">
+                                  <button 
+                                    className="btn btn-sm btn-outline-primary"
+                                    onClick={() => handleViewQuestions(quiz)}
+                                    title="View Questions"
+                                  >
+                                    <i className="fas fa-list"></i>
+                                  </button>
+                                  <button 
+                                    className="btn btn-sm btn-outline-warning"
+                                    title="Edit Quiz"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </button>
+                                  <button 
+                                    className="btn btn-sm btn-outline-info"
+                                    title="Mark as Featured"
+                                  >
+                                    <i className="fas fa-star"></i>
+                                  </button>
+                                  <button 
+                                    className="btn btn-sm btn-outline-danger"
+                                    title="Delete Quiz"
+                                    onClick={() => handleDeleteQuiz(quiz.quiz_id, quiz.title)}
+                                  >
+                                    <i className="fas fa-trash"></i>
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Pagination */}
+          {!isLoading && allQuizzes.length > 0 && (
+            <div className="row mt-3">
+              <div className="col-sm-12">
+                <div className="card">
+                  <div className="card-body">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <small className="text-muted">
+                          Showing page <strong>{currentPage}</strong> of <strong>{totalPages}</strong> (Total: <strong>{totalQuizzes}</strong> quizzes)
+                        </small>
+                      </div>
+                      <div className="d-flex gap-2">
+                        <button
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={() => fetchQuizzes(currentPage - 1)}
+                          disabled={currentPage === 1 || isLoading}
+                        >
+                          <i className="fas fa-chevron-left me-1"></i>Previous
+                        </button>
+
+                        <div className="d-flex gap-1">
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <button
+                              key={page}
+                              className={`btn btn-sm ${currentPage === page ? 'btn-primary' : 'btn-outline-primary'}`}
+                              onClick={() => fetchQuizzes(page)}
+                              disabled={isLoading}
+                            >
+                              {page}
+                            </button>
+                          ))}
+                        </div>
+
+                        <button
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={() => fetchQuizzes(currentPage + 1)}
+                          disabled={currentPage === totalPages || isLoading}
+                        >
+                          Next<i className="fas fa-chevron-right ms-1"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Coin System Info Card */}
           <div className="row mt-4">
@@ -590,6 +601,13 @@ export default function Quizes() {
         </div>
       </div>
       <Footer />
+
+      <QuestionsModal 
+        show={showQuestionsModal}
+        quizData={selectedQuiz}
+        onClose={handleCloseModal}
+        isLoading={false}
+      />
     </div>
   );
 }

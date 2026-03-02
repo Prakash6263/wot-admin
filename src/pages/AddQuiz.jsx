@@ -1,9 +1,221 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import { uploadPdf, generateQuiz } from '../api/quizzes';
 
 export default function AddQuiz() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [step, setStep] = useState(1);
+  const [pdfId, setPdfId] = useState('');
+  const [pdfFileName, setPdfFileName] = useState('');
+  const [imagePreview, setImagePreview] = useState(null);
+
+  // Step 1: PDF Upload
+  const [pdfFile, setPdfFile] = useState(null);
+
+  // Step 2: Quiz Details
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    start_datetime: '',
+    end_datetime: '',
+    max_participants: 0,
+    entry_type: 'FREE',
+    entry_fee: 0,
+    prize_pool: 0,
+    prize_description: '',
+    top10_reward_percent: 100,
+    top25_reward_percent: 60,
+    participation_reward_percent: 10,
+    max_attempts: 2,
+    image: null,
+  });
+
+  const handlePdfChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      setPdfFile(file);
+    } else {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Invalid File',
+        text: 'Please select a valid PDF file',
+      });
+      setPdfFile(null);
+    }
+  };
+
+  const handlePdfUpload = async (e) => {
+    e.preventDefault();
+
+    if (!pdfFile) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'Please select a PDF file',
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const result = await uploadPdf(pdfFile);
+
+      if (result.success) {
+        setPdfId(result.data.pdf_id);
+        setPdfFileName(pdfFile.name);
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'PDF Uploaded',
+          text: 'PDF uploaded successfully! Now configure your quiz.',
+          timer: 1500,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        }).then(() => {
+          setStep(2);
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Upload Failed',
+          text: result.error || 'Failed to upload PDF',
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error uploading PDF: ' + err.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData(prev => ({
+        ...prev,
+        image: file,
+      }));
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value, type } = e.target;
+    let finalValue = value;
+
+    if (type === 'number') {
+      finalValue = parseInt(value) || 0;
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: finalValue,
+    }));
+  };
+
+  const handleCreateQuiz = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (!formData.title.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'Please enter quiz title',
+      });
+      return;
+    }
+
+    if (formData.entry_type === 'PAID' && formData.entry_fee < 10) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'Minimum entry fee is 10 coins',
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const quizPayload = {
+        ...formData,
+        pdf_id: pdfId,
+      };
+
+      const result = await generateQuiz(quizPayload);
+
+      if (result.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Quiz Created',
+          text: result.data?.message || 'Quiz created successfully!',
+          timer: 1500,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        }).then(() => {
+          navigate('/quizes');
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to Create Quiz',
+          text: result.error || 'An error occurred while creating the quiz',
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error creating quiz: ' + err.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleBackToUpload = () => {
+    setStep(1);
+    setPdfId('');
+    setPdfFileName('');
+    setFormData({
+      title: '',
+      description: '',
+      start_datetime: '',
+      end_datetime: '',
+      max_participants: 0,
+      entry_type: 'FREE',
+      entry_fee: 0,
+      prize_pool: 0,
+      prize_description: '',
+      top10_reward_percent: 100,
+      top25_reward_percent: 60,
+      participation_reward_percent: 10,
+      max_attempts: 2,
+      image: null,
+    });
+    setImagePreview(null);
+  };
+
+  const handleCancel = () => {
+    navigate('/quizes');
+  };
+
   return (
     <div className="main-wrapper">
       <Header />
@@ -24,98 +236,276 @@ export default function AddQuiz() {
               </div>
             </div>
           </div>
-          
+
           <div className="row">
             <div className="col-sm-12">
               <div className="card">
                 <div className="card-body">
-                  <form className="row g-4">
-                    <div className="col-md-8">
-                      <label className="form-label">Quiz Title</label>
-                      <input type="text" className="form-control" placeholder="e.g. Technical Analysis Basics Quiz" />
-                    </div>
-
-                    <div className="col-md-4">
-                      <label className="form-label">Course</label>
-                      <select className="form-select">
-                        <option>Technical Analysis</option>
-                        <option>Smart Money Concepts</option>
-                        <option>AI Trading</option>
-                        <option>Options Trading</option>
-                      </select>
-                    </div>
-
-                    <div className="col-md-3">
-                      <label className="form-label">Passing Percentage</label>
-                      <input type="number" className="form-control" defaultValue="60" />
-                    </div>
-
-                    <div className="col-md-3">
-                      <label className="form-label">Time Limit (mins)</label>
-                      <input type="number" className="form-control" defaultValue="30" />
-                    </div>
-
-                    <div className="col-md-3">
-                      <label className="form-label">Max Attempts</label>
-                      <input type="number" className="form-control" defaultValue="3" />
-                    </div>
-
-                    <div className="col-md-3">
-                      <label className="form-label">Status</label>
-                      <select className="form-select">
-                        <option>Draft</option>
-                        <option>Published</option>
-                        <option>Disabled</option>
-                      </select>
-                    </div>
-
-                    <div className="col-md-12">
-                      <label className="form-label">Quiz Instructions</label>
-                      <textarea className="form-control" rows="4" placeholder="Explain quiz rules, passing criteria, negative marking etc."></textarea>
-                    </div>
-
-                    <div className="col-md-12">
-                      <label className="form-label">Quiz Settings</label>
-                      <div className="d-flex flex-wrap gap-4">
-                        <div className="form-check form-switch">
-                          <input className="form-check-input" type="checkbox" defaultChecked />
-                          <label className="form-check-label">Shuffle Questions</label>
-                        </div>
-                        <div className="form-check form-switch">
-                          <input className="form-check-input" type="checkbox" />
-                          <label className="form-check-label">Shuffle Options</label>
-                        </div>
-                        <div className="form-check form-switch">
-                          <input className="form-check-input" type="checkbox" defaultChecked />
-                          <label className="form-check-label">Show Result Instantly</label>
-                        </div>
-                        <div className="form-check form-switch">
-                          <input className="form-check-input" type="checkbox" />
-                          <label className="form-check-label">Negative Marking</label>
-                        </div>
+                  {/* STEP 1: PDF Upload */}
+                  {step === 1 && (
+                    <form onSubmit={handlePdfUpload} className="row g-3">
+                      <div className="col-md-12">
+                        <h6 className="mb-4">Step 1: Upload PDF File</h6>
                       </div>
-                    </div>
 
-                    <div className="col-md-12">
-                      <div className="alert alert-primary d-flex justify-content-between align-items-center">
-                        <div>
-                          <strong>Questions:</strong> 0 added
-                          <span className="badge badge-soft ms-2">MCQ</span>
-                          <span className="badge badge-soft ms-1">Single Correct</span>
-                        </div>
-                        <button type="button" className="btn btn-outline-primary btn-sm">
-                          <i className="bi bi-plus-circle"></i> Add Questions
+                      <div className="col-md-12">
+                        <label className="form-label">Select PDF File <span className="text-danger">*</span></label>
+                        <input
+                          type="file"
+                          className="form-control"
+                          accept=".pdf"
+                          onChange={handlePdfChange}
+                          required
+                        />
+                        {pdfFile && (
+                          <div className="mt-3">
+                            <p className="text-muted mb-0">Selected: <strong>{pdfFile.name}</strong></p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="col-md-12 text-end mt-3">
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={handleCancel}
+                        >
+                          Cancel
+                        </button>
+                        <button 
+                          type="submit" 
+                          className="btn btn-primary ms-2"
+                          disabled={isLoading || !pdfFile}
+                        >
+                          <i className="fa fa-upload"></i> {isLoading ? 'Uploading...' : 'Upload PDF'}
                         </button>
                       </div>
-                    </div>
+                    </form>
+                  )}
 
-                    <div className="col-md-12 text-end">
-                      <button className="btn btn-secondary">Cancel</button>
-                      <button className="btn btn-primary">
-                        <i className="bi bi-check-circle"></i> Save Quiz
-                      </button>
-                    </div>
-                  </form>
+                  {/* STEP 2: Quiz Configuration */}
+                  {step === 2 && (
+                    <form onSubmit={handleCreateQuiz} className="row g-3">
+                      <div className="col-md-12">
+                        <h6 className="mb-4">Step 2: Configure Quiz</h6>
+                      </div>
+
+                      <div className="col-md-8">
+                        <label className="form-label">Quiz Title <span className="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Enter quiz title"
+                          name="title"
+                          value={formData.title}
+                          onChange={handleFormChange}
+                          required
+                        />
+                      </div>
+
+                      <div className="col-md-4">
+                        <label className="form-label">Entry Type <span className="text-danger">*</span></label>
+                        <select
+                          className="form-select"
+                          name="entry_type"
+                          value={formData.entry_type}
+                          onChange={handleFormChange}
+                        >
+                          <option value="FREE">Free</option>
+                          <option value="PAID">Paid</option>
+                        </select>
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label">Start Date & Time</label>
+                        <input
+                          type="datetime-local"
+                          className="form-control"
+                          name="start_datetime"
+                          value={formData.start_datetime}
+                          onChange={handleFormChange}
+                        />
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label">End Date & Time</label>
+                          <input
+                          type="datetime-local"
+                          className="form-control"
+                          name="end_datetime"
+                          value={formData.end_datetime}
+                          onChange={handleFormChange}
+                        />
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label">Max Participants</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="0"
+                          name="max_participants"
+                          value={formData.max_participants}
+                          onChange={handleFormChange}
+                          min="0"
+                        />
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label">Max Attempts</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="2"
+                          name="max_attempts"
+                          value={formData.max_attempts}
+                          onChange={handleFormChange}
+                          min="1"
+                        />
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label">Entry Fee (for Paid) <span className="text-danger">*</span></label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="0"
+                          name="entry_fee"
+                          value={formData.entry_fee}
+                          onChange={handleFormChange}
+                          min="0"
+                        />
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label">Prize Pool</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="0"
+                          name="prize_pool"
+                          value={formData.prize_pool}
+                          onChange={handleFormChange}
+                          min="0"
+                        />
+                      </div>
+
+                      <div className="col-md-12">
+                        <label className="form-label">Description</label>
+                        <textarea
+                          className="form-control"
+                          rows="3"
+                          placeholder="Enter quiz description and instructions"
+                          name="description"
+                          value={formData.description}
+                          onChange={handleFormChange}
+                        ></textarea>
+                      </div>
+
+                      <div className="col-md-12">
+                        <label className="form-label">Prize Description</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="e.g. Prize up to 500 coins"
+                          name="prize_description"
+                          value={formData.prize_description}
+                          onChange={handleFormChange}
+                        />
+                      </div>
+
+                      <div className="col-md-12">
+                        <label className="form-label">Quiz Image</label>
+                        <input
+                          type="file"
+                          className="form-control"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                        />
+                        {imagePreview && (
+                          <div className="mt-3">
+                            <img
+                              src={imagePreview}
+                              alt="Image Preview"
+                              style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '4px' }}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="col-md-12">
+                        <h6 className="mb-3">Reward Distribution</h6>
+                      </div>
+
+                      <div className="col-md-4">
+                        <label className="form-label">Top 10% Reward %</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="100"
+                          name="top10_reward_percent"
+                          value={formData.top10_reward_percent}
+                          onChange={handleFormChange}
+                          min="0"
+                          max="100"
+                        />
+                      </div>
+
+                      <div className="col-md-4">
+                        <label className="form-label">Top 25% Reward %</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="60"
+                          name="top25_reward_percent"
+                          value={formData.top25_reward_percent}
+                          onChange={handleFormChange}
+                          min="0"
+                          max="100"
+                        />
+                      </div>
+
+                      <div className="col-md-4">
+                        <label className="form-label">Participation Reward %</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="10"
+                          name="participation_reward_percent"
+                          value={formData.participation_reward_percent}
+                          onChange={handleFormChange}
+                          min="0"
+                          max="100"
+                        />
+                      </div>
+
+                      <div className="col-md-12 text-end mt-3">
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={handleBackToUpload}
+                          disabled={isLoading}
+                        >
+                          <i className="fa fa-arrow-left"></i> Back
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-secondary ms-2"
+                          onClick={handleCancel}
+                          disabled={isLoading}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="btn btn-primary ms-2"
+                          disabled={isLoading}
+                        >
+                          <i className="fa fa-check-circle"></i> {isLoading ? 'Creating...' : 'Create Quiz'}
+                        </button>
+                      </div>
+                    </form>
+                  )}
                 </div>
               </div>
             </div>
