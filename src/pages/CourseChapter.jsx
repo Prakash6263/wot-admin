@@ -6,12 +6,14 @@ import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import DurationPicker from '../components/DurationPicker';
 
 export default function CourseChapter() {
   const navigate = useNavigate();
   const { courseId } = useParams();
   const { token } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [showDurationPicker, setShowDurationPicker] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -26,6 +28,13 @@ export default function CourseChapter() {
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleDurationChange = (duration) => {
+    setFormData(prev => ({
+      ...prev,
+      duration: duration,
     }));
   };
 
@@ -158,14 +167,26 @@ export default function CourseChapter() {
 
                     <div className="col-md-6">
                       <label className="form-label">Duration</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="duration"
-                        value={formData.duration}
-                        onChange={handleInputChange}
-                        placeholder="e.g., 2 hours"
-                      />
+                      <div className="input-group">
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="duration"
+                          value={formData.duration}
+                          onChange={handleInputChange}
+                          placeholder="Click to select duration"
+                          readOnly
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => setShowDurationPicker(true)}
+                        />
+                        <button 
+                          className="btn btn-outline-secondary" 
+                          type="button"
+                          onClick={() => setShowDurationPicker(true)}
+                        >
+                          <i className="fa fa-clock"></i>
+                        </button>
+                      </div>
                     </div>
 
                     <div className="col-md-6">
@@ -211,6 +232,14 @@ export default function CourseChapter() {
         </div>
       </div>
       <Footer />
+      
+      {showDurationPicker && (
+        <DurationPicker
+          value={formData.duration}
+          onChange={handleDurationChange}
+          onClose={() => setShowDurationPicker(false)}
+        />
+      )}
     </div>
   );
 }

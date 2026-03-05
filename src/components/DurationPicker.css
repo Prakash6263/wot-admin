@@ -1,9 +1,3 @@
-body {
-  margin: 0;
-  padding: 0;
-}
-
-/* Duration Picker Styles */
 .duration-picker-overlay {
   position: fixed !important;
   top: 0 !important;
@@ -58,9 +52,9 @@ body {
   cursor: pointer !important;
 }
 
-/* .hour-circle:hover, .minute-circle:hover {
+.hour-circle:hover, .minute-circle:hover {
   transform: scale(1.1) !important;
-} */
+}
 
 .hour-text, .minute-text {
   pointer-events: none !important;
@@ -149,4 +143,3 @@ body {
     height: 180px !important;
   }
 }
-
