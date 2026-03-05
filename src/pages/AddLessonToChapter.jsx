@@ -109,6 +109,15 @@ export default function AddLessonToChapter() {
       return;
     }
 
+    if (!formData.content_type) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'Please select a content type',
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     const result = await addLessonToChapter(chapterId, formData, token);
@@ -330,23 +339,6 @@ export default function AddLessonToChapter() {
     <option value="doc">Document</option>
   </select>
 </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Content Type <span className="text-danger">*</span></label>
-                      <select
-                        className="form-select"
-                        name="content_type"
-                        value={formData.content_type}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        <option value="text">Text</option>
-                        <option value="video">Video</option>
-                        <option value="audio">Audio</option>
-                        <option value="pdf">PDF</option>
-                        <option value="doc">Document</option>
-                      </select>
-                    </div>
 
                     {formData.content_type === 'text' && (
                       <div className="col-md-12">

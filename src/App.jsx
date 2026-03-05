@@ -45,9 +45,14 @@ export default function App() {
         <Route path="/course/:courseId/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
         <Route path="/course/:courseId/add-category" element={<ProtectedRoute><AddCategory /></ProtectedRoute>} />
         <Route path="/course/:courseId/category/:categoryId/chapters" element={<ProtectedRoute><Chapters /></ProtectedRoute>} />
+        <Route path="/course/:courseId/chapters" element={<ProtectedRoute><Chapters /></ProtectedRoute>} />
         <Route path="/course/:courseId/category/:categoryId/add-chapter" element={<ProtectedRoute><AddChapter /></ProtectedRoute>} />
+        <Route path="/course/:courseId/add-chapter" element={<ProtectedRoute><AddChapter /></ProtectedRoute>} />
         <Route path="/course/:courseId/category/:categoryId/chapter/:chapterId/lessons" element={<ProtectedRoute><ChapterLessons /></ProtectedRoute>} />
         <Route path="/course/:courseId/category/:categoryId/chapter/:chapterId/add-lesson" element={<ProtectedRoute><AddLesson /></ProtectedRoute>} />
+        <Route path="/course/:courseId/chapter/:chapterId/add-lesson" element={<ProtectedRoute><AddLesson /></ProtectedRoute>} />
+        <Route path="/course/:courseId/category/:categoryId/chapter/:chapterId/lesson/:lessonId/edit" element={<ProtectedRoute><EditLesson /></ProtectedRoute>} />
+        <Route path="/course/:courseId/chapter/:chapterId/lesson/:lessonId/edit" element={<ProtectedRoute><EditLesson /></ProtectedRoute>} />
         <Route path="/course/:courseId/chapter/:chapterId/lessons" element={<ProtectedRoute><ChapterLessons /></ProtectedRoute>} />
         <Route path="/courses/admin/course/:courseId/chapter" element={<ProtectedRoute><CourseChapter /></ProtectedRoute>} />
         <Route path="/courses/admin/course/:courseId/chapters" element={<ProtectedRoute><CourseChapters /></ProtectedRoute>} />

@@ -332,6 +332,7 @@ export const createLesson = async (chapterId, lessonData, token) => {
     const formData = new FormData();
     formData.append('title', lessonData.title);
     formData.append('description', lessonData.description);
+    formData.append('content_type', lessonData.content_type);
     formData.append('lesson_number', lessonData.lesson_number || 0);
     formData.append('duration', lessonData.duration || '');
     formData.append('xp_points', lessonData.xp_points || 0);
@@ -345,6 +346,9 @@ export const createLesson = async (chapterId, lessonData, token) => {
     }
     if (lessonData.thumbnail instanceof File) {
       formData.append('thumbnail', lessonData.thumbnail);
+    }
+    if (lessonData.media instanceof File) {
+      formData.append('media', lessonData.media);
     }
 
     const response = await fetch(url, {

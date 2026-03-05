@@ -25,7 +25,9 @@ export default function AddLesson() {
     quiz_available: false,
     status: 'active',
     order_number: 1,
+    content_type: 'text',
     thumbnail: null,
+    media: null,
   });
 
   const contentTypeOptions = ['text', 'video', 'audio', 'doc', 'pdf'];
@@ -46,6 +48,16 @@ export default function AddLesson() {
         thumbnail: file,
       }));
       setThumbnailPreview(file.name);
+    }
+  };
+
+  const handleMediaChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData(prev => ({
+        ...prev,
+        media: file,
+      }));
     }
   };
 
@@ -71,6 +83,24 @@ export default function AddLesson() {
         icon: 'warning',
         title: 'Validation Error',
         text: 'Please enter lesson description',
+      });
+      return;
+    }
+
+    if (!formData.content_type) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'Please select a content type',
+      });
+      return;
+    }
+
+    if (['video', 'audio', 'doc', 'pdf'].includes(formData.content_type) && !formData.media) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: `Media file is required for ${formData.content_type} type`,
       });
       return;
     }
@@ -171,6 +201,23 @@ export default function AddLesson() {
                         onChange={handleInputChange}
                         required
                       ></textarea>
+                    </div>
+
+                    <div className="col-md-6">
+                      <label className="form-label">Content Type <span className="text-danger">*</span></label>
+                      <select 
+                        className="form-select"
+                        name="content_type"
+                        value={formData.content_type}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        {contentTypeOptions.map(option => (
+                          <option key={option} value={option}>
+                            {option.charAt(0).toUpperCase() + option.slice(1)}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     <div className="col-md-6">
@@ -288,6 +335,26 @@ export default function AddLesson() {
                       {thumbnailPreview && (
                         <div className="mt-2">
                           <small className="text-muted">Selected: {thumbnailPreview}</small>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="col-md-12">
+                      <label className="form-label">
+                        Media File 
+                        {['video', 'audio', 'doc', 'pdf'].includes(formData.content_type) && (
+                          <span className="text-danger"> *</span>
+                        )}
+                      </label>
+                      <input 
+                        type="file" 
+                        className="form-control"
+                        onChange={handleMediaChange}
+                        accept="video/*,audio/*,.pdf,.doc,.docx"
+                      />
+                      {formData.media && (
+                        <div className="mt-2">
+                          <small className="text-muted">Selected: {formData.media.name}</small>
                         </div>
                       )}
                     </div>

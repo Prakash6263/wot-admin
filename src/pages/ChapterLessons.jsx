@@ -152,7 +152,12 @@ export default function ChapterLessons() {
                   <li>
                     <button 
                       className="btn btn-primary"
-                      onClick={() => navigate(`/course/${courseId}/category/${categoryId}/chapter/${chapterId}/add-lesson`)}
+                      onClick={() => {
+                        const addLessonUrl = categoryId 
+                          ? `/course/${courseId}/category/${categoryId}/chapter/${chapterId}/add-lesson`
+                          : `/course/${courseId}/chapter/${chapterId}/add-lesson`;
+                        navigate(addLessonUrl);
+                      }}
                     >
                       <i className="fa fa-plus me-2"></i>Add Lesson
                     </button>
@@ -160,7 +165,12 @@ export default function ChapterLessons() {
                   <li>
                     <button 
                       className="btn btn-outline-secondary"
-                      onClick={() => navigate(`/course/${courseId}/category/${categoryId}/chapters`)}
+                      onClick={() => {
+                        const chaptersUrl = categoryId 
+                          ? `/course/${courseId}/category/${categoryId}/chapters`
+                          : `/course/${courseId}/chapters`;
+                        navigate(chaptersUrl);
+                      }}
                     >
                       <i className="fas fa-arrow-left me-2"></i>Back to Chapters
                     </button>
@@ -211,6 +221,7 @@ export default function ChapterLessons() {
                             <th>Type</th>
                             <th>Duration</th>
                             <th>Status</th>
+                            <th>Is Downloadable</th>
                             <th>Created Date</th>
                             <th>Content</th>
                             <th>Action</th>
@@ -255,7 +266,12 @@ export default function ChapterLessons() {
                                 <div className="d-flex gap-2">
                                   <button 
                                     className="btn btn-sm btn-outline-warning"
-                                    onClick={() => navigate(`/course/${courseId}/category/${categoryId}/chapter/${chapterId}/lesson/${lesson.id}/edit`)}
+                                    onClick={() => {
+                                      const editUrl = categoryId 
+                                        ? `/course/${courseId}/category/${categoryId}/chapter/${chapterId}/lesson/${lesson.id}/edit`
+                                        : `/course/${courseId}/chapter/${chapterId}/lesson/${lesson.id}/edit`;
+                                      navigate(editUrl);
+                                    }}
                                     title="Edit Lesson"
                                   >
                                     <i className="fas fa-edit"></i>
