@@ -534,3 +534,51 @@ export const getCourseChapters = async (courseId, token) => {
     };
   }
 };
+
+// Update chapter
+export const updateCourseChapter = async (chapterId, chapterData, token) => {
+  try {
+    console.log('[v0] Updating chapter:', chapterId);
+    const url = `${API_BASE_URL}/courses/admin/chapter/${chapterId}`;
+    
+    const formData = new FormData();
+    formData.append('title', chapterData.title);
+    formData.append('category', chapterData.category);
+    formData.append('description', chapterData.description || '');
+    formData.append('chapter_number', chapterData.chapter_number || 0);
+    formData.append('duration', chapterData.duration || '');
+    formData.append('is_locked', chapterData.is_locked || false);
+    formData.append('order_number', chapterData.order_number || 0);
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('[v0] Update chapter response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.data,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to update chapter',
+      };
+    }
+  } catch (error) {
+    console.error('Update Course Chapter API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while updating chapter',
+    };
+  }
+};

@@ -224,8 +224,8 @@ export default function Courses() {
                                   onClick={() => navigate(`/courses/admin/course/${course.id}/chapters`)}
                                   title="View Chapters"
                                 >
-                                  <i className="fas fa-eye"></i>
-                                  <span className="ms-1">{course.chapter_count || 0}</span>
+                                  View
+                                  {/* <span className="ms-1">{course.chapter_count || 0}</span> */}
                                 </button>
                               </td>
                               <td>{course.enrolled_count || 0}</td>

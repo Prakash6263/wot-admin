@@ -43,6 +43,10 @@ export default function CourseChapters() {
     navigate(`/course/${courseId}/chapter/${chapterId}/lessons`);
   };
 
+  const handleEditChapter = (chapterId) => {
+    navigate(`/courses/admin/course/${courseId}/chapter/${chapterId}/edit`);
+  };
+
   // Map status to badge color
   const getLockedBadge = (isLocked) => {
     return isLocked ? 'bg-warning' : 'bg-success';
@@ -168,6 +172,7 @@ export default function CourseChapters() {
                                         </button>
                                         <button 
                                           className="btn btn-sm btn-outline-warning"
+                                          onClick={() => handleEditChapter(chapter.id)}
                                           title="Edit Chapter"
                                         >
                                           <i className="fas fa-edit"></i>
