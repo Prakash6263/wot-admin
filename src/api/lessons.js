@@ -531,3 +531,41 @@ export const addLessonToChapter = async (chapterId, lessonData, token) => {
     };
   }
 };
+
+// Get lesson details at /courses/admin/lesson/{lesson_id}
+export const getLessonAdmin = async (lessonId, token) => {
+  try {
+    console.log('[v0] Fetching lesson details:', lessonId);
+    const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    console.log('[v0] Get lesson admin response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.data,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to fetch lesson details',
+      };
+    }
+  } catch (error) {
+    console.error('Get Lesson Admin API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while fetching lesson details',
+    };
+  }
+};

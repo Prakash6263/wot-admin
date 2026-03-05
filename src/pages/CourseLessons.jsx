@@ -3,7 +3,7 @@ import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { getCourseById } from '../api/courses';
-import { getLessonsByCourse, deleteLesson } from '../api/lessons';
+import { getLessonsByCourse, deleteLesson, getLessonAdmin } from '../api/lessons';
 import { useAuth } from '../context/AuthContext';
 import GlobalLoader from '../components/GlobalLoader';
 import Header from '../components/Header';

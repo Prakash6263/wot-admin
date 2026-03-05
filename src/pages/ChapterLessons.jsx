@@ -20,7 +20,7 @@ export default function ChapterLessons() {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    if (courseId && categoryId && chapterId) {
+    if (courseId && chapterId) {
       fetchData();
     }
   }, [courseId, categoryId, chapterId]);
