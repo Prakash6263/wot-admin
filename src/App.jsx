@@ -16,6 +16,8 @@ import AddCategory from './pages/AddCategory'
 import Chapters from './pages/Chapters'
 import AddChapter from './pages/AddChapter'
 import ChapterLessons from './pages/ChapterLessons'
+import CourseChapter from './pages/CourseChapter'
+import CourseChapters from './pages/CourseChapters'
 import Quizes from './pages/Quizes'
 import UserList from './pages/UserList'
 import AddLesson from './pages/AddLesson'
@@ -43,6 +45,8 @@ export default function App() {
         <Route path="/course/:courseId/category/:categoryId/add-chapter" element={<ProtectedRoute><AddChapter /></ProtectedRoute>} />
         <Route path="/course/:courseId/category/:categoryId/chapter/:chapterId/lessons" element={<ProtectedRoute><ChapterLessons /></ProtectedRoute>} />
         <Route path="/course/:courseId/category/:categoryId/chapter/:chapterId/add-lesson" element={<ProtectedRoute><AddLesson /></ProtectedRoute>} />
+        <Route path="/courses/admin/course/:courseId/chapter" element={<ProtectedRoute><CourseChapter /></ProtectedRoute>} />
+        <Route path="/courses/admin/course/:courseId/chapters" element={<ProtectedRoute><CourseChapters /></ProtectedRoute>} />
         <Route path="/lessons" element={<ProtectedRoute><Lessons /></ProtectedRoute>} />
         <Route path="/lesson/:lessonId/content" element={<ProtectedRoute><LessonContent /></ProtectedRoute>} />
         <Route path="/lesson/:lessonId/add-content" element={<ProtectedRoute><AddContent /></ProtectedRoute>} />

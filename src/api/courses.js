@@ -449,3 +449,88 @@ export const createChapter = async (categoryId, chapterData, token) => {
     };
   }
 };
+
+// Create chapter directly for course
+export const createCourseChapter = async (courseId, chapterData, token) => {
+  try {
+    console.log('[v0] Creating chapter for course:', courseId);
+    const url = `${API_BASE_URL}/courses/admin/course/${courseId}/chapter`;
+    
+    const formData = new FormData();
+    formData.append('title', chapterData.title);
+    formData.append('category', chapterData.category);
+    formData.append('description', chapterData.description || '');
+    formData.append('chapter_number', chapterData.chapter_number || 0);
+    formData.append('duration', chapterData.duration || '');
+    formData.append('is_locked', chapterData.is_locked || false);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('[v0] Create course chapter response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.data,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to create chapter',
+      };
+    }
+  } catch (error) {
+    console.error('Create Course Chapter API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while creating chapter',
+    };
+  }
+};
+
+// Get course chapters grouped by categories
+export const getCourseChapters = async (courseId, token) => {
+  try {
+    console.log('[v0] Fetching chapters for course:', courseId);
+    const url = `${API_BASE_URL}/courses/admin/course/${courseId}/chapters`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    console.log('[v0] Course chapters response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to fetch chapters',
+      };
+    }
+  } catch (error) {
+    console.error('Get Course Chapters API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while fetching chapters',
+    };
+  }
+};

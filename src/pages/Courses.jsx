@@ -182,7 +182,7 @@ export default function Courses() {
                             <th>Course Title</th>
                             <th>Level</th>
                             <th>Duration</th>
-                            <th>Categories</th>
+                            <th>Chepter</th>
                             <th>Enrolled</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -221,10 +221,11 @@ export default function Courses() {
                               <td>
                                 <button 
                                   className="btn btn-sm btn-outline-primary"
-                                  onClick={() => navigate(`/course/${course.id}/categories`)}
-                                  title="View Categories"
+                                  onClick={() => navigate(`/courses/admin/course/${course.id}/chapters`)}
+                                  title="View Chapters"
                                 >
                                   <i className="fas fa-eye"></i>
+                                  <span className="ms-1">{course.chapter_count || 0}</span>
                                 </button>
                               </td>
                               <td>{course.enrolled_count || 0}</td>
