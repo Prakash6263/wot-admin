@@ -26,6 +26,8 @@ import AddQuiz from './pages/AddQuiz'
 import AddUser from './pages/AddUser'
 import Glossaries from './pages/Glossaries'
 import AddGlossary from './pages/AddGlossary'
+import EditLessonAdmin from './pages/EditLessonAdmin'
+import AddLessonToChapter from './pages/AddLessonToChapter'
 
 export default function App() {
   return (
@@ -46,6 +48,7 @@ export default function App() {
         <Route path="/course/:courseId/category/:categoryId/add-chapter" element={<ProtectedRoute><AddChapter /></ProtectedRoute>} />
         <Route path="/course/:courseId/category/:categoryId/chapter/:chapterId/lessons" element={<ProtectedRoute><ChapterLessons /></ProtectedRoute>} />
         <Route path="/course/:courseId/category/:categoryId/chapter/:chapterId/add-lesson" element={<ProtectedRoute><AddLesson /></ProtectedRoute>} />
+        <Route path="/course/:courseId/chapter/:chapterId/lessons" element={<ProtectedRoute><ChapterLessons /></ProtectedRoute>} />
         <Route path="/courses/admin/course/:courseId/chapter" element={<ProtectedRoute><CourseChapter /></ProtectedRoute>} />
         <Route path="/courses/admin/course/:courseId/chapters" element={<ProtectedRoute><CourseChapters /></ProtectedRoute>} />
         <Route path="/courses/admin/course/:courseId/chapter/:chapterId/edit" element={<ProtectedRoute><EditChapter /></ProtectedRoute>} />
@@ -59,6 +62,8 @@ export default function App() {
         <Route path="/add-user" element={<ProtectedRoute><AddUser /></ProtectedRoute>} />
         <Route path="/glossaries" element={<ProtectedRoute><Glossaries /></ProtectedRoute>} />
         <Route path="/add-glossary" element={<ProtectedRoute><AddGlossary /></ProtectedRoute>} />
+        <Route path="/courses/admin/lesson/:lessonId" element={<ProtectedRoute><EditLessonAdmin /></ProtectedRoute>} />
+        <Route path="/courses/admin/chapter/:chapterId/lesson" element={<ProtectedRoute><AddLessonToChapter /></ProtectedRoute>} />
       </Routes>
     </AuthProvider>
   )

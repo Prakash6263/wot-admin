@@ -379,3 +379,155 @@ export const createLesson = async (chapterId, lessonData, token) => {
     };
   }
 };
+
+// Update lesson at /courses/admin/lesson/{lesson_id}
+export const updateLessonAdmin = async (lessonId, lessonData, token) => {
+  try {
+    console.log('[v0] Updating lesson:', lessonId);
+    const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}`;
+    
+    const formData = new FormData();
+    formData.append('title', lessonData.title);
+    formData.append('description', lessonData.description);
+    formData.append('lesson_number', lessonData.lesson_number || 0);
+    formData.append('duration', lessonData.duration || '');
+    formData.append('xp_points', lessonData.xp_points || 0);
+    formData.append('reward_points', lessonData.reward_points || 0);
+    formData.append('is_preview', lessonData.is_preview || false);
+    formData.append('is_locked', lessonData.is_locked || false);
+    if (lessonData.order_number !== null && lessonData.order_number !== undefined) {
+      formData.append('order_number', lessonData.order_number);
+    }
+    if (lessonData.thumbnail instanceof File) {
+      formData.append('thumbnail', lessonData.thumbnail);
+    }
+    if (lessonData.content_title) {
+      formData.append('content_title', lessonData.content_title);
+    }
+    if (lessonData.content_type) {
+      formData.append('content_type', lessonData.content_type);
+    }
+    if (lessonData.text_content) {
+      formData.append('text_content', lessonData.text_content);
+    }
+    if (lessonData.content_duration) {
+      formData.append('content_duration', lessonData.content_duration);
+    }
+    if (lessonData.file_size) {
+      formData.append('file_size', lessonData.file_size);
+    }
+    if (lessonData.is_downloadable !== undefined && lessonData.is_downloadable !== null) {
+      formData.append('is_downloadable', lessonData.is_downloadable);
+    }
+    if (lessonData.media instanceof File) {
+      formData.append('media', lessonData.media);
+    }
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('[v0] Update lesson admin response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.data,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to update lesson',
+      };
+    }
+  } catch (error) {
+    console.error('Update Lesson Admin API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while updating lesson',
+    };
+  }
+};
+
+// Add lesson to chapter at /courses/admin/chapter/{chapter_id}/lesson
+export const addLessonToChapter = async (chapterId, lessonData, token) => {
+  try {
+    console.log('[v0] Adding lesson to chapter:', chapterId);
+    const url = `${API_BASE_URL}/courses/admin/chapter/${chapterId}/lesson`;
+    
+    const formData = new FormData();
+    formData.append('title', lessonData.title);
+    formData.append('description', lessonData.description);
+    formData.append('lesson_number', lessonData.lesson_number || 0);
+    formData.append('duration', lessonData.duration || '');
+    formData.append('xp_points', lessonData.xp_points || 0);
+    formData.append('reward_points', lessonData.reward_points || 0);
+    formData.append('is_preview', lessonData.is_preview || false);
+    formData.append('is_locked', lessonData.is_locked || false);
+    if (lessonData.order_number !== null && lessonData.order_number !== undefined) {
+      formData.append('order_number', lessonData.order_number);
+    }
+    if (lessonData.thumbnail instanceof File) {
+      formData.append('thumbnail', lessonData.thumbnail);
+    }
+    if (lessonData.content_title) {
+      formData.append('content_title', lessonData.content_title);
+    }
+    if (lessonData.content_type) {
+      formData.append('content_type', lessonData.content_type);
+    }
+    if (lessonData.text_content) {
+      formData.append('text_content', lessonData.text_content);
+    }
+    if (lessonData.content_duration) {
+      formData.append('content_duration', lessonData.content_duration);
+    }
+    if (lessonData.file_size) {
+      formData.append('file_size', lessonData.file_size);
+    }
+    if (lessonData.is_downloadable !== undefined && lessonData.is_downloadable !== null) {
+      formData.append('is_downloadable', lessonData.is_downloadable);
+    }
+    if (lessonData.media instanceof File) {
+      formData.append('media', lessonData.media);
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('[v0] Add lesson to chapter response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.data,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to add lesson to chapter',
+      };
+    }
+  } catch (error) {
+    console.error('Add Lesson To Chapter API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while adding lesson to chapter',
+    };
+  }
+};
