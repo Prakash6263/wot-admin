@@ -340,6 +340,7 @@ export const createLesson = async (chapterId, lessonData, token) => {
     formData.append('is_preview', lessonData.is_preview || false);
     formData.append('is_locked', lessonData.is_locked || false);
     formData.append('quiz_available', lessonData.quiz_available || false);
+    formData.append('is_downloadable', lessonData.is_downloadable || false);
     formData.append('status', lessonData.status || 'active');
     if (lessonData.order_number !== null && lessonData.order_number !== undefined) {
       formData.append('order_number', lessonData.order_number);

@@ -154,7 +154,7 @@ export default function CourseChapter() {
                     <div className="col-md-6">
                       <label className="form-label">Category <span className="text-danger">*</span></label>
                       <select
-                        className="form-select"
+                        className="form-control"
                         name="category"
                         value={formData.category}
                         onChange={handleInputChange}
@@ -228,7 +228,7 @@ export default function CourseChapter() {
                     <div className="col-md-6">
                       <label className="form-label">Is Locked</label>
                       <select
-                        className="form-select"
+                        className="form-control"
                         name="is_locked"
                         value={formData.is_locked}
                         onChange={handleInputChange}

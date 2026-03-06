@@ -218,7 +218,7 @@ export default function AddLesson() {
                     <div className="col-md-6">
                       <label className="form-label">Content Type <span className="text-danger">*</span></label>
                       <select 
-                        className="form-select"
+                        className="form-control"
                         name="content_type"
                         value={formData.content_type}
                         onChange={handleInputChange}
@@ -353,7 +353,7 @@ export default function AddLesson() {
                     <div className="col-md-3">
                       <label className="form-label">Is Downloadable</label>
                       <select 
-                        className="form-select"
+                        className="form-control"
                         name="is_downloadable"
                         value={formData.is_downloadable}
                         onChange={handleInputChange}
@@ -366,7 +366,7 @@ export default function AddLesson() {
                     <div className="col-md-3">
                       <label className="form-label">Status</label>
                       <select 
-                        className="form-select"
+                        className="form-control"
                         name="status"
                         value={formData.status}
                         onChange={handleInputChange}

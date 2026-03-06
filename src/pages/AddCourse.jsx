@@ -246,7 +246,7 @@ export default function AddCourse() {
                     <div className="col-md-4">
                       <label className="form-label">Level <span className="text-danger">*</span></label>
                       <select
-                        className="form-select"
+                        className="form-control"
                         name="level"
                         value={formData.level}
                         onChange={handleInputChange}
@@ -286,7 +286,7 @@ export default function AddCourse() {
                     <div className="col-md-4">
                       <label className="form-label">Status <span className="text-danger">*</span></label>
                       <select
-                        className="form-select"
+                        className="form-control"
                         name="status"
                         value={formData.status}
                         onChange={handleInputChange}
@@ -351,7 +351,7 @@ export default function AddCourse() {
                     <div className="col-md-6">
                       <label className="form-label">Is Free?</label>
                       <select
-                        className="form-select"
+                        className="form-control"
                         name="is_free"
                         value={String(formData.is_free)}
                         onChange={handleInputChange}
@@ -364,7 +364,7 @@ export default function AddCourse() {
                     <div className="col-md-6">
                       <label className="form-label">Featured</label>
                       <select
-                        className="form-select"
+                        className="form-control"
                         name="is_featured"
                         value={String(formData.is_featured)}
                         onChange={handleInputChange}
@@ -377,7 +377,7 @@ export default function AddCourse() {
                     <div className="col-md-6">
                       <label className="form-label">Certificate Available</label>
                       <select
-                        className="form-select"
+                        className="form-control"
                         name="certificate_available"
                         value={String(formData.certificate_available)}
                         onChange={handleInputChange}
