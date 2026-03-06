@@ -32,6 +32,9 @@ export default function AddQuiz() {
     top25_reward_percent: 60,
     participation_reward_percent: 10,
     max_attempts: 2,
+    is_featured: false,
+    is_sponsored: false,
+    featured_order: 0,
     image: null,
   });
 
@@ -115,11 +118,13 @@ export default function AddQuiz() {
   };
 
   const handleFormChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value, type, checked } = e.target;
     let finalValue = value;
 
     if (type === 'number') {
       finalValue = parseInt(value) || 0;
+    } else if (type === 'checkbox') {
+      finalValue = checked;
     }
 
     setFormData(prev => ({
@@ -207,6 +212,9 @@ export default function AddQuiz() {
       top25_reward_percent: 60,
       participation_reward_percent: 10,
       max_attempts: 2,
+      is_featured: false,
+      is_sponsored: false,
+      featured_order: 0,
       image: null,
     });
     setImagePreview(null);
@@ -477,6 +485,56 @@ export default function AddQuiz() {
                           min="0"
                           max="100"
                         />
+                      </div>
+
+                      <div className="col-md-12">
+                        <h6 className="mb-3 mt-4">Featured & Sponsored Options</h6>
+                      </div>
+
+                      <div className="col-md-4">
+                        <div className="form-check mt-4">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            name="is_featured"
+                            id="is_featured"
+                            checked={formData.is_featured}
+                            onChange={handleFormChange}
+                          />
+                          <label className="form-check-label" htmlFor="is_featured">
+                            Featured Quiz
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="col-md-4">
+                        <div className="form-check mt-4">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            name="is_sponsored"
+                            id="is_sponsored"
+                            checked={formData.is_sponsored}
+                            onChange={handleFormChange}
+                          />
+                          <label className="form-check-label" htmlFor="is_sponsored">
+                            Sponsored Quiz
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="col-md-4">
+                        <label className="form-label">Featured Order</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="0"
+                          name="featured_order"
+                          value={formData.featured_order}
+                          onChange={handleFormChange}
+                          min="0"
+                        />
+                        <small className="text-muted">Order for featured quizzes (0 = no order)</small>
                       </div>
 
                       <div className="col-md-12 text-end mt-3">

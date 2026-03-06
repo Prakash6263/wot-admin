@@ -103,7 +103,7 @@ export default function Quizes() {
   };
 
   // Static Featured Quizzes Data (for carousel) - will use first 3 quizzes from API if available
-  const featuredQuizzes = allQuizzes.length > 0 ? allQuizzes.slice(0, 3).map(quiz => ({
+  const featuredQuizzes = allQuizzes.length > 0 ? allQuizzes.filter(q => q.is_featured).slice(0, 3).map(quiz => ({
     id: quiz.quiz_id,
     title: quiz.title,
     course: 'Trading Course',
@@ -399,8 +399,19 @@ export default function Quizes() {
                                     />
                                   )}
                                   <div>
-                                    <strong>{quiz.title}</strong>
-                                    <br />
+                                    <div className="d-flex align-items-center gap-2">
+                                      <strong>{quiz.title}</strong>
+                                      {quiz.is_featured && (
+                                        <span className="badge bg-warning text-dark">
+                                          <i className="fas fa-star me-1"></i>Featured
+                                        </span>
+                                      )}
+                                      {quiz.is_sponsored && (
+                                        <span className="badge bg-info">
+                                          <i className="fas fa-ad me-1"></i>Sponsored
+                                        </span>
+                                      )}
+                                    </div>
                                     <small className="text-muted">{new Date(quiz.end_datetime).toLocaleString()}</small>
                                   </div>
                                 </div>
@@ -434,12 +445,6 @@ export default function Quizes() {
                                     title="Edit Quiz"
                                   >
                                     <i className="fas fa-edit"></i>
-                                  </button>
-                                  <button 
-                                    className="btn btn-sm btn-outline-info"
-                                    title="Mark as Featured"
-                                  >
-                                    <i className="fas fa-star"></i>
                                   </button>
                                   <button 
                                     className="btn btn-sm btn-outline-danger"
@@ -511,7 +516,7 @@ export default function Quizes() {
           )}
 
           {/* Coin System Info Card */}
-          <div className="row mt-4">
+          {/* <div className="row mt-4">
             <div className="col-lg-8">
               <div className="card border-0 shadow-soft">
                 <div className="card-body">
@@ -593,7 +598,7 @@ export default function Quizes() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
         </div>
       </div>

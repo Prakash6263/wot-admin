@@ -48,7 +48,7 @@ export const uploadPdf = async (file) => {
 
     console.log('[v0] Uploading PDF:', file.name);
 
-    const response = await fetch(`${API_BASE_URL}/upload-pdf`, {
+    const response = await fetch(`${API_BASE_URL}/upload-file`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: formData,
@@ -89,6 +89,9 @@ export const generateQuiz = async (quizData) => {
     formData.append('top25_reward_percent', quizData.top25_reward_percent || 60);
     formData.append('participation_reward_percent', quizData.participation_reward_percent || 10);
     formData.append('max_attempts', quizData.max_attempts || 2);
+    formData.append('is_featured', quizData.is_featured || false);
+    formData.append('is_sponsored', quizData.is_sponsored || false);
+    formData.append('featured_order', quizData.featured_order || 0);
     
     if (quizData.image) {
       formData.append('image', quizData.image);

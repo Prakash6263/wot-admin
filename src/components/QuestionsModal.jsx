@@ -106,27 +106,58 @@ export default function QuestionsModal({ show, quizData, onClose, isLoading }) {
                       </h6>
 
                       <div className="ms-4">
-                        <strong className="text-muted d-block mb-2">Options:</strong>
-                        <ul className="list-unstyled">
-                          {question.options && question.options.map((option, optionIndex) => (
-                            <li 
-                              key={optionIndex}
-                              className={`mb-2 p-2 rounded ${
-                                optionIndex === question.correct_answer 
-                                  ? 'bg-success bg-opacity-10 border-start border-success border-3' 
-                                  : 'border-start border-secondary border-3'
-                              }`}
-                            >
-                              <span className="me-2">
-                                {String.fromCharCode(65 + optionIndex)}.
-                              </span>
-                              {option}
-                              {optionIndex === question.correct_answer && (
-                                <span className="badge bg-success ms-2">Correct</span>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
+                        {question.type === 'percentage' ? (
+                          <>
+                            <strong className="text-muted d-block mb-2">Options (Percentage Range):</strong>
+                            <ul className="list-unstyled">
+                              {question.options && question.options.map((option, optionIndex) => (
+                                <li 
+                                  key={optionIndex}
+                                  className={`mb-2 p-2 rounded ${
+                                    optionIndex === question.correct_answer 
+                                      ? 'bg-success bg-opacity-10 border-start border-success border-3' 
+                                      : 'border-start border-secondary border-3'
+                                  }`}
+                                >
+                                  <span className="me-2">
+                                    {String.fromCharCode(65 + optionIndex)}.
+                                  </span>
+                                  {option}%
+                                  {optionIndex === question.correct_answer && (
+                                    <span className="badge bg-success ms-2">Correct</span>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                            {question.tolerance && (
+                              <small className="text-muted">Tolerance: ±{question.tolerance}%</small>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <strong className="text-muted d-block mb-2">Options:</strong>
+                            <ul className="list-unstyled">
+                              {question.options && question.options.map((option, optionIndex) => (
+                                <li 
+                                  key={optionIndex}
+                                  className={`mb-2 p-2 rounded ${
+                                    optionIndex === question.correct_answer 
+                                      ? 'bg-success bg-opacity-10 border-start border-success border-3' 
+                                      : 'border-start border-secondary border-3'
+                                  }`}
+                                >
+                                  <span className="me-2">
+                                    {String.fromCharCode(65 + optionIndex)}.
+                                  </span>
+                                  {option}
+                                  {optionIndex === question.correct_answer && (
+                                    <span className="badge bg-success ms-2">Correct</span>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
