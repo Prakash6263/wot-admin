@@ -42,13 +42,13 @@ export default function AddQuiz() {
 
   const handlePdfChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type === 'application/pdf') {
+    if (file && (file.type === 'application/pdf' || file.type === 'application/json' || file.name.endsWith('.json'))) {
       setPdfFile(file);
     } else {
       Swal.fire({
         icon: 'warning',
         title: 'Invalid File',
-        text: 'Please select a valid PDF file',
+        text: 'Please select a valid PDF or JSON file',
       });
       setPdfFile(null);
     }
@@ -61,7 +61,7 @@ export default function AddQuiz() {
       Swal.fire({
         icon: 'warning',
         title: 'Validation Error',
-        text: 'Please select a PDF file',
+        text: 'Please select a PDF or JSON file',
       });
       return;
     }
@@ -283,25 +283,25 @@ export default function AddQuiz() {
                       {isLoading ? (
                         <div className="row">
                           <div className="col-md-12">
-                            <h6 className="mb-4">Step 1: Upload PDF File</h6>
+                            <h6 className="mb-4">Step 1: Upload File (PDF or JSON)</h6>
                             <div className="d-flex justify-content-center align-items-center flex-column" style={{ minHeight: '300px' }}>
                               <GlobalLoader visible={true} size="medium" />
-                              <p className="mt-3 text-muted">Uploading PDF...</p>
+                              <p className="mt-3 text-muted">Uploading file...</p>
                             </div>
                           </div>
                         </div>
                       ) : (
                         <form onSubmit={handlePdfUpload} className="row g-3">
                           <div className="col-md-12">
-                            <h6 className="mb-4">Step 1: Upload PDF File</h6>
+                            <h6 className="mb-4">Step 1: Upload File (PDF or JSON)</h6>
                           </div>
 
                           <div className="col-md-12">
-                            <label className="form-label">Select PDF File <span className="text-danger">*</span></label>
+                            <label className="form-label">Select PDF or JSON File <span className="text-danger">*</span></label>
                             <input
                               type="file"
                               className="form-control"
-                              accept=".pdf"
+                              accept=".pdf,.json"
                               onChange={handlePdfChange}
                               required
                             />
@@ -325,7 +325,7 @@ export default function AddQuiz() {
                               className="btn btn-primary ms-2"
                               disabled={isLoading || !pdfFile}
                             >
-                              <i className="fa fa-upload"></i> Upload PDF
+                              <i className="fa fa-upload"></i> Upload
                             </button>
                           </div>
                         </form>
@@ -368,7 +368,7 @@ export default function AddQuiz() {
                       <div className="col-md-4">
                         <label className="form-label">Entry Type <span className="text-danger">*</span></label>
                         <select
-                          className="form-select"
+                          className="form-control"
                           name="entry_type"
                           value={formData.entry_type}
                           onChange={handleFormChange}
