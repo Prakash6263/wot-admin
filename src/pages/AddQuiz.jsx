@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import GlobalLoader from '../components/GlobalLoader';
 import { uploadPdf, generateQuiz } from '../api/quizzes';
 
 export default function AddQuiz() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const [step, setStep] = useState(1);
   const [pdfId, setPdfId] = useState('');
   const [pdfFileName, setPdfFileName] = useState('');
@@ -224,6 +226,32 @@ export default function AddQuiz() {
     navigate('/quizes');
   };
 
+  useEffect(() => {
+    // Simulate initial page load
+    const timer = setTimeout(() => {
+      setIsPageLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isPageLoading) {
+    return (
+      <div className="main-wrapper">
+        <Header />
+        <Sidebar />
+        <div className="page-wrapper">
+          <div className="content container-fluid">
+            <div className="d-flex justify-content-center align-items-center" style={{ height: '400px' }}>
+              <GlobalLoader visible={true} size="large" />
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="main-wrapper">
       <Header />
@@ -251,52 +279,78 @@ export default function AddQuiz() {
                 <div className="card-body">
                   {/* STEP 1: PDF Upload */}
                   {step === 1 && (
-                    <form onSubmit={handlePdfUpload} className="row g-3">
-                      <div className="col-md-12">
-                        <h6 className="mb-4">Step 1: Upload PDF File</h6>
-                      </div>
-
-                      <div className="col-md-12">
-                        <label className="form-label">Select PDF File <span className="text-danger">*</span></label>
-                        <input
-                          type="file"
-                          className="form-control"
-                          accept=".pdf"
-                          onChange={handlePdfChange}
-                          required
-                        />
-                        {pdfFile && (
-                          <div className="mt-3">
-                            <p className="text-muted mb-0">Selected: <strong>{pdfFile.name}</strong></p>
+                    <>
+                      {isLoading ? (
+                        <div className="row">
+                          <div className="col-md-12">
+                            <h6 className="mb-4">Step 1: Upload PDF File</h6>
+                            <div className="d-flex justify-content-center align-items-center flex-column" style={{ minHeight: '300px' }}>
+                              <GlobalLoader visible={true} size="medium" />
+                              <p className="mt-3 text-muted">Uploading PDF...</p>
+                            </div>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      ) : (
+                        <form onSubmit={handlePdfUpload} className="row g-3">
+                          <div className="col-md-12">
+                            <h6 className="mb-4">Step 1: Upload PDF File</h6>
+                          </div>
 
-                      <div className="col-md-12 text-end mt-3">
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          onClick={handleCancel}
-                        >
-                          Cancel
-                        </button>
-                        <button 
-                          type="submit" 
-                          className="btn btn-primary ms-2"
-                          disabled={isLoading || !pdfFile}
-                        >
-                          <i className="fa fa-upload"></i> {isLoading ? 'Uploading...' : 'Upload PDF'}
-                        </button>
-                      </div>
-                    </form>
+                          <div className="col-md-12">
+                            <label className="form-label">Select PDF File <span className="text-danger">*</span></label>
+                            <input
+                              type="file"
+                              className="form-control"
+                              accept=".pdf"
+                              onChange={handlePdfChange}
+                              required
+                            />
+                            {pdfFile && (
+                              <div className="mt-3">
+                                <p className="text-muted mb-0">Selected: <strong>{pdfFile.name}</strong></p>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="col-md-12 text-end mt-3">
+                            <button
+                              type="button"
+                              className="btn btn-secondary"
+                              onClick={handleCancel}
+                            >
+                              Cancel
+                            </button>
+                            <button 
+                              type="submit" 
+                              className="btn btn-primary ms-2"
+                              disabled={isLoading || !pdfFile}
+                            >
+                              <i className="fa fa-upload"></i> Upload PDF
+                            </button>
+                          </div>
+                        </form>
+                      )}
+                    </>
                   )}
 
                   {/* STEP 2: Quiz Configuration */}
                   {step === 2 && (
-                    <form onSubmit={handleCreateQuiz} className="row g-3">
-                      <div className="col-md-12">
-                        <h6 className="mb-4">Step 2: Configure Quiz</h6>
-                      </div>
+                    <>
+                      {isLoading ? (
+                        <div className="row">
+                          <div className="col-md-12">
+                            <h6 className="mb-4">Step 2: Configure Quiz</h6>
+                            <div className="d-flex justify-content-center align-items-center flex-column" style={{ minHeight: '300px' }}>
+                              <GlobalLoader visible={true} size="medium" />
+                              <p className="mt-3 text-muted">Generating Quiz...</p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <form onSubmit={handleCreateQuiz} className="row g-3">
+                          <div className="col-md-12">
+                            <h6 className="mb-4">Step 2: Configure Quiz</h6>
+                          </div>
 
                       <div className="col-md-8">
                         <label className="form-label">Quiz Title <span className="text-danger">*</span></label>
@@ -563,6 +617,8 @@ export default function AddQuiz() {
                         </button>
                       </div>
                     </form>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
