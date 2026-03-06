@@ -6,6 +6,7 @@ import { getAdminCategoryById, updateAdminCategory } from '../api/courses';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import GlobalLoader from '../components/GlobalLoader';
 
 export default function EditAdminCategory() {
   const { token } = useAuth();
@@ -133,11 +134,9 @@ export default function EditAdminCategory() {
         <Sidebar />
         <div className="page-wrapper">
           <div className="content container-fluid">
-            <div className="text-center py-5">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-              <p className="mt-2">Loading category details...</p>
+            <div className="d-flex justify-content-center align-items-center flex-column" style={{ minHeight: '400px' }}>
+              <GlobalLoader visible={true} size="large" />
+              <p className="mt-3 text-muted">Loading category details...</p>
             </div>
           </div>
         </div>
@@ -155,7 +154,7 @@ export default function EditAdminCategory() {
           <div className="page-header">
             <div className="content-page-header">
               <div>
-                <h5>Edit Admin Category</h5>
+                <h5>Edit Category</h5>
               </div>
               <div className="list-btn">
                 <ul className="filter-list">
@@ -177,8 +176,14 @@ export default function EditAdminCategory() {
             <div className="col-sm-12">
               <div className="card">
                 <div className="card-body">
-                  <form onSubmit={handleSubmit}>
-                    <div className="row">
+                  {isLoading ? (
+                    <div className="d-flex justify-content-center align-items-center flex-column" style={{ minHeight: '300px' }}>
+                      <GlobalLoader visible={true} size="medium" />
+                      <p className="mt-3 text-muted">Updating Category...</p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmit}>
+                      <div className="row">
                       <div className="col-12">
                         <div className="form-group">
                           <label htmlFor="name" className="form-label">
@@ -320,6 +325,7 @@ export default function EditAdminCategory() {
                       </div>
                     </div>
                   </form>
+                    )}
                 </div>
               </div>
             </div>
