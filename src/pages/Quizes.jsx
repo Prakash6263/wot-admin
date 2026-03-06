@@ -102,8 +102,7 @@ export default function Quizes() {
     }
   };
 
-  // Static Featured Quizzes Data (for carousel) - will use first 3 quizzes from API if available
-  const featuredQuizzes = allQuizzes.length > 0 ? allQuizzes.filter(q => q.is_featured).slice(0, 3).map(quiz => ({
+  const featuredQuizzes = allQuizzes.length > 0 ? allQuizzes.filter(q => q.is_featured || q.is_sponsored).slice(0, 3).map(quiz => ({
     id: quiz.quiz_id,
     title: quiz.title,
     course: 'Trading Course',
