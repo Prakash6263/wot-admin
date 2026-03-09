@@ -444,7 +444,7 @@ export default function Quizes() {
                                   <strong>{quiz.entry_fee} <small>Coins</small></strong>
                                 )}
                               </td>
-                              <td>{quiz.unique_participants || 0}</td>
+                              <td>{quiz.play_count || 0}</td>
                               <td>{quiz.prize_pool} Coins</td>
                               <td>
                                 <span className={`badge ${getStatusBadgeColor(quiz.status)}`}>
