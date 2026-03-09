@@ -52,7 +52,6 @@ export const uploadPdf = async (file) => {
       method: 'POST',
       headers: getAuthHeaders(),
       body: formData,
-      // Don't set Content-Type header, browser will set it with boundary for multipart
     });
 
     const data = await response.json();
@@ -74,7 +73,6 @@ export const generateQuiz = async (quizData) => {
   try {
     const formData = new FormData();
     
-    // Add all quiz fields to FormData
     formData.append('pdf_id', quizData.pdf_id);
     formData.append('title', quizData.title);
     formData.append('description', quizData.description || '');
@@ -103,7 +101,6 @@ export const generateQuiz = async (quizData) => {
       method: 'POST',
       headers: getAuthHeaders(),
       body: formData,
-      // Don't set Content-Type header, browser will set it with boundary for multipart
     });
 
     const data = await response.json();
@@ -125,7 +122,6 @@ export const updateQuiz = async (quizId, quizData) => {
   try {
     const formData = new FormData();
     
-    // Add all quiz fields to FormData
     formData.append('title', quizData.title);
     formData.append('description', quizData.description || '');
     formData.append('start_datetime', quizData.start_datetime || '');
@@ -153,7 +149,6 @@ export const updateQuiz = async (quizId, quizData) => {
       method: 'PATCH',
       headers: getAuthHeaders(),
       body: formData,
-      // Don't set Content-Type header, browser will set it with boundary for multipart
     });
 
     const data = await response.json();
@@ -167,6 +162,45 @@ export const updateQuiz = async (quizId, quizData) => {
     return { success: response.ok, data, status: response.status };
   } catch (error) {
     console.error('[v0] Quiz Update Error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const editQuizQuestions = async (quizId, questions) => {
+  try {
+    console.log('[v0] Editing quiz questions for quiz:', quizId, 'Questions count:', questions.length);
+    console.log('[v0] Questions data:', JSON.stringify(questions, null, 2));
+
+    if (!questions || !Array.isArray(questions) || questions.length === 0) {
+      console.error('[v0] Invalid questions data:', questions);
+      return { success: false, error: 'Questions data is required and must be a non-empty array' };
+    }
+    const formData = new FormData();
+    formData.append('questions', JSON.stringify(questions));
+    
+    console.log('[v0] FormData contents:');
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/${quizId}/edit-questions`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('[v0] Response data:', data);
+
+    if (!response.ok) {
+      console.error('[v0] Quiz questions edit failed:', data);
+      return { success: false, error: data.message || data.detail || 'Failed to edit quiz questions', status: response.status };
+    }
+
+    console.log('[v0] Quiz questions edited successfully:', quizId);
+    return { success: response.ok, data, status: response.status };
+  } catch (error) {
+    console.error('[v0] Quiz Questions Edit Error:', error);
     return { success: false, error: error.message };
   }
 };

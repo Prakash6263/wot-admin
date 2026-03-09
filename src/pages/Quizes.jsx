@@ -66,6 +66,22 @@ export default function Quizes() {
     setSelectedQuiz(null);
   };
 
+  const handleQuestionsUpdated = (updatedQuestions) => {
+    if (selectedQuiz) {
+      const updatedQuiz = { ...selectedQuiz, questions: updatedQuestions };
+      setSelectedQuiz(updatedQuiz);
+      
+      // Update the quiz in the allQuizzes array
+      setAllQuizzes(prevQuizzes => 
+        prevQuizzes.map(quiz => 
+          quiz.quiz_id === selectedQuiz.quiz_id 
+            ? { ...quiz, questions: updatedQuestions }
+            : quiz
+        )
+      );
+    }
+  };
+
   const handleEditQuiz = (quizId) => {
     navigate(`/quiz/${quizId}/edit`);
   };
@@ -614,6 +630,7 @@ export default function Quizes() {
         quizData={selectedQuiz}
         onClose={handleCloseModal}
         isLoading={false}
+        onQuestionsUpdated={handleQuestionsUpdated}
       />
     </div>
   );
