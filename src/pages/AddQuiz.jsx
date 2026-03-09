@@ -157,6 +157,17 @@ export default function AddQuiz() {
       return;
     }
 
+    if (formData.entry_type === 'PAID' && formData.entry_fee > 250) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'Maximum entry fee is 250 coins',
+      });
+      return;
+    }
+
+ 
+
     setIsLoading(true);
 
     try {
@@ -181,7 +192,7 @@ export default function AddQuiz() {
       } else {
         Swal.fire({
           icon: 'error',
-          title: 'Failed to Create Quiz',
+          title: 'Failed to create quiz',
           text: result.error || 'An error occurred while creating the quiz',
         });
       }
@@ -436,7 +447,9 @@ export default function AddQuiz() {
                           value={formData.entry_fee}
                           onChange={handleFormChange}
                           min="0"
+                          max="250"
                         />
+                        <small className="text-muted">Maximum entry fee is 250 coins</small>
                       </div>
 
                       <div className="col-md-6">

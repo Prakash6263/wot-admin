@@ -110,7 +110,7 @@ export const generateQuiz = async (quizData) => {
 
     if (!response.ok) {
       console.error('[v0] Quiz generation failed:', data);
-      return { success: false, error: data.message || 'Failed to create quiz', status: response.status };
+      return { success: false, error: data.detail || data.message || 'Failed to create quiz', status: response.status };
     }
 
     console.log('[v0] Quiz created successfully:', data);
