@@ -1,4 +1,6 @@
 import { apiCall } from './config';
+const API_BASE_URL = 'https://api.wayoftrading.com/aitredding';
+
 
 // Get users list with pagination and filtering
 export const getUsers = async (token, page = 1, limit = 10, sortBy = 'id', order = 'desc', search = null, isActive = null) => {
@@ -90,20 +92,30 @@ export const getUserById = async (token, userId) => {
 };
 
 // Update user status (activate/deactivate)
-export const updateUserStatus = async (token, userId, isActive) => {
-  return apiCall(`/admin/users/${userId}/status`, {
-    method: 'PUT',
+export const updateUserStatus = async (token, userId, isActive, reason = '') => {
+  const formData = new URLSearchParams();
+  formData.append('is_active', isActive.toString());
+  if (reason) {
+    formData.append('reason', reason);
+  }
+  const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/set-status`, {
+    method: "PATCH",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'accept': 'application/json',
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+      accept: "application/json",
     },
-    body: JSON.stringify({
-      is_active: isActive,
-    }),
+    body: formData.toString(),
   });
-};
 
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to update user status");
+  }
+
+  return data;
+};
 // Delete user
 export const deleteUser = async (token, userId) => {
   return apiCall(`/admin/users/${userId}`, {

@@ -107,30 +107,23 @@ export default function UserList() {
     try {
       const updateResult = await updateUserStatus(token, userId, newStatus);
       
-      if (updateResult.success) {
-        // Update the user in the local state
-        setUsers(prevUsers => 
-          prevUsers.map(user => 
-            user.user_id === userId 
-              ? { ...user, is_active: newStatus }
-              : user
-          )
-        );
-        
-        Swal.fire({
-          icon: 'success',
-          title: 'Status Updated',
-          text: `User ${newStatus ? 'activated' : 'deactivated'} successfully`,
-          timer: 1500,
-          showConfirmButton: false
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Update Failed',
-          text: updateResult.error || 'Failed to update user status'
-        });
-      }
+      // Update the user in the local state
+      setUsers(prevUsers => 
+        prevUsers.map(user => 
+          user.user_id === userId 
+            ? { ...user, is_active: newStatus }
+            : user
+        )
+      );
+      
+      // Display success message from API response
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: updateResult.message || `User ${newStatus ? 'activated' : 'blocked'} successfully`,
+        timer: 2000,
+        showConfirmButton: false
+      });
     } catch (error) {
       Swal.fire({
         icon: 'error',
