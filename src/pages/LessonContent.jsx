@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useAuth } from '../context/AuthContext';
-import { getLessonContent, createLessonContent, getLessonAdmin } from '../api/lessons';
+import { getLessonContent, createLessonContent, getLessonAdmin, updateLessonAdmin } from '../api/lessons';
 import GlobalLoader from '../components/GlobalLoader';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
@@ -16,6 +16,19 @@ export default function LessonContent() {
   const [content, setContent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showContentModal, setShowContentModal] = useState(false);
+  const [showLessonModal, setShowLessonModal] = useState(false);
+  const [lessonFormData, setLessonFormData] = useState({
+    title: '',
+    description: '',
+    lesson_number: 0,
+    duration: '',
+    xp_points: 0,
+    reward_points: 0,
+    is_preview: false,
+    is_locked: false,
+    order_number: 1,
+    thumbnail: null,
+  });
   const [contentFormData, setContentFormData] = useState({
     title: '',
     content_type: 'text',
@@ -109,6 +122,63 @@ export default function LessonContent() {
       Swal.fire({
         icon: 'error',
         title: 'Failed to Add Content',
+        text: result.message,
+      });
+    }
+    setIsLoading(false);
+  };
+
+  const handleUpdateLesson = () => {
+    if (lesson) {
+      setLessonFormData({
+        title: lesson.title || '',
+        description: lesson.description || '',
+        lesson_number: lesson.lesson_number || 0,
+        duration: lesson.duration || '',
+        xp_points: lesson.xp_points || 0,
+        reward_points: lesson.reward_points || 0,
+        is_preview: lesson.is_preview || false,
+        is_locked: lesson.is_locked || false,
+        order_number: lesson.order_number || 1,
+        thumbnail: null,
+      });
+      setShowLessonModal(true);
+    }
+  };
+
+  const handleLessonInputChange = (e) => {
+    const { name, value, type, checked, files } = e.target;
+    setLessonFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : type === 'file' ? files[0] : value,
+    }));
+  };
+
+  const handleUpdateLessonSubmit = async () => {
+    if (!lessonFormData.title.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'Please enter lesson title',
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    const result = await updateLessonAdmin(lessonId, lessonFormData, token);
+    
+    if (result.success) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Lesson updated successfully',
+      });
+      setShowLessonModal(false);
+      await fetchContent();
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to Update Lesson',
         text: result.message,
       });
     }
@@ -220,7 +290,7 @@ export default function LessonContent() {
                       <>
                         <button 
                           className="btn btn-warning me-2"
-                          onClick={() => setShowContentModal(true)}
+                          onClick={handleUpdateLesson}
                         >
                           <i className="fa fa-edit me-2"></i>Update
                         </button>
@@ -529,6 +599,192 @@ export default function LessonContent() {
                       disabled={isLoading}
                     >
                       {isLoading ? 'Processing...' : (content ? 'Update' : 'Add')} Content
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Lesson Update Modal */}
+          {showLessonModal && (
+            <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+              <div className="modal-dialog modal-lg">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">Update Lesson</h5>
+                    <button 
+                      type="button" 
+                      className="btn-close" 
+                      onClick={() => setShowLessonModal(false)}
+                    ></button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="row">
+                      <div className="col-12">
+                        <div className="mb-3">
+                          <label className="form-label">Lesson Title <span className="text-danger">*</span></label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="title"
+                            value={lessonFormData.title}
+                            onChange={handleLessonInputChange}
+                            placeholder="Enter lesson title"
+                          />
+                        </div>
+
+                        <div className="mb-3">
+                          <label className="form-label">Description</label>
+                          <textarea
+                            className="form-control"
+                            name="description"
+                            rows="4"
+                            value={lessonFormData.description}
+                            onChange={handleLessonInputChange}
+                            placeholder="Enter lesson description"
+                          ></textarea>
+                        </div>
+
+                        <div className="row">
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-label">Lesson Number</label>
+                              <input
+                                type="number"
+                                className="form-control"
+                                name="lesson_number"
+                                value={lessonFormData.lesson_number}
+                                onChange={handleLessonInputChange}
+                                min="0"
+                              />
+                            </div>
+                          </div>
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-label">Duration</label>
+                              <input
+                                type="text"
+                                className="form-control"
+                                name="duration"
+                                value={lessonFormData.duration}
+                                onChange={handleLessonInputChange}
+                                placeholder="e.g., 20 minutes"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="row">
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-label">XP Points</label>
+                              <input
+                                type="number"
+                                className="form-control"
+                                name="xp_points"
+                                value={lessonFormData.xp_points}
+                                onChange={handleLessonInputChange}
+                                min="0"
+                              />
+                            </div>
+                          </div>
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-label">Reward Points</label>
+                              <input
+                                type="number"
+                                className="form-control"
+                                name="reward_points"
+                                value={lessonFormData.reward_points}
+                                onChange={handleLessonInputChange}
+                                min="0"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="row">
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-label">Order Number</label>
+                              <input
+                                type="number"
+                                className="form-control"
+                                name="order_number"
+                                value={lessonFormData.order_number}
+                                onChange={handleLessonInputChange}
+                                min="1"
+                              />
+                            </div>
+                          </div>
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-label">Thumbnail</label>
+                              <input
+                                type="file"
+                                className="form-control"
+                                name="thumbnail"
+                                onChange={handleLessonInputChange}
+                                accept="image/*"
+                              />
+                              {lesson?.thumbnail && (
+                                <small className="text-muted d-block mt-2">
+                                  Current: <a href={lesson.thumbnail} target="_blank" rel="noopener noreferrer">View thumbnail</a>
+                                </small>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="row">
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-check-label">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  name="is_preview"
+                                  checked={lessonFormData.is_preview}
+                                  onChange={handleLessonInputChange}
+                                />
+                                Preview Available
+                              </label>
+                            </div>
+                          </div>
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-check-label">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  name="is_locked"
+                                  checked={lessonFormData.is_locked}
+                                  onChange={handleLessonInputChange}
+                                />
+                                Locked
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button 
+                      type="button" 
+                      className="btn btn-secondary"
+                      onClick={() => setShowLessonModal(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="button" 
+                      className="btn btn-primary"
+                      onClick={handleUpdateLessonSubmit}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Updating...' : 'Update Lesson'}
                     </button>
                   </div>
                 </div>

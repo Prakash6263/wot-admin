@@ -412,27 +412,6 @@ export const updateLessonAdmin = async (lessonId, lessonData, token) => {
     if (lessonData.thumbnail instanceof File) {
       formData.append('thumbnail', lessonData.thumbnail);
     }
-    if (lessonData.content_title) {
-      formData.append('content_title', lessonData.content_title);
-    }
-    if (lessonData.content_type) {
-      formData.append('content_type', lessonData.content_type);
-    }
-    if (lessonData.text_content) {
-      formData.append('text_content', lessonData.text_content);
-    }
-    if (lessonData.content_duration) {
-      formData.append('content_duration', lessonData.content_duration);
-    }
-    if (lessonData.file_size) {
-      formData.append('file_size', lessonData.file_size);
-    }
-    if (lessonData.is_downloadable !== undefined && lessonData.is_downloadable !== null) {
-      formData.append('is_downloadable', lessonData.is_downloadable);
-    }
-    if (lessonData.media instanceof File) {
-      formData.append('media', lessonData.media);
-    }
 
     const response = await fetch(url, {
       method: 'PUT',
