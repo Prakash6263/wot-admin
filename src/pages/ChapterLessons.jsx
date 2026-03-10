@@ -259,7 +259,7 @@ export default function ChapterLessons() {
                               <td>{lesson.duration}</td>
                               <td>
                                 <span className={`badge ${getStatusBadge(lesson.status)}`}>
-                                  {lesson.status ? new Date(lesson.status).toLocaleDateString() : '-'}
+                                  {lesson.status ? lesson.status : '-'}
                                 </span>
                               </td>
                               <td>
