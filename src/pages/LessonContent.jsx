@@ -294,12 +294,12 @@ export default function LessonContent() {
                         >
                           <i className="fa fa-edit me-2"></i>Update
                         </button>
-                        <button 
+                        {/* <button 
                           className="btn btn-danger"
                           onClick={handleDeleteContent}
                         >
                           <i className="fa fa-trash me-2"></i>Delete
-                        </button>
+                        </button> */}
                       </>
                     )}
                   </li>
