@@ -588,7 +588,7 @@ export default function ChapterLessons() {
               <div className="modal-footer">
                 <button 
                   type="button" 
-                  className="btn btn-secondary"
+                  className="btn btn-secondary me-2"
                   onClick={() => {
                     setShowContentModal(false);
                     setSelectedLesson(null);
@@ -598,7 +598,7 @@ export default function ChapterLessons() {
                 </button>
                 <button 
                   type="button" 
-                  className="btn btn-primary"
+                  className="btn btn-primary "
                   onClick={() => {
                     navigate(`/lesson/${selectedLesson.id}/content`);
                     setShowContentModal(false);
