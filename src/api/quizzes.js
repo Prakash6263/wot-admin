@@ -16,11 +16,11 @@ const getAuthHeaders = () => {
 export const getAllQuizzes = async (page = 1, limit = 10) => {
   try {
     console.log('[v0] Fetching all quizzes - Page:', page, 'Limit:', limit);
-    
+
     const url = new URL(`${API_BASE_URL}/admin/all-quizzes`);
     url.searchParams.append('page', page);
     url.searchParams.append('limit', limit);
-    
+
     const response = await fetch(url.toString(), {
       method: 'GET',
       headers: getAuthHeaders(),
@@ -55,7 +55,7 @@ export const uploadPdf = async (file) => {
     });
 
     const data = await response.json();
-    
+
     if (!response.ok) {
       console.error('[v0] PDF upload failed:', data);
       return { success: false, error: data.message || 'Failed to upload PDF', status: response.status };
@@ -72,7 +72,7 @@ export const uploadPdf = async (file) => {
 export const generateQuiz = async (quizData) => {
   try {
     const formData = new FormData();
-    
+
     formData.append('pdf_id', quizData.pdf_id);
     formData.append('title', quizData.title);
     formData.append('description', quizData.description || '');
@@ -90,7 +90,7 @@ export const generateQuiz = async (quizData) => {
     formData.append('is_featured', quizData.is_featured || false);
     formData.append('is_sponsored', quizData.is_sponsored || false);
     formData.append('featured_order', quizData.featured_order || 0);
-    
+
     if (quizData.image) {
       formData.append('image', quizData.image);
     }
@@ -121,7 +121,7 @@ export const generateQuiz = async (quizData) => {
 export const updateQuiz = async (quizId, quizData) => {
   try {
     const formData = new FormData();
-    
+
     formData.append('title', quizData.title);
     formData.append('description', quizData.description || '');
     formData.append('start_datetime', quizData.start_datetime || '');
@@ -138,7 +138,7 @@ export const updateQuiz = async (quizId, quizData) => {
     formData.append('is_featured', quizData.is_featured || false);
     formData.append('is_sponsored', quizData.is_sponsored || false);
     formData.append('featured_order', quizData.featured_order || 0);
-    
+
     if (quizData.image) {
       formData.append('image', quizData.image);
     }
@@ -169,19 +169,13 @@ export const updateQuiz = async (quizId, quizData) => {
 export const editQuizQuestions = async (quizId, questions) => {
   try {
     console.log('[v0] Editing quiz questions for quiz:', quizId, 'Questions count:', questions.length);
-    console.log('[v0] Questions data:', JSON.stringify(questions, null, 2));
 
     if (!questions || !Array.isArray(questions) || questions.length === 0) {
-      console.error('[v0] Invalid questions data:', questions);
       return { success: false, error: 'Questions data is required and must be a non-empty array' };
     }
+
     const formData = new FormData();
     formData.append('questions', JSON.stringify(questions));
-    
-    console.log('[v0] FormData contents:');
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
 
     const response = await fetch(`${API_BASE_URL}/${quizId}/edit-questions`, {
       method: 'PATCH',
@@ -190,7 +184,6 @@ export const editQuizQuestions = async (quizId, questions) => {
     });
 
     const data = await response.json();
-    console.log('[v0] Response data:', data);
 
     if (!response.ok) {
       console.error('[v0] Quiz questions edit failed:', data);
@@ -201,6 +194,42 @@ export const editQuizQuestions = async (quizId, questions) => {
     return { success: response.ok, data, status: response.status };
   } catch (error) {
     console.error('[v0] Quiz Questions Edit Error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// ─── Upload image for a specific question ─────────────────────────────────────
+// POST /quiz/{quiz_id}/question/{question_id}/image
+// Body: multipart/form-data  { image: File }
+export const uploadQuestionImage = async (quizId, questionId, imageFile) => {
+  try {
+    console.log('[v0] Uploading image for question:', questionId, 'in quiz:', quizId);
+
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    // NOTE: Do NOT set Content-Type manually – browser sets multipart/form-data + boundary automatically
+    const response = await fetch(`${API_BASE_URL}/${quizId}/question/${questionId}/image`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('[v0] Question image upload failed:', data);
+      return {
+        success: false,
+        error: data.message || data.detail || 'Failed to upload question image',
+        status: response.status,
+      };
+    }
+
+    console.log('[v0] Question image uploaded successfully. question_id:', questionId, 'response:', data);
+    return { success: true, data, status: response.status };
+  } catch (error) {
+    console.error('[v0] Question Image Upload Error:', error);
     return { success: false, error: error.message };
   }
 };

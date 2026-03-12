@@ -1,7 +1,159 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Swal from 'sweetalert2';
-import { editQuizQuestions } from '../api/quizzes';
+import { editQuizQuestions, uploadQuestionImage } from '../api/quizzes';
 
+// ─── Per-question image uploader ──────────────────────────────────────────────
+function QuestionImageCell({ quizId, questionId, existingImageUrl, questionIndex }) {
+  const [preview, setPreview] = useState(existingImageUrl || null);
+  const [pendingFile, setPendingFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (!pendingFile) setPreview(existingImageUrl || null);
+  }, [existingImageUrl]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setPendingFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setPreview(reader.result);
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleUpload = async () => {
+    if (!pendingFile) return;
+    setUploading(true);
+    const result = await uploadQuestionImage(quizId, questionId, pendingFile);
+    setUploading(false);
+
+    if (result.success) {
+      setPendingFile(null);
+      Swal.fire({
+        icon: 'success',
+        title: 'Image Uploaded',
+        text: `Q${questionIndex + 1} image saved successfully!`,
+        timer: 1500,
+        showConfirmButton: false,
+        timerProgressBar: true,
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Upload Failed',
+        text: result.error || 'Could not upload image. Please try again.',
+      });
+    }
+  };
+
+  const handleRemovePreview = () => {
+    setPendingFile(null);
+    setPreview(existingImageUrl || null);
+  };
+
+  return (
+    <div className="d-flex align-items-center gap-2 flex-wrap">
+      {/* Hidden file input */}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+
+      {/* Thumbnail or placeholder */}
+      {preview ? (
+        <div style={{ position: 'relative', display: 'inline-block' }}>
+          <img
+            src={preview}
+            alt={`Q${questionIndex + 1}`}
+            style={{
+              width: 64, height: 64,
+              objectFit: 'cover',
+              borderRadius: 6,
+              border: pendingFile ? '2px dashed #0d6efd' : '2px solid #dee2e6',
+              cursor: 'pointer',
+            }}
+            onClick={() => inputRef.current?.click()}
+            title="Click to change"
+          />
+          {pendingFile && (
+            <button
+              type="button"
+              onClick={handleRemovePreview}
+              style={{
+                position: 'absolute', top: -7, right: -7,
+                width: 18, height: 18, borderRadius: '50%',
+                border: 'none', background: '#dc3545', color: '#fff',
+                fontSize: 10, lineHeight: '18px', textAlign: 'center',
+                cursor: 'pointer', padding: 0,
+              }}
+              title="Discard"
+            >✕</button>
+          )}
+        </div>
+      ) : (
+        <div
+          onClick={() => inputRef.current?.click()}
+          style={{
+            width: 64, height: 64, borderRadius: 6,
+            border: '2px dashed #ced4da',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#adb5bd', fontSize: 22, cursor: 'pointer',
+          }}
+          title="Add image"
+        >
+          <i className="fas fa-image" />
+        </div>
+      )}
+
+      {/* Buttons */}
+      <div className="d-flex flex-column gap-1">
+        <button
+          type="button"
+          className="btn btn-sm btn-outline-secondary"
+          style={{ fontSize: '0.75rem', padding: '2px 8px' }}
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+        >
+          <i className="fas fa-upload me-1" />{preview ? 'Change' : 'Upload'}
+        </button>
+
+        {pendingFile && (
+          <button
+            type="button"
+            className="btn btn-sm btn-success"
+            style={{ fontSize: '0.75rem', padding: '2px 8px' }}
+            onClick={handleUpload}
+            disabled={uploading}
+          >
+            {uploading
+              ? <><span className="spinner-border spinner-border-sm me-1" role="status" />Saving…</>
+              : <><i className="fas fa-check me-1" />Save Image</>}
+          </button>
+        )}
+      </div>
+
+      {/* Status label */}
+      {pendingFile && (
+        <small className="text-primary" style={{ fontSize: '0.72rem' }}>{pendingFile.name}</small>
+      )}
+      {!pendingFile && preview && (
+        <small className="text-success" style={{ fontSize: '0.72rem' }}>
+          <i className="fas fa-check-circle me-1" />Has image
+        </small>
+      )}
+      {!pendingFile && !preview && (
+        <small className="text-muted" style={{ fontSize: '0.72rem' }}>No image</small>
+      )}
+    </div>
+  );
+}
+
+// ─── Main modal ───────────────────────────────────────────────────────────────
 export default function QuestionsModal({ show, quizData, onClose, isLoading, onQuestionsUpdated }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isEditing, setIsEditing] = useState(false);
@@ -10,27 +162,15 @@ export default function QuestionsModal({ show, quizData, onClose, isLoading, onQ
   const itemsPerPage = 5;
 
   useEffect(() => {
-    console.log('[v0] QuestionsModal - Show:', show, 'Quiz:', quizData?.quiz_id);
-    console.log('[v0] Quiz data:', quizData);
-    console.log('[v0] Quiz questions:', quizData?.questions);
-    
     if (show) {
       setCurrentPage(1);
       setIsEditing(false);
-      
-      // Initialize editing questions with proper fallback
-      const questionsToEdit = quizData?.questions || [];
-      console.log('[v0] Setting editing questions:', questionsToEdit);
-      setEditingQuestions(JSON.parse(JSON.stringify(questionsToEdit)));
-      
+      setEditingQuestions(JSON.parse(JSON.stringify(quizData?.questions || [])));
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
     }
-    
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
+    return () => { document.body.style.overflow = 'auto'; };
   }, [show, quizData]);
 
   if (!show || !quizData) return null;
@@ -40,194 +180,98 @@ export default function QuestionsModal({ show, quizData, onClose, isLoading, onQ
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedQuestions = questions.slice(startIndex, startIndex + itemsPerPage);
 
-  const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
-  const handleClose = () => {
-    console.log('[v0] Closing QuestionsModal');
-    onClose();
-  };
-
   const handleEditToggle = () => {
-    if (isEditing) {
-      // Cancel editing - restore original questions
-      setEditingQuestions(JSON.parse(JSON.stringify(quizData.questions || [])));
-    }
+    if (isEditing) setEditingQuestions(JSON.parse(JSON.stringify(quizData.questions || [])));
     setIsEditing(!isEditing);
     setCurrentPage(1);
   };
 
   const handleQuestionChange = (index, field, value) => {
-    const updatedQuestions = [...editingQuestions];
-    if (field === 'question') {
-      updatedQuestions[index].question = value;
-    } else if (field === 'correct_answer') {
-      updatedQuestions[index].correct_answer = parseInt(value);
-    } else if (field.startsWith('option_')) {
-      const optionIndex = parseInt(field.split('_')[1]);
-      updatedQuestions[index].options[optionIndex] = value;
+    const updated = [...editingQuestions];
+    if (field === 'question') updated[index].question = value;
+    else if (field === 'correct_answer') updated[index].correct_answer = parseInt(value);
+    else if (field.startsWith('option_')) {
+      const optIdx = parseInt(field.split('_')[1]);
+      updated[index].options[optIdx] = value;
     }
-    setEditingQuestions(updatedQuestions);
+    setEditingQuestions(updated);
   };
 
   const handleSaveQuestions = async () => {
+    if (!quizData?.quiz_id) { Swal.fire({ icon: 'error', title: 'Error', text: 'Quiz ID is missing' }); return; }
+    if (!editingQuestions?.length) { Swal.fire({ icon: 'error', title: 'Error', text: 'No questions to save' }); return; }
+
     setIsSaving(true);
-    
-    console.log('[v0] Saving questions for quiz:', quizData?.quiz_id);
-    console.log('[v0] Editing questions:', editingQuestions);
-    
-    // Validate quiz data
-    if (!quizData?.quiz_id) {
-      console.error('[v0] No quiz ID available');
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Quiz ID is missing',
-      });
-      setIsSaving(false);
-      return;
-    }
-    
-    // Validate questions data
-    if (!editingQuestions || !Array.isArray(editingQuestions) || editingQuestions.length === 0) {
-      console.error('[v0] Invalid editing questions data:', editingQuestions);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No questions to save',
-      });
-      setIsSaving(false);
-      return;
-    }
-    
     const result = await editQuizQuestions(quizData.quiz_id, editingQuestions);
-    
+    setIsSaving(false);
+
     if (result.success) {
       await Swal.fire({
-        icon: 'success',
-        title: 'Questions Updated',
+        icon: 'success', title: 'Questions Updated',
         text: 'Quiz questions have been updated successfully',
-        timer: 2000,
-        timerProgressBar: true,
-        showConfirmButton: false,
+        timer: 2000, timerProgressBar: true, showConfirmButton: false,
       });
-      
       setIsEditing(false);
-      if (onQuestionsUpdated) {
-        onQuestionsUpdated(editingQuestions);
-      }
+      if (onQuestionsUpdated) onQuestionsUpdated(editingQuestions);
     } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Update Failed',
-        text: result.error || 'Failed to update quiz questions',
-      });
+      Swal.fire({ icon: 'error', title: 'Update Failed', text: result.error || 'Failed to update quiz questions' });
     }
-    
-    setIsSaving(false);
   };
 
-  
-
-
   return (
-    <>
-      <div 
-        className="modal"
-        style={{ 
-          display: show ? 'block' : 'none',
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          zIndex: 1050,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          width: '100%',
-          height: '100%'
-        }}
-        onClick={handleClose}
+    <div
+      className="modal"
+      style={{ display: 'block', position: 'fixed', top: 0, left: 0, zIndex: 1050, backgroundColor: 'rgba(0,0,0,0.5)', width: '100%', height: '100%' }}
+      onClick={onClose}
+    >
+      <div
+        className="modal-dialog modal-lg"
+        style={{ position: 'relative', margin: '1.75rem auto' }}
+        onClick={(e) => e.stopPropagation()}
       >
-        <div 
-          className="modal-dialog modal-lg"
-          style={{ position: 'relative', margin: '1.75rem auto' }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="modal-content">
+        <div className="modal-content">
+
+          {/* Header */}
           <div className="modal-header">
-            <h5 className="modal-title">{quizData.title} - Questions</h5>
+            <h5 className="modal-title">{quizData.title} – Questions</h5>
             <div className="d-flex gap-2">
-              <button 
-                type="button" 
-                className={`btn btn-sm ${isEditing ? 'btn-secondary' : 'btn-primary'}`}
-                onClick={handleEditToggle}
-                disabled={isSaving}
-              >
-                {isEditing ? (
-                  <>
-                    <i className="fas fa-times me-1"></i>Cancel
-                  </>
-                ) : (
-                  <>
-                    <i className="fas fa-edit me-1"></i>Edit
-                  </>
-                )}
+              <button type="button" className={`btn btn-sm ${isEditing ? 'btn-secondary' : 'btn-primary'}`} onClick={handleEditToggle} disabled={isSaving}>
+                {isEditing ? <><i className="fas fa-times me-1" />Cancel</> : <><i className="fas fa-edit me-1" />Edit</>}
               </button>
               {isEditing && (
-                <button 
-                  type="button" 
-                  className="btn btn-sm btn-success"
-                  onClick={handleSaveQuestions}
-                  disabled={isSaving}
-                >
-                  {isSaving ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-save me-1"></i>Save
-                    </>
-                  )}
+                <button type="button" className="btn btn-sm btn-success" onClick={handleSaveQuestions} disabled={isSaving}>
+                  {isSaving
+                    ? <><span className="spinner-border spinner-border-sm me-1" role="status" />Saving…</>
+                    : <><i className="fas fa-save me-1" />Save</>}
                 </button>
               )}
-              <button 
-                type="button" 
-                className="btn-close" 
-                onClick={handleClose}
-                aria-label="Close"
-              ></button>
+              <button type="button" className="btn-close" onClick={onClose} aria-label="Close" />
             </div>
           </div>
 
+          {/* Body */}
           <div className="modal-body" style={{ maxHeight: '600px', overflowY: 'auto' }}>
             {isLoading ? (
               <div className="text-center py-5">
-                <div className="spinner-border" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
+                <div className="spinner-border" role="status"><span className="visually-hidden">Loading…</span></div>
               </div>
             ) : questions.length === 0 ? (
-              <div className="text-center py-5">
-                <p className="text-muted">No questions available</p>
-              </div>
+              <div className="text-center py-5"><p className="text-muted">No questions available</p></div>
             ) : (
               <>
-                <div className="mb-3">
-                  <p className="text-muted mb-0">
-                    Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, questions.length)} of {questions.length} questions
-                  </p>
-                </div>
+                <p className="text-muted mb-3">
+                  Showing {startIndex + 1}–{Math.min(startIndex + itemsPerPage, questions.length)} of {questions.length} questions
+                </p>
 
                 {paginatedQuestions.map((question, index) => {
                   const questionIndex = startIndex + index;
+                  const questionId = question.question_id || question.id;
+
                   return (
-                    <div key={question.id || questionIndex} className="card mb-3">
+                    <div key={questionId || questionIndex} className="card mb-3 border">
                       <div className="card-body">
+
+                        {/* Question text */}
                         <div className="d-flex align-items-start mb-3">
                           <span className="badge bg-primary me-2 mt-1">{questionIndex + 1}</span>
                           <div className="flex-grow-1">
@@ -245,6 +289,29 @@ export default function QuestionsModal({ show, quizData, onClose, isLoading, onQ
                           </div>
                         </div>
 
+                        {/* ── Question image upload row (always shown) ── */}
+                        <div className="ms-4 mb-3 p-2 rounded" style={{ background: '#f8f9fa', border: '1px solid #e9ecef' }}>
+                          <small className="text-muted fw-semibold d-block mb-2">
+                            <i className="fas fa-image me-1 text-primary" />
+                            Question Image
+                            <span className="text-muted fw-normal ms-1">(optional)</span>
+                          </small>
+                          {questionId ? (
+                            <QuestionImageCell
+                              quizId={quizData.quiz_id}
+                              questionId={questionId}
+                              existingImageUrl={question.image_path || question.image_url || null}
+                              questionIndex={questionIndex}
+                            />
+                          ) : (
+                            <small className="text-warning">
+                              <i className="fas fa-exclamation-triangle me-1" />
+                              Question ID not available – save questions first to enable image upload.
+                            </small>
+                          )}
+                        </div>
+
+                        {/* Options */}
                         <div className="ms-4">
                           <strong className="text-muted d-block mb-2">
                             {question.type === 'percentage' ? 'Options (Percentage Range):' : 'Options:'}
@@ -257,43 +324,39 @@ export default function QuestionsModal({ show, quizData, onClose, isLoading, onQ
                                   value={question.correct_answer}
                                   onChange={(e) => handleQuestionChange(questionIndex, 'correct_answer', e.target.value)}
                                 >
-                                  {question.options && question.options.map((_, optionIndex) => (
-                                    <option key={optionIndex} value={optionIndex}>
-                                      {String.fromCharCode(65 + optionIndex)}
-                                    </option>
+                                  {question.options?.map((_, optIdx) => (
+                                    <option key={optIdx} value={optIdx}>{String.fromCharCode(65 + optIdx)}</option>
                                   ))}
                                 </select>
                               </span>
                             )}
                           </strong>
-                          
+
                           <ul className="list-unstyled">
-                            {question.options && question.options.map((option, optionIndex) => (
-                              <li 
-                                key={optionIndex}
+                            {question.options?.map((option, optIdx) => (
+                              <li
+                                key={optIdx}
                                 className={`mb-2 p-2 rounded ${
-                                  !isEditing && optionIndex === question.correct_answer 
-                                    ? 'bg-success bg-opacity-10 border-start border-success border-3' 
+                                  !isEditing && optIdx === question.correct_answer
+                                    ? 'bg-success bg-opacity-10 border-start border-success border-3'
                                     : 'border-start border-secondary border-3'
                                 }`}
                               >
                                 <div className="d-flex align-items-center">
-                                  <span className="me-2">
-                                    {String.fromCharCode(65 + optionIndex)}.
-                                  </span>
+                                  <span className="me-2">{String.fromCharCode(65 + optIdx)}.</span>
                                   {isEditing ? (
                                     <input
                                       type="text"
                                       className="form-control form-control-sm"
                                       value={option}
-                                      onChange={(e) => handleQuestionChange(questionIndex, `option_${optionIndex}`, e.target.value)}
-                                      placeholder={`Option ${String.fromCharCode(65 + optionIndex)}`}
+                                      onChange={(e) => handleQuestionChange(questionIndex, `option_${optIdx}`, e.target.value)}
+                                      placeholder={`Option ${String.fromCharCode(65 + optIdx)}`}
                                     />
                                   ) : (
                                     <span>
                                       {option}
                                       {question.type === 'percentage' && '%'}
-                                      {optionIndex === question.correct_answer && (
+                                      {optIdx === question.correct_answer && (
                                         <span className="badge bg-success ms-2">Correct</span>
                                       )}
                                     </span>
@@ -302,11 +365,12 @@ export default function QuestionsModal({ show, quizData, onClose, isLoading, onQ
                               </li>
                             ))}
                           </ul>
-                          
+
                           {question.type === 'percentage' && question.tolerance && (
                             <small className="text-muted">Tolerance: ±{question.tolerance}%</small>
                           )}
                         </div>
+
                       </div>
                     </div>
                   );
@@ -315,39 +379,22 @@ export default function QuestionsModal({ show, quizData, onClose, isLoading, onQ
             )}
           </div>
 
+          {/* Footer */}
           <div className="modal-footer">
             <div className="me-auto">
-              <small className="text-muted">
-                Page {currentPage} of {totalPages || 1}
-              </small>
+              <small className="text-muted">Page {currentPage} of {totalPages || 1}</small>
             </div>
-            <button 
-              type="button" 
-              className="btn btn-sm btn-outline-primary"
-              onClick={handlePrevious}
-              disabled={currentPage === 1 || isLoading}
-            >
-              <i className="fas fa-chevron-left me-1"></i>Previous
+            <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => setCurrentPage(p => p - 1)} disabled={currentPage === 1 || isLoading}>
+              <i className="fas fa-chevron-left me-1" />Previous
             </button>
-            <button 
-              type="button" 
-              className="btn btn-sm btn-outline-primary"
-              onClick={handleNext}
-              disabled={currentPage === totalPages || isLoading}
-            >
-              Next<i className="fas fa-chevron-right ms-1"></i>
+            <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => setCurrentPage(p => p + 1)} disabled={currentPage === totalPages || isLoading}>
+              Next<i className="fas fa-chevron-right ms-1" />
             </button>
-            <button 
-              type="button" 
-              className="btn btn-secondary" 
-              onClick={handleClose}
-            >
-              Close
-            </button>
+            <button type="button" className="btn btn-secondary" onClick={onClose}>Close</button>
           </div>
-          </div>
+
         </div>
       </div>
-    </>
+    </div>
   );
 }
