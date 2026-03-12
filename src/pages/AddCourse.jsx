@@ -264,6 +264,7 @@ export default function AddCourse() {
                         name="level"
                         value={formData.level}
                         onChange={handleInputChange}
+                        style={{ appearance: "auto" }}
                       >
                         <option value="Beginner">Beginner</option>
                         <option value="Intermediate">Intermediate</option>
@@ -315,6 +316,7 @@ export default function AddCourse() {
                         name="status"
                         value={formData.status}
                         onChange={handleInputChange}
+                        style={{ appearance: "auto" }}
                       >
                         <option value="draft">Draft</option>
                         <option value="Published">Published</option>
@@ -383,6 +385,7 @@ export default function AddCourse() {
                         name="is_free"
                         value={String(formData.is_free)}
                         onChange={handleInputChange}
+                        style={{ appearance: "auto" }}
                       >
                         <option value="true">Yes</option>
                         <option value="false">No</option>
@@ -396,6 +399,7 @@ export default function AddCourse() {
                         name="is_featured"
                         value={String(formData.is_featured)}
                         onChange={handleInputChange}
+                        style={{ appearance: "auto" }}
                       >
                         <option value="false">No</option>
                         <option value="true">Yes</option>
@@ -409,6 +413,7 @@ export default function AddCourse() {
                         name="certificate_available"
                         value={String(formData.certificate_available)}
                         onChange={handleInputChange}
+                        style={{ appearance: "auto" }}
                       >
                         <option value="false">No</option>
                         <option value="true">Yes</option>

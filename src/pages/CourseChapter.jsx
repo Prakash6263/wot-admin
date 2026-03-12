@@ -160,6 +160,7 @@ export default function CourseChapter() {
                         onChange={handleInputChange}
                         required
                         disabled={categoriesLoading}
+                        style={{ appearance: "auto" }}
                       >
                         <option value="">Select a category</option>
                         {categories.map((category) => (
