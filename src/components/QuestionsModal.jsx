@@ -2,30 +2,22 @@ import { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2";
 import { editQuizQuestions, uploadQuestionImage } from "../api/quizzes";
 
-// ─── Per-question image uploader ──────────────────────────────────────────────
-function QuestionImageCell({
-  quizId,
-  questionId,
-  existingImageUrl,
-  questionIndex,
-}) {
-  const [preview, setPreview] = useState(existingImageUrl || null);
+// ── Question Image Upload Cell ────────────────────────────────────────────────
+function QuestionImageCell({ quizId, question, questionIndex }) {
+  const inputRef = useRef(null);
+  const [preview, setPreview] = useState(question.question_image || null);
   const [pendingFile, setPendingFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const inputRef = useRef(null);
 
-  useEffect(() => {
-    if (!pendingFile) setPreview(existingImageUrl || null);
-  }, [existingImageUrl]);
+  const questionId = question.question_id || question.id;
 
-  const handleFileChange = (e) => {
+  const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setPendingFile(file);
     const reader = new FileReader();
     reader.onloadend = () => setPreview(reader.result);
     reader.readAsDataURL(file);
-    e.target.value = "";
   };
 
   const handleUpload = async () => {
@@ -35,12 +27,16 @@ function QuestionImageCell({
     setUploading(false);
 
     if (result.success) {
+      if (result.data?.image_url || result.data?.question_image) {
+        setPreview(result.data.image_url || result.data.question_image);
+      }
       setPendingFile(null);
+      if (inputRef.current) inputRef.current.value = "";
       Swal.fire({
         icon: "success",
         title: "Image Uploaded",
-        text: `Q${questionIndex + 1} image saved successfully!`,
-        timer: 1500,
+        text: `Q${questionIndex + 1} image saved!`,
+        timer: 1400,
         showConfirmButton: false,
         timerProgressBar: true,
       });
@@ -48,152 +44,148 @@ function QuestionImageCell({
       Swal.fire({
         icon: "error",
         title: "Upload Failed",
-        text: result.error || "Could not upload image. Please try again.",
+        text: result.error || "Could not upload image.",
       });
     }
   };
 
-  const handleRemovePreview = () => {
-    setPendingFile(null);
-    setPreview(existingImageUrl || null);
-  };
-
   return (
-    <div className="d-flex align-items-center gap-2 flex-wrap">
-      {/* Hidden file input */}
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        style={{ display: "none" }}
-        onChange={handleFileChange}
-      />
+    <div
+      className="p-3 rounded mb-3"
+      style={{ background: "#f8f9ff", border: "1px solid #e8eaf6" }}
+    >
+      {/* Label */}
+      <div className="d-flex align-items-center gap-2 mb-2">
+        <span style={{ fontSize: 16 }}>🖼️</span>
+        <span
+          className="fw-semibold"
+          style={{ fontSize: "0.88rem", color: "#333" }}
+        >
+          Question Image
+        </span>
+        <span className="text-muted" style={{ fontSize: "0.8rem" }}>
+          (optional)
+        </span>
+      </div>
 
-      {/* Thumbnail or placeholder */}
-      {preview ? (
-        <div style={{ position: "relative", display: "inline-block" }}>
-          <img
-            src={preview}
-            alt={`Q${questionIndex + 1}`}
-            style={{
-              width: 64,
-              height: 64,
-              objectFit: "cover",
-              borderRadius: 6,
-              border: pendingFile ? "2px dashed #0d6efd" : "2px solid #dee2e6",
-              cursor: "pointer",
-            }}
-            onClick={() => inputRef.current?.click()}
-            title="Click to change"
-          />
-          {pendingFile && (
-            <button
-              type="button"
-              onClick={handleRemovePreview}
-              style={{
-                position: "absolute",
-                top: -7,
-                right: -7,
-                width: 18,
-                height: 18,
-                borderRadius: "50%",
-                border: "none",
-                background: "#dc3545",
-                color: "#fff",
-                fontSize: 10,
-                lineHeight: "18px",
-                textAlign: "center",
-                cursor: "pointer",
-                padding: 0,
-              }}
-              title="Discard"
-            >
-              ✕
-            </button>
-          )}
-        </div>
-      ) : (
+      <div className="d-flex align-items-center gap-3 flex-wrap">
+        {/* Thumbnail */}
         <div
-          onClick={() => inputRef.current?.click()}
           style={{
-            width: 64,
-            height: 64,
-            borderRadius: 6,
-            border: "2px dashed #ced4da",
+            width: 72,
+            height: 72,
+            borderRadius: 8,
+            flexShrink: 0,
+            overflow: "hidden",
+            border: preview ? "2px solid #6c63ff" : "2px dashed #ced4da",
+            background: "#fff",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#adb5bd",
-            fontSize: 22,
-            cursor: "pointer",
           }}
-          title="Add image"
         >
-          <i className="fas fa-image" />
+          {preview ? (
+            <img
+              src={preview}
+              alt={`Q${questionIndex + 1}`}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <span style={{ fontSize: 26, color: "#c0c0c0" }}>🖼</span>
+          )}
         </div>
-      )}
 
-      {/* Buttons */}
-      <div className="d-flex flex-column gap-1">
-        <button
-          type="button"
-          className="btn btn-sm btn-outline-secondary"
-          style={{ fontSize: "0.75rem", padding: "2px 8px" }}
-          onClick={() => inputRef.current?.click()}
-          disabled={uploading}
-        >
-          <i className="fas fa-upload me-1" />
-          {preview ? "Change" : "Upload"}
-        </button>
+        {/* Controls */}
+        <div className="d-flex flex-column gap-2">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            id={`q-img-${questionId}`}
+            onChange={handleFileSelect}
+          />
 
-        {pendingFile && (
-          <button
-            type="button"
-            className="btn btn-sm btn-success"
-            style={{ fontSize: "0.75rem", padding: "2px 8px" }}
-            onClick={handleUpload}
-            disabled={uploading}
-          >
-            {uploading ? (
-              <>
-                <span
-                  className="spinner-border spinner-border-sm me-1"
-                  role="status"
-                />
-                Saving…
-              </>
-            ) : (
-              <>
-                <i className="fas fa-check me-1" />
-                Save Image
-              </>
+          <div className="d-flex align-items-center gap-2 flex-wrap">
+            <label
+              htmlFor={`q-img-${questionId}`}
+              className="btn btn-sm mb-0"
+              style={{
+                background: "#6c63ff",
+                color: "#fff",
+                borderRadius: 6,
+                fontSize: "0.8rem",
+                cursor: "pointer",
+                padding: "5px 14px",
+              }}
+            >
+              <i className="fa fa-upload me-1" />
+              {preview && !pendingFile ? "Change Image" : "Upload"}
+            </label>
+
+            <span className="text-muted" style={{ fontSize: "0.78rem" }}>
+              {pendingFile ? pendingFile.name : !preview ? "No image" : ""}
+            </span>
+
+            {pendingFile && (
+              <button
+                type="button"
+                className="btn btn-sm btn-success"
+                style={{
+                  fontSize: "0.8rem",
+                  padding: "5px 14px",
+                  borderRadius: 6,
+                }}
+                onClick={handleUpload}
+                disabled={uploading}
+              >
+                {uploading ? (
+                  <span
+                    className="spinner-border spinner-border-sm"
+                    role="status"
+                  />
+                ) : (
+                  <>
+                    <i className="fa fa-save me-1" />
+                    Save
+                  </>
+                )}
+              </button>
             )}
-          </button>
-        )}
-      </div>
 
-      {/* Status label */}
-      {pendingFile && (
-        <small className="text-primary" style={{ fontSize: "0.72rem" }}>
-          {pendingFile.name}
-        </small>
-      )}
-      {!pendingFile && preview && (
-        <small className="text-success" style={{ fontSize: "0.72rem" }}>
-          <i className="fas fa-check-circle me-1" />
-          Has image
-        </small>
-      )}
-      {!pendingFile && !preview && (
-        <small className="text-muted" style={{ fontSize: "0.72rem" }}>
-          No image
-        </small>
-      )}
+            {pendingFile && !uploading && (
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary"
+                style={{
+                  fontSize: "0.78rem",
+                  padding: "4px 10px",
+                  borderRadius: 6,
+                }}
+                onClick={() => {
+                  setPendingFile(null);
+                  setPreview(question.question_image || null);
+                  if (inputRef.current) inputRef.current.value = "";
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {preview && !pendingFile && (
+            <span className="text-success" style={{ fontSize: "0.75rem" }}>
+              <i className="fa fa-check-circle me-1" />
+              Image set
+            </span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
-// ─── Main modal ───────────────────────────────────────────────────────────────
+// ── Main Modal ────────────────────────────────────────────────────────────────
 export default function QuestionsModal({
   show,
   quizData,
@@ -245,16 +237,14 @@ export default function QuestionsModal({
     if (field === "question") updated[index].question = value;
     else if (field === "correct_answer")
       updated[index].correct_answer = parseInt(value);
-    else if (field.startsWith("option_")) {
-      const optIdx = parseInt(field.split("_")[1]);
-      updated[index].options[optIdx] = value;
-    }
+    else if (field.startsWith("option_"))
+      updated[index].options[parseInt(field.split("_")[1])] = value;
     setEditingQuestions(updated);
   };
 
   const handleSaveQuestions = async () => {
     if (!quizData?.quiz_id) {
-      Swal.fire({ icon: "error", title: "Error", text: "Quiz ID is missing" });
+      Swal.fire({ icon: "error", title: "Error", text: "Quiz ID missing" });
       return;
     }
     if (!editingQuestions?.length) {
@@ -265,16 +255,13 @@ export default function QuestionsModal({
       });
       return;
     }
-
     setIsSaving(true);
     const result = await editQuizQuestions(quizData.quiz_id, editingQuestions);
     setIsSaving(false);
-
     if (result.success) {
       await Swal.fire({
         icon: "success",
         title: "Questions Updated",
-        text: "Quiz questions have been updated successfully",
         timer: 2000,
         timerProgressBar: true,
         showConfirmButton: false,
@@ -293,8 +280,9 @@ export default function QuestionsModal({
   return (
     <div
       className="modal"
+      onClick={onClose}
       style={{
-        display: "block",
+        display: show ? "block" : "none",
         position: "fixed",
         top: 0,
         left: 0,
@@ -303,7 +291,6 @@ export default function QuestionsModal({
         width: "100%",
         height: "100%",
       }}
-      onClick={onClose}
     >
       <div
         className="modal-dialog modal-lg"
@@ -311,7 +298,6 @@ export default function QuestionsModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-content">
-          {/* Header */}
           <div className="modal-header d-flex align-items-center">
             <h5 className="modal-title">{quizData.title} – Questions</h5>
 
@@ -375,9 +361,7 @@ export default function QuestionsModal({
           >
             {isLoading ? (
               <div className="text-center py-5">
-                <div className="spinner-border" role="status">
-                  <span className="visually-hidden">Loading…</span>
-                </div>
+                <div className="spinner-border" role="status" />
               </div>
             ) : questions.length === 0 ? (
               <div className="text-center py-5">
@@ -385,7 +369,7 @@ export default function QuestionsModal({
               </div>
             ) : (
               <>
-                <p className="text-muted mb-3">
+                <p className="text-muted mb-3" style={{ fontSize: "0.85rem" }}>
                   Showing {startIndex + 1}–
                   {Math.min(startIndex + itemsPerPage, questions.length)} of{" "}
                   {questions.length} questions
@@ -393,23 +377,31 @@ export default function QuestionsModal({
 
                 {paginatedQuestions.map((question, index) => {
                   const questionIndex = startIndex + index;
-                  const questionId = question.question_id || question.id;
-
                   return (
                     <div
-                      key={questionId || questionIndex}
-                      className="card mb-3 border"
+                      key={question.id || question.question_id || questionIndex}
+                      className="card mb-3"
+                      style={{ borderRadius: 10, border: "1px solid #e9ecef" }}
                     >
-                      <div className="card-body">
+                      <div className="card-body p-3">
                         {/* Question text */}
                         <div className="d-flex align-items-start mb-3">
-                          <span className="badge bg-primary me-2 mt-1">
+                          <span
+                            className="badge me-2 mt-1"
+                            style={{
+                              background: "#6c63ff",
+                              minWidth: 24,
+                              fontSize: "0.8rem",
+                            }}
+                          >
                             {questionIndex + 1}
                           </span>
                           <div className="flex-grow-1">
                             {isEditing ? (
                               <textarea
                                 className="form-control"
+                                rows="2"
+                                placeholder="Enter question"
                                 value={question.question}
                                 onChange={(e) =>
                                   handleQuestionChange(
@@ -418,63 +410,37 @@ export default function QuestionsModal({
                                     e.target.value,
                                   )
                                 }
-                                rows="2"
-                                placeholder="Enter question"
                               />
                             ) : (
-                              <h6 className="card-title mb-0">
+                              <h6
+                                className="card-title mb-0"
+                                style={{ lineHeight: 1.5 }}
+                              >
                                 {question.question}
                               </h6>
                             )}
                           </div>
                         </div>
 
-                        {/* ── Question image upload row (always shown) ── */}
-                        <div
-                          className="ms-4 mb-3 p-2 rounded"
-                          style={{
-                            background: "#f8f9fa",
-                            border: "1px solid #e9ecef",
-                          }}
-                        >
-                          <small className="text-muted fw-semibold d-block mb-2">
-                            <i className="fas fa-image me-1 text-primary" />
-                            Question Image
-                            <span className="text-muted fw-normal ms-1">
-                              (optional)
-                            </span>
-                          </small>
-                          {questionId ? (
-                            <QuestionImageCell
-                              quizId={quizData.quiz_id}
-                              questionId={questionId}
-                              existingImageUrl={
-                                question.image_path ||
-                                question.image_url ||
-                                null
-                              }
-                              questionIndex={questionIndex}
-                            />
-                          ) : (
-                            <small className="text-warning">
-                              <i className="fas fa-exclamation-triangle me-1" />
-                              Question ID not available – save questions first
-                              to enable image upload.
-                            </small>
-                          )}
-                        </div>
+                        {/* ── Image upload (always shown, reads question_image from API) ── */}
+                        <QuestionImageCell
+                          quizId={quizData.quiz_id}
+                          question={question}
+                          questionIndex={questionIndex}
+                        />
 
                         {/* Options */}
-                        <div className="ms-4">
-                          <strong className="text-muted d-block mb-2">
+                        <div>
+                          <strong
+                            className="text-muted d-block mb-2"
+                            style={{ fontSize: "0.85rem" }}
+                          >
                             {question.type === "percentage"
                               ? "Options (Percentage Range):"
                               : "Options:"}
                             {isEditing && (
                               <span className="ms-2">
-                                <small className="text-muted">
-                                  Correct Answer:
-                                </small>
+                                <small className="text-muted">Correct:</small>
                                 <select
                                   className="form-select form-select-sm d-inline-block ms-1"
                                   style={{ width: "auto" }}
@@ -487,9 +453,9 @@ export default function QuestionsModal({
                                     )
                                   }
                                 >
-                                  {question.options?.map((_, optIdx) => (
-                                    <option key={optIdx} value={optIdx}>
-                                      {String.fromCharCode(65 + optIdx)}
+                                  {question.options?.map((_, i) => (
+                                    <option key={i} value={i}>
+                                      {String.fromCharCode(65 + i)}
                                     </option>
                                   ))}
                                 </select>
@@ -497,54 +463,69 @@ export default function QuestionsModal({
                             )}
                           </strong>
 
-                          <ul className="list-unstyled">
-                            {question.options?.map((option, optIdx) => (
-                              <li
-                                key={optIdx}
-                                className={`mb-2 p-2 rounded ${
-                                  !isEditing &&
-                                  optIdx === question.correct_answer
-                                    ? "bg-success bg-opacity-10 border-start border-success border-3"
-                                    : "border-start border-secondary border-3"
-                                }`}
-                              >
-                                <div className="d-flex align-items-center">
-                                  <span className="me-2">
-                                    {String.fromCharCode(65 + optIdx)}.
-                                  </span>
-                                  {isEditing ? (
-                                    <input
-                                      type="text"
-                                      className="form-control form-control-sm"
-                                      value={option}
-                                      onChange={(e) =>
-                                        handleQuestionChange(
-                                          questionIndex,
-                                          `option_${optIdx}`,
-                                          e.target.value,
-                                        )
-                                      }
-                                      placeholder={`Option ${String.fromCharCode(65 + optIdx)}`}
-                                    />
-                                  ) : (
-                                    <span>
-                                      {option}
-                                      {question.type === "percentage" && "%"}
-                                      {optIdx === question.correct_answer && (
-                                        <span className="badge bg-success ms-2">
-                                          Correct
-                                        </span>
-                                      )}
+                          <ul className="list-unstyled mb-0">
+                            {question.options?.map((option, optionIndex) => {
+                              const isCorrect =
+                                optionIndex === question.correct_answer;
+                              return (
+                                <li
+                                  key={optionIndex}
+                                  className="mb-2 p-2 rounded"
+                                  style={{
+                                    background:
+                                      !isEditing && isCorrect
+                                        ? "#d4edda"
+                                        : "#f8f9fa",
+                                    borderLeft: `3px solid ${!isEditing && isCorrect ? "#28a745" : "#adb5bd"}`,
+                                  }}
+                                >
+                                  <div className="d-flex align-items-center gap-2">
+                                    <span
+                                      className="fw-semibold"
+                                      style={{ minWidth: 20 }}
+                                    >
+                                      {String.fromCharCode(65 + optionIndex)}.
                                     </span>
-                                  )}
-                                </div>
-                              </li>
-                            ))}
+                                    {isEditing ? (
+                                      <input
+                                        type="text"
+                                        className="form-control form-control-sm"
+                                        value={option}
+                                        placeholder={`Option ${String.fromCharCode(65 + optionIndex)}`}
+                                        onChange={(e) =>
+                                          handleQuestionChange(
+                                            questionIndex,
+                                            `option_${optionIndex}`,
+                                            e.target.value,
+                                          )
+                                        }
+                                      />
+                                    ) : (
+                                      <span>
+                                        {option}
+                                        {question.type === "percentage" && "%"}
+                                        {isCorrect && (
+                                          <span
+                                            className="badge ms-2"
+                                            style={{
+                                              background: "#28a745",
+                                              fontSize: "0.72rem",
+                                            }}
+                                          >
+                                            Correct
+                                          </span>
+                                        )}
+                                      </span>
+                                    )}
+                                  </div>
+                                </li>
+                              );
+                            })}
                           </ul>
 
                           {question.type === "percentage" &&
                             question.tolerance && (
-                              <small className="text-muted">
+                              <small className="text-muted mt-1 d-block">
                                 Tolerance: ±{question.tolerance}%
                               </small>
                             )}
@@ -559,15 +540,13 @@ export default function QuestionsModal({
 
           {/* Footer */}
           <div className="modal-footer">
-            <div className="me-auto">
-              <small className="text-muted">
-                Page {currentPage} of {totalPages || 1}
-              </small>
-            </div>
+            <small className="text-muted me-auto">
+              Page {currentPage} of {totalPages || 1}
+            </small>
             <button
               type="button"
               className="btn btn-sm btn-outline-primary"
-              onClick={() => setCurrentPage((p) => p - 1)}
+              onClick={() => currentPage > 1 && setCurrentPage((p) => p - 1)}
               disabled={currentPage === 1 || isLoading}
             >
               <i className="fas fa-chevron-left me-1" />
@@ -576,11 +555,12 @@ export default function QuestionsModal({
             <button
               type="button"
               className="btn btn-sm btn-outline-primary"
-              onClick={() => setCurrentPage((p) => p + 1)}
+              onClick={() =>
+                currentPage < totalPages && setCurrentPage((p) => p + 1)
+              }
               disabled={currentPage === totalPages || isLoading}
             >
-              Next
-              <i className="fas fa-chevron-right ms-1" />
+              Next <i className="fas fa-chevron-right ms-1" />
             </button>
             <button
               type="button"
