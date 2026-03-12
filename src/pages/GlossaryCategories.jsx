@@ -176,40 +176,9 @@ export default function GlossaryCategories() {
           </div>
           
           <div className="row">
-            <div className="col-sm-12">
+            <div className="col-sm-14">
               <div className="card">
                 <div className="card-body">
-                  {/* Search Form */}
-                  <form onSubmit={handleSearch} className="mb-3">
-                    <div className="row">
-                      <div className="col-md-8">
-                        <input 
-                          type="text" 
-                          className="form-control" 
-                          placeholder="Search categories..."
-                          value={searchTerm}
-                          onChange={handleSearchChange}
-                        />
-                      </div>
-                      <div className="col-md-4">
-                        <button type="submit" className="btn btn-primary">
-                          <i className="fas fa-search"></i> Search
-                        </button>
-                        {searchTerm && (
-                          <button 
-                            type="button" 
-                            className="btn btn-secondary ms-2"
-                            onClick={() => {
-                              setSearchTerm('');
-                              fetchCategories(1, '');
-                            }}
-                          >
-                            <i className="fas fa-times"></i> Clear
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </form>
 
                   {isLoading ? (
                     <GlobalLoader visible={true} size="medium" />
