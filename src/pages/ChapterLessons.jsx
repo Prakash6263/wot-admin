@@ -158,32 +158,8 @@ export default function ChapterLessons() {
   };
 
   const handleViewContent = async (lesson) => {
-    setSelectedLesson(lesson);
-    setShowContentModal(true);
-    setContentLoading(true);
-    
-    try {
-      const result = await getLessonAdmin(lesson.id, token);
-      if (result.success) {
-        setSelectedLesson(result.data);
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: result.message || 'Failed to load lesson content',
-        });
-        setShowContentModal(false);
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An error occurred while loading lesson content',
-      });
-      setShowContentModal(false);
-    } finally {
-      setContentLoading(false);
-    }
+    // Navigate to full lesson content page
+    navigate(`/lesson/${lesson.id}/content`);
   };
 
   const renderContentPreview = (content) => {
