@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { getLessonById, updateLessonAdmin } from '../api/lessons';
+import { getLessonAdmin, updateLessonAdmin } from '../api/lessons';
 import { useAuth } from '../context/AuthContext';
 import GlobalLoader from '../components/GlobalLoader';
 import Header from '../components/Header';
@@ -18,6 +18,7 @@ export default function EditLessonAdmin() {
   const [isSaving, setIsSaving] = useState(false);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [mediaPreview, setMediaPreview] = useState(null);
+  const [lessonData, setLessonData] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -27,6 +28,7 @@ export default function EditLessonAdmin() {
     reward_points: 0,
     is_preview: false,
     is_locked: false,
+    quiz_available: false,
     order_number: 0,
     thumbnail: null,
     content_title: '',
@@ -44,10 +46,15 @@ export default function EditLessonAdmin() {
 
   const fetchLessonData = async () => {
     setIsLoading(true);
-    const result = await getLessonById(lessonId, token);
+    const result = await getLessonAdmin(lessonId, token);
 
     if (result.success) {
       const lesson = result.data;
+      setLessonData(lesson);
+      
+      // Map content data from nested content object
+      const contentData = lesson.content || {};
+      
       setFormData({
         title: lesson.title || '',
         description: lesson.description || '',
@@ -57,22 +64,23 @@ export default function EditLessonAdmin() {
         reward_points: lesson.reward_points || 0,
         is_preview: lesson.is_preview || false,
         is_locked: lesson.is_locked || false,
+        quiz_available: lesson.quiz_available || false,
         order_number: lesson.order_number || 0,
         thumbnail: null,
-        content_title: lesson.content_title || '',
-        content_type: lesson.content_type || 'text',
-        text_content: lesson.text_content || '',
-        content_duration: lesson.content_duration || '',
-        file_size: lesson.file_size || '',
-        is_downloadable: lesson.is_downloadable || false,
+        content_title: contentData.title || '',
+        content_type: contentData.content_type || 'text',
+        text_content: contentData.text_content || '',
+        content_duration: contentData.duration || '',
+        file_size: contentData.file_size || '',
+        is_downloadable: contentData.is_downloadable || false,
         media: null,
       });
       
-      if (lesson.thumbnail_url) {
-        setThumbnailPreview(lesson.thumbnail_url);
+      if (lesson.thumbnail) {
+        setThumbnailPreview(lesson.thumbnail);
       }
-      if (lesson.media_url || lesson.file_url) {
-        setMediaPreview(lesson.media_url || lesson.file_url);
+      if (contentData.file_url || contentData.video_url) {
+        setMediaPreview(contentData.file_url || contentData.video_url);
       }
     } else {
       Swal.fire({
@@ -90,7 +98,7 @@ export default function EditLessonAdmin() {
     let finalValue = value;
 
     // Handle boolean fields from select dropdowns
-    if (['is_preview', 'is_locked', 'is_downloadable'].includes(name)) {
+    if (['is_preview', 'is_locked', 'is_downloadable', 'quiz_available'].includes(name)) {
       finalValue = value === 'true' || value === true;
     }
 
@@ -133,7 +141,11 @@ export default function EditLessonAdmin() {
   };
 
   const handleCancel = () => {
-    navigate('/lessons');
+    if (lessonData && lessonData.chapter_id) {
+      navigate(`/course/${lessonData.course_id}/chapter/${lessonData.chapter_id}/lessons`);
+    } else {
+      navigate('/lessons');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -158,6 +170,15 @@ export default function EditLessonAdmin() {
       return;
     }
 
+    if (!formData.content_type) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'Please select a content type',
+      });
+      return;
+    }
+
     setIsSaving(true);
 
     const result = await updateLessonAdmin(lessonId, formData, token);
@@ -171,7 +192,11 @@ export default function EditLessonAdmin() {
         timerProgressBar: true,
         showConfirmButton: false,
       }).then(() => {
-        navigate('/lessons');
+        if (lessonData && lessonData.chapter_id) {
+          navigate(`/course/${lessonData.course_id}/chapter/${lessonData.chapter_id}/lessons`);
+        } else {
+          navigate('/lessons');
+        }
       });
     } else {
       Swal.fire({
@@ -216,7 +241,7 @@ export default function EditLessonAdmin() {
                 <ul className="filter-list">
                   <li>
                     <button className="btn btn-primary" onClick={handleCancel}>
-                      <i className="fa fa-arrow-left me-2"></i>Back to Lessons
+                      <i className="fa fa-arrow-left me-2"></i>Back
                     </button>
                   </li>
                 </ul>
@@ -308,33 +333,49 @@ export default function EditLessonAdmin() {
                     </div>
 
                     {/* Lesson Settings */}
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                       <label className="form-label">Is Preview</label>
                       <select
-                        className="form-select"
+                         className="form-control"
                         name="is_preview"
                         value={String(formData.is_preview)}
                         onChange={handleInputChange}
+                         style={{ appearance: "auto" }}
                       >
                         <option value="false">No</option>
                         <option value="true">Yes</option>
                       </select>
                     </div>
 
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                       <label className="form-label">Is Locked</label>
                       <select
-                        className="form-select"
+                        className="form-control"
                         name="is_locked"
                         value={String(formData.is_locked)}
                         onChange={handleInputChange}
+                        style={{ appearance: "auto" }}
                       >
                         <option value="false">No</option>
                         <option value="true">Yes</option>
                       </select>
                     </div>
 
-                    <div className="col-md-4">
+                    <div className="col-md-3">
+                      <label className="form-label">Quiz Available</label>
+                      <select
+                        className="form-control"
+                        name="quiz_available"
+                        value={String(formData.quiz_available)}
+                        onChange={handleInputChange}
+                        style={{ appearance: "auto" }}
+                      >
+                        <option value="false">No</option>
+                        <option value="true">Yes</option>
+                      </select>
+                    </div>
+
+                    <div className="col-md-3">
                       <label className="form-label">Order Number</label>
                       <input
                         type="number"
@@ -347,7 +388,7 @@ export default function EditLessonAdmin() {
                       />
                     </div>
 
-                    {/* Thumbnail */}
+                    {/* Thumbnail - Show for all content types */}
                     <div className="col-md-12">
                       <label className="form-label">Thumbnail</label>
                       <input
@@ -381,32 +422,36 @@ export default function EditLessonAdmin() {
                     </div>
 
                     <div className="col-md-6">
-                      <label className="form-label">Content Type</label>
+                      <label className="form-label">Content Type <span className="text-danger">*</span></label>
                       <select
-                        className="form-select"
+                        className="form-control"
                         name="content_type"
                         value={formData.content_type}
                         onChange={handleInputChange}
+                        required
+                        style={{ appearance: "auto" }}
                       >
-                        {CONTENT_TYPES.map(type => (
-                          <option key={type} value={type}>
-                            {type.charAt(0).toUpperCase() + type.slice(1)}
-                          </option>
-                        ))}
+                        <option value="text">Text</option>
+                        <option value="video">Video</option>
+                        <option value="audio">Audio</option>
+                        <option value="pdf">PDF</option>
+                        <option value="doc">Document</option>
                       </select>
                     </div>
 
-                    <div className="col-md-12">
-                      <label className="form-label">Text Content</label>
-                      <textarea
-                        className="form-control"
-                        rows="4"
-                        placeholder="Enter text content"
-                        name="text_content"
-                        value={formData.text_content}
-                        onChange={handleInputChange}
-                      ></textarea>
-                    </div>
+                    {formData.content_type === 'text' && (
+                      <div className="col-md-12">
+                        <label className="form-label">Text Content</label>
+                        <textarea
+                          className="form-control"
+                          rows="4"
+                          placeholder="Enter text content"
+                          name="text_content"
+                          value={formData.text_content}
+                          onChange={handleInputChange}
+                        ></textarea>
+                      </div>
+                    )}
 
                     <div className="col-md-4">
                       <label className="form-label">Content Duration</label>
@@ -414,8 +459,8 @@ export default function EditLessonAdmin() {
                         type="text"
                         className="form-control"
                         placeholder="e.g., 25 min"
-                        name="content_duration"
-                        value={formData.content_duration}
+                        name="duration"
+                        value={formData.duration}
                         onChange={handleInputChange}
                       />
                     </div>
@@ -445,35 +490,40 @@ export default function EditLessonAdmin() {
                       </select>
                     </div>
 
-                    {/* Media File */}
-                    <div className="col-md-12">
-                      <label className="form-label">Media File</label>
-                      <input
-                        type="file"
-                        className="form-control"
-                        onChange={handleMediaChange}
-                        accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
-                      />
-                      {mediaPreview && (
-                        <div className="mt-3">
-                          {formData.content_type === 'video' ? (
-                            <video width="200" height="150" controls style={{ borderRadius: '4px' }}>
-                              <source src={mediaPreview} type="video/mp4" />
-                            </video>
-                          ) : formData.content_type === 'audio' ? (
-                            <audio controls style={{ width: '200px' }}>
-                              <source src={mediaPreview} type="audio/webm" />
-                            </audio>
-                          ) : (
-                            <img
-                              src={mediaPreview}
-                              alt="Media Preview"
-                              style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '4px' }}
-                            />
-                          )}
-                        </div>
-                      )}
-                    </div>
+                    {/* Media File - Show for video, audio, pdf, doc */}
+                    {(formData.content_type === 'video' || formData.content_type === 'audio' || formData.content_type === 'pdf' || formData.content_type === 'doc') && (
+                      <div className="col-md-12">
+                        <label className="form-label">Media File</label>
+                        <input
+                          type="file"
+                          className="form-control"
+                          onChange={handleMediaChange}
+                          accept={formData.content_type === 'video' ? 'video/*' : 
+                                 formData.content_type === 'audio' ? 'audio/*' : 
+                                 formData.content_type === 'pdf' ? '.pdf' : 
+                                 '.doc,.docx'}
+                        />
+                        {mediaPreview && (
+                          <div className="mt-3">
+                            {formData.content_type === 'video' ? (
+                              <video width="200" height="150" controls style={{ borderRadius: '4px' }}>
+                                <source src={mediaPreview} type="video/mp4" />
+                              </video>
+                            ) : formData.content_type === 'audio' ? (
+                              <audio controls style={{ width: '200px' }}>
+                                <source src={mediaPreview} type="audio/webm" />
+                              </audio>
+                            ) : (
+                              <img
+                                src={mediaPreview}
+                                alt="Media Preview"
+                                style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '4px' }}
+                              />
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {/* Form Actions */}
                     <div className="col-md-12 text-end mt-3">

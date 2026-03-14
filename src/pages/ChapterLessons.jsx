@@ -381,9 +381,7 @@ export default function ChapterLessons() {
                                   <button
                                     className="btn btn-sm btn-outline-warning"
                                     onClick={() => {
-                                      const editUrl = categoryId
-                                        ? `/course/${courseId}/category/${categoryId}/chapter/${chapterId}/lesson/${lesson.id}/edit`
-                                        : `/course/${courseId}/chapter/${chapterId}/lesson/${lesson.id}/edit`;
+                                      const editUrl = `/courses/admin/lesson/${lesson.id}`;
                                       navigate(editUrl);
                                     }}
                                     title="Edit Lesson"

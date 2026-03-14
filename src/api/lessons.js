@@ -217,7 +217,7 @@ export const addLesson = async (courseId, lessonData, token) => {
     formData.append('content_type', lessonData.content_type);
     formData.append('duration', lessonData.duration || '');
     formData.append('order', lessonData.order);
-    formaData.append('text_content', lessonData.text_content);
+    formData.append('text_content', lessonData.text_content);
     if (lessonData.media instanceof File) {
       formData.append('media', lessonData.media);
     }
