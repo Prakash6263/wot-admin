@@ -236,6 +236,16 @@ export default function ChapterLessons() {
               </div>
               <div className="list-btn">
                 <ul className="filter-list">
+                   <li>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => {
+                        navigate(-1);
+                      }}
+                    >
+                      <i className="fas fa-arrow-left me-2"></i>Back to Chapters
+                    </button>
+                  </li>
                   <li>
                     <button
                       className="btn btn-primary"
@@ -247,19 +257,6 @@ export default function ChapterLessons() {
                       }}
                     >
                       <i className="fa fa-plus me-2"></i>Add Lesson
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      className="btn btn-outline-secondary"
-                      onClick={() => {
-                        const chaptersUrl = categoryId
-                          ? `/course/${courseId}/category/${categoryId}/chapters`
-                          : `/course/${courseId}/chapters`;
-                        navigate(chaptersUrl);
-                      }}
-                    >
-                      <i className="fas fa-arrow-left me-2"></i>Back to Chapters
                     </button>
                   </li>
                   <li>
