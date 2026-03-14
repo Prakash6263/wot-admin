@@ -228,27 +228,6 @@ export default function Glossaries() {
               <div className="list-btn">
                 <ul className="filter-list">
                   <li>
-                    <div className="input-group" style={{ width: '250px' }}>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search glossaries..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                      {searchTerm && (
-                        <button
-                          className="btn btn-outline-secondary"
-                          type="button"
-                          onClick={handleClearSearch}
-                          title="Clear search"
-                        >
-                          <i className="fas fa-times"></i>
-                        </button>
-                      )}
-                    </div>
-                  </li>
-                  <li>
                     <Link className="btn btn-primary" to="/add-glossary-category"><i className="fa fa-plus-circle me-2"></i>Add Glossary Category</Link>
                   </li>
                   <li>
