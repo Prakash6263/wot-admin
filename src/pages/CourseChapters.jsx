@@ -106,7 +106,7 @@ export default function CourseChapters() {
                 <ul className="filter-list">
                   <li>
                     <button
-                      className="btn btn-outline-secondary"
+                      className="btn btn-primary"
                       onClick={() => navigate('/courses')}
                     >
                       <i className="fa fa-arrow-left me-2"></i>Back to Courses

@@ -286,26 +286,10 @@ export default function LessonContent() {
                         <i className="fa fa-plus me-2"></i>Add Content
                       </button>
                     )}
-                    {content && (
-                      <>
-                        {/* <button 
-                          className="btn btn-warning me-2"
-                          onClick={handleUpdateLesson}
-                        >
-                          <i className="fa fa-edit me-2"></i>Update
-                        </button> */}
-                        {/* <button 
-                          className="btn btn-danger"
-                          onClick={handleDeleteContent}
-                        >
-                          <i className="fa fa-trash me-2"></i>Delete
-                        </button> */}
-                      </>
-                    )}
                   </li>
                   <li>
                     <button 
-                      className="btn btn-secondary"
+                      className="btn btn-primary"
                       onClick={() => navigate(-1)}
                     >
                       <i className="fa fa-arrow-left me-2"></i>Back
