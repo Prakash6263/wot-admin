@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { getAllGlossaries, deleteGlossary, updateGlossary, getAllGlossaryCategories } from '../api/glossary';
+import { getAllGlossaries, deleteGlossary, updateGlossary, getAllGlossaryCategories, searchGlossaries } from '../api/glossary';
 import { useAuth } from '../context/AuthContext';
 import GlobalLoader from '../components/GlobalLoader';
 import Header from '../components/Header';
@@ -13,6 +13,7 @@ export default function Glossaries() {
   const [glossaries, setGlossaries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingGlossary, setEditingGlossary] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -35,9 +36,22 @@ export default function Glossaries() {
     fetchCategories();
   }, []);
 
+  // Debounce search - 500ms after user stops typing
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (searchTerm.trim()) {
+        handleSearch(1);
+      } else {
+        setIsSearching(false);
+        fetchGlossaries(1);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
+
   const fetchCategories = async () => {
     if (!token) return;
-    
     setCategoriesLoading(true);
     try {
       const result = await getAllGlossaryCategories(token, 1, 100);
@@ -56,7 +70,7 @@ export default function Glossaries() {
   const fetchGlossaries = async (pageNumber = 1) => {
     setIsLoading(true);
     const result = await getAllGlossaries(token, pageNumber, 10);
-    
+
     if (result.success) {
       setGlossaries(result.data || []);
       setPagination(result.pagination || { page: pageNumber, limit: 10, total: 0, count: 0 });
@@ -71,8 +85,33 @@ export default function Glossaries() {
     setIsLoading(false);
   };
 
+  const handleSearch = async (pageNumber = 1) => {
+    setIsLoading(true);
+    setIsSearching(true);
+
+    const result = await searchGlossaries(token, searchTerm.trim(), pageNumber, 10);
+
+    if (result.success) {
+      setGlossaries(result.data || []);
+      setPagination(result.pagination || { page: pageNumber, limit: 10, total: 0, count: 0 });
+    } else {
+      setGlossaries([]);
+      setPagination({ page: 1, limit: 10, total: 0, count: 0 });
+    }
+    setIsLoading(false);
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setIsSearching(false);
+  };
+
   const handlePageChange = (newPage) => {
-    fetchGlossaries(newPage);
+    if (searchTerm.trim()) {
+      handleSearch(newPage);
+    } else {
+      fetchGlossaries(newPage);
+    }
   };
 
   const handleEditClick = (glossary) => {
@@ -96,7 +135,7 @@ export default function Glossaries() {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!editFormData.term || !editFormData.short_form || !editFormData.category || !editFormData.description) {
       Swal.fire({
         icon: 'warning',
@@ -118,7 +157,11 @@ export default function Glossaries() {
         showConfirmButton: false,
       }).then(() => {
         setShowEditModal(false);
-        fetchGlossaries(pagination.page);
+        if (searchTerm.trim()) {
+          handleSearch(pagination.page);
+        } else {
+          fetchGlossaries(pagination.page);
+        }
       });
     } else {
       Swal.fire({
@@ -152,7 +195,11 @@ export default function Glossaries() {
             timerProgressBar: true,
             showConfirmButton: false,
           }).then(() => {
-            fetchGlossaries();
+            if (searchTerm.trim()) {
+              handleSearch(pagination.page);
+            } else {
+              fetchGlossaries(pagination.page);
+            }
           });
         } else {
           Swal.fire({
@@ -181,25 +228,86 @@ export default function Glossaries() {
               <div className="list-btn">
                 <ul className="filter-list">
                   <li>
+                    <div className="input-group" style={{ width: '250px' }}>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search glossaries..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                      {searchTerm && (
+                        <button
+                          className="btn btn-outline-secondary"
+                          type="button"
+                          onClick={handleClearSearch}
+                          title="Clear search"
+                        >
+                          <i className="fas fa-times"></i>
+                        </button>
+                      )}
+                    </div>
+                  </li>
+                  <li>
                     <Link className="btn btn-primary" to="/add-glossary-category"><i className="fa fa-plus-circle me-2"></i>Add Glossary Category</Link>
                   </li>
-                   <li>
+                  <li>
                     <Link className="btn btn-primary" to="/add-glossary"><i className="fa fa-plus-circle me-2"></i>Add Glossary</Link>
                   </li>
                 </ul>
               </div>
             </div>
           </div>
-          
+
           <div className="row">
             <div className="col-sm-12">
               <div className="card">
                 <div className="card-body">
+
+                  {/* Search Bar */}
+                  <div className="row mb-3">
+                    <div className="col-md-5">
+                      <div className="input-group">
+                        <span className="input-group-text">
+                          <i className="fas fa-search"></i>
+                        </span>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Search glossary terms..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        {searchTerm && (
+                          <button
+                            className="btn btn-outline-secondary"
+                            onClick={handleClearSearch}
+                            title="Clear search"
+                          >
+                            <i className="fas fa-times"></i>
+                          </button>
+                        )}
+                      </div>
+                      {isSearching && searchTerm && (
+                        <small className="text-muted mt-1 d-block">
+                          Search results for: <strong>"{searchTerm}"</strong>
+                        </small>
+                      )}
+                    </div>
+                  </div>
+
                   {isLoading ? (
                     <GlobalLoader visible={true} size="medium" />
                   ) : glossaries.length === 0 ? (
                     <div className="text-center py-5">
-                      <p className="text-muted">No glossaries found</p>
+                      <p className="text-muted">
+                        {isSearching ? `No results found for "${searchTerm}"` : 'No glossaries found'}
+                      </p>
+                      {isSearching && (
+                        <button className="btn btn-sm btn-outline-secondary mt-2" onClick={handleClearSearch}>
+                          Clear Search
+                        </button>
+                      )}
                     </div>
                   ) : (
                     <div className="table-responsive">
@@ -207,7 +315,7 @@ export default function Glossaries() {
                         <thead>
                           <tr>
                             <th>Term</th>
-                            <th>Short Form</th>
+                            {/* <th>Short Form</th> */}
                             <th>Category</th>
                             <th>Description</th>
                             <th>Action</th>
@@ -219,9 +327,9 @@ export default function Glossaries() {
                               <td>
                                 <strong>{glossary.term}</strong>
                               </td>
-                              <td>
+                              {/* <td>
                                 <span className="badge bg-info">{glossary.short_form}</span>
-                              </td>
+                              </td> */}
                               <td>
                                 <span className="badge bg-secondary">{glossary.category}</span>
                               </td>
@@ -233,14 +341,14 @@ export default function Glossaries() {
                               </td>
                               <td>
                                 <div className="d-flex gap-2">
-                                  <button 
+                                  <button
                                     className="btn btn-sm btn-outline-warning"
                                     onClick={() => handleEditClick(glossary)}
                                     title="Edit Glossary"
                                   >
                                     <i className="fas fa-edit"></i>
                                   </button>
-                                  <button 
+                                  <button
                                     className="btn btn-sm btn-outline-danger"
                                     onClick={() => handleDeleteGlossary(glossary.id, glossary.term)}
                                     title="Delete Glossary"
@@ -260,6 +368,7 @@ export default function Glossaries() {
             </div>
           </div>
 
+          {/* Pagination */}
           {totalPages > 1 && glossaries.length > 0 && (
             <div className="row mt-3">
               <div className="col-sm-12">
@@ -279,19 +388,21 @@ export default function Glossaries() {
                             Previous
                           </button>
                         </li>
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).slice(
-                          Math.max(0, pagination.page - 2),
-                          Math.min(totalPages, pagination.page + 1)
-                        ).map((page) => (
-                          <li key={page} className={`page-item ${pagination.page === page ? 'active' : ''}`}>
-                            <button
-                              className="page-link"
-                              onClick={() => handlePageChange(page)}
-                            >
-                              {page}
-                            </button>
-                          </li>
-                        ))}
+                        {Array.from({ length: totalPages }, (_, i) => i + 1)
+                          .slice(
+                            Math.max(0, pagination.page - 2),
+                            Math.min(totalPages, pagination.page + 1)
+                          )
+                          .map((page) => (
+                            <li key={page} className={`page-item ${pagination.page === page ? 'active' : ''}`}>
+                              <button
+                                className="page-link"
+                                onClick={() => handlePageChange(page)}
+                              >
+                                {page}
+                              </button>
+                            </li>
+                          ))}
                         <li className={`page-item ${pagination.page === totalPages ? 'disabled' : ''}`}>
                           <button
                             className="page-link"
@@ -312,7 +423,12 @@ export default function Glossaries() {
       </div>
 
       {/* Edit Modal */}
-      <div className={`modal fade ${showEditModal ? 'show' : ''}`} style={{ display: showEditModal ? 'block' : 'none' }} tabIndex="-1" role="dialog">
+      <div
+        className={`modal fade ${showEditModal ? 'show' : ''}`}
+        style={{ display: showEditModal ? 'block' : 'none' }}
+        tabIndex="-1"
+        role="dialog"
+      >
         <div className="modal-dialog modal-dialog-centered" role="document">
           <div className="modal-content">
             <div className="modal-header">
@@ -323,30 +439,30 @@ export default function Glossaries() {
               <div className="modal-body">
                 <div className="mb-3">
                   <label className="form-label">Term <span className="text-danger">*</span></label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
+                  <input
+                    type="text"
+                    className="form-control"
                     name="term"
                     value={editFormData.term}
                     onChange={handleEditInputChange}
                     required
                   />
                 </div>
-                <div className="mb-3">
+                {/* <div className="mb-3">
                   <label className="form-label">Short Form <span className="text-danger">*</span></label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
+                  <input
+                    type="text"
+                    className="form-control"
                     name="short_form"
                     value={editFormData.short_form}
                     onChange={handleEditInputChange}
                     required
                   />
-                </div>
+                </div> */}
                 <div className="mb-3">
                   <label className="form-label">Category <span className="text-danger">*</span></label>
-                  <select 
-                    className="form-select" 
+                  <select
+                    className="form-select"
                     name="category"
                     value={editFormData.category}
                     onChange={handleEditInputChange}
@@ -359,7 +475,6 @@ export default function Glossaries() {
                         {category.name}
                       </option>
                     ))}
-                    {/* Fallback options if API fails */}
                     {!categoriesLoading && categories.length === 0 && (
                       <>
                         <option value="SMC">SMC</option>
@@ -376,8 +491,8 @@ export default function Glossaries() {
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Description <span className="text-danger">*</span></label>
-                  <textarea 
-                    className="form-control" 
+                  <textarea
+                    className="form-control"
                     rows="4"
                     name="description"
                     value={editFormData.description}
@@ -387,8 +502,12 @@ export default function Glossaries() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">Save Changes</button>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Save Changes
+                </button>
               </div>
             </form>
           </div>

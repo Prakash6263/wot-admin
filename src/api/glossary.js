@@ -108,6 +108,61 @@ export const getAllGlossaries = async (token, page = 1, limit = 10) => {
   }
 };
 
+// Search glossary terms
+export const searchGlossaries = async (token, query, page = 1, limit = 10) => {
+  try {
+    const url = `${API_BASE_URL}/admin/glossary/search?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: `HTTP Error: ${response.status}`,
+        data: [],
+        pagination: { page, limit, total: 0, count: 0 },
+      };
+    }
+
+    const data = await response.json();
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.data || [],
+        message: data.message || 'Search results fetched successfully',
+        pagination: {
+          page: data.page || page,
+          limit: data.limit || limit,
+          total: data.total || 0,
+          count: data.count || 0,
+        },
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'No results found',
+        data: [],
+        pagination: { page, limit, total: 0, count: 0 },
+      };
+    }
+  } catch (error) {
+    console.error('Search Glossary API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while searching',
+      data: [],
+      pagination: { page: 1, limit: 10, total: 0, count: 0 },
+    };
+  }
+};
+
 // Get single glossary term
 export const getGlossaryById = async (glossaryId, token) => {
   try {
@@ -250,11 +305,6 @@ export const importGlossaryFromJSON = async (file, token) => {
     
     const formData = new FormData();
     formData.append('file', file);
-    
-    console.log('FormData contents:');
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
 
     const response = await fetch(url, {
       method: 'POST',
