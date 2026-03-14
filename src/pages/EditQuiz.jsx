@@ -45,13 +45,15 @@ export default function EditQuiz() {
   const fetchQuizDetails = async () => {
     setIsLoading(true);
 
-    // Fetch all quizzes and find the specific one
-    const result = await getAllQuizzes(1, 100); // Get more items to find the quiz
+    const result = await getAllQuizzes(1, 100);
 
     if (result.success && result.data?.quizzes) {
       const quiz = result.data.quizzes.find(q => q.quiz_id === quizId);
 
       if (quiz) {
+        // top10_coupon object se coupon_id nikalo
+        const couponId = quiz.top10_coupon?.coupon_id || quiz.coupon_id || '';
+
         setFormData({
           title: quiz.title || '',
           description: quiz.description || '',
@@ -69,11 +71,10 @@ export default function EditQuiz() {
           is_featured: quiz.is_featured || false,
           is_sponsored: quiz.is_sponsored || false,
           featured_order: quiz.featured_order || 0,
-          image: null, // We'll handle image updates separately
-          coupon_id: quiz.coupon_id || '',
+          image: null,
+          coupon_id: couponId,
         });
 
-        // Set image preview if image exists
         if (quiz.image_path) {
           setImagePreview(quiz.image_path);
         }
@@ -103,16 +104,14 @@ export default function EditQuiz() {
     try {
       const result = await getAllCoupons();
 
-
       if (result.success && result.data) {
-        // Check if coupons are directly in data or nested
         const couponsData = result.data.coupons || result.data || [];
         setCoupons(couponsData);
       } else {
-        setCoupons([]); // Set empty array on failure
+        setCoupons([]);
       }
     } catch (error) {
-      setCoupons([]); // Set empty array on error
+      setCoupons([]);
     }
   };
 
@@ -151,7 +150,6 @@ export default function EditQuiz() {
   const handleUpdateQuiz = async (e) => {
     e.preventDefault();
 
-    // Validation
     if (!formData.title.trim()) {
       Swal.fire({
         icon: 'warning',
@@ -245,7 +243,9 @@ export default function EditQuiz() {
               <div className="list-btn">
                 <ul className="filter-list">
                   <li>
-                    <Link className="btn btn-primary" to="/quizes"><i className="fa fa-list me-2"></i>View All</Link>
+                    <Link className="btn btn-primary" to="/quizes">
+                      <i className="fa fa-list me-2"></i>View All
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -347,7 +347,7 @@ export default function EditQuiz() {
                         {coupons && coupons.length > 0 ? (
                           coupons.map(coupon => (
                             <option key={coupon.coupon_id || coupon.id} value={coupon.coupon_id || coupon.id}>
-                              {coupon.code} - {coupon.discount_type === 'PERCENTAGE' ? `${coupon.discount_value}%` : `${coupon.discount_value} coins`}
+                              {coupon.title}
                               {coupon.is_active ? '' : ' (Inactive)'}
                             </option>
                           ))
