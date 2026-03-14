@@ -234,7 +234,7 @@ export default function Glossaries() {
                               <td>
                                 <div className="d-flex gap-2">
                                   <button 
-                                    className="btn btn-sm btn-outline-primary"
+                                    className="btn btn-sm btn-outline-warning"
                                     onClick={() => handleEditClick(glossary)}
                                     title="Edit Glossary"
                                   >

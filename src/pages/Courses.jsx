@@ -25,7 +25,7 @@ export default function Courses() {
   const fetchCourses = async () => {
     setIsLoading(true);
     const result = await getAllCourses(token);
-    
+
     if (result.success) {
       setCourses(result.data || []);
     } else {
@@ -42,9 +42,9 @@ export default function Courses() {
   const handleViewCourse = async (courseId) => {
     setShowModal(true);
     setModalLoading(true);
-    
+
     const result = await getCourseById(courseId, token);
-    
+
     if (result.success) {
       setSelectedCourse(result.data);
     } else {
@@ -156,14 +156,14 @@ export default function Courses() {
                   <li>
                     <Link className="btn btn-primary" to="/admin-categories"><i className="fa fa-plus-circle me-2"></i>Add Category</Link>
                   </li>
-                   <li>
+                  <li>
                     <Link className="btn btn-primary" to="/add-course"><i className="fa fa-plus-circle me-2"></i>Add Course</Link>
                   </li>
                 </ul>
               </div>
             </div>
           </div>
-          
+
           <div className="row">
             <div className="col-sm-12">
               <div className="card">
@@ -193,8 +193,8 @@ export default function Courses() {
                             <tr key={course.id}>
                               <td>
                                 <div className="d-flex align-items-center">
-                                  <img 
-                                    src={course.thumbnail || course.image} 
+                                  <img
+                                    src={course.thumbnail || course.image}
                                     alt={course.title}
                                     style={{
                                       width: '40px',
@@ -219,7 +219,7 @@ export default function Courses() {
                               </td>
                               <td>{course.duration_in_minutes}</td>
                               <td>
-                                <button 
+                                <button
                                   className="btn btn-sm btn-outline-primary"
                                   onClick={() => navigate(`/courses/admin/course/${course.id}/chapters`)}
                                   title="View Chapters"
@@ -236,21 +236,21 @@ export default function Courses() {
                               </td>
                               <td>
                                 <div className="d-flex gap-2">
-                                  <button 
+                                  <button
                                     className="btn btn-sm btn-outline-primary"
                                     onClick={() => handleViewCourse(course.id)}
                                     title="View Course"
                                   >
                                     <i className="fas fa-eye"></i>
                                   </button>
-                                  <Link 
-                                    to={`/edit-course/${course.id}`}
+                                  <button
                                     className="btn btn-sm btn-outline-warning"
+                                    onClick={() => navigate(`/edit-course/${course.id}`)}
                                     title="Edit Course"
                                   >
                                     <i className="fas fa-edit"></i>
-                                  </Link>
-                                  <button 
+                                  </button>
+                                  <button
                                     className="btn btn-sm btn-outline-danger"
                                     onClick={() => handleDeleteCourse(course.id, course.title)}
                                     title="Delete Course"
@@ -273,7 +273,7 @@ export default function Courses() {
       </div>
       <Footer />
 
-      <CourseDetailModal 
+      <CourseDetailModal
         show={showModal}
         courseData={selectedCourse}
         isLoading={modalLoading}
