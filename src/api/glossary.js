@@ -10,6 +10,7 @@ export const addGlossary = async (glossaryData, token) => {
       short_form: glossaryData.short_form,
       category: glossaryData.category,
       description: glossaryData.description,
+      color: glossaryData.color,
     };
 
     const response = await fetch(url, {
@@ -209,6 +210,7 @@ export const updateGlossary = async (glossaryId, glossaryData, token) => {
       short_form: glossaryData.short_form,
       category: glossaryData.category,
       description: glossaryData.description,
+      color: glossaryData.color,
     };
 
     const response = await fetch(url, {
@@ -357,6 +359,7 @@ export const addGlossaryCategory = async (categoryData, token) => {
     const formData = new URLSearchParams();
     formData.append('name', categoryData.name);
     formData.append('description', categoryData.description || '');
+    formData.append('color', categoryData.color || '#000000');
 
     const response = await fetch(url, {
       method: 'POST',
@@ -499,6 +502,7 @@ export const updateGlossaryCategory = async (categoryId, categoryData, token) =>
     const formData = new URLSearchParams();
     formData.append('name', categoryData.name);
     formData.append('description', categoryData.description || '');
+    formData.append('color', categoryData.color || '#000000');
 
     const response = await fetch(url, {
       method: 'PUT',

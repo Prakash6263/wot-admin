@@ -20,6 +20,7 @@ export default function AddGlossary() {
     short_form: '',
     category: '',
     description: '',
+    color: '#941efd',
   });
 
   useEffect(() => {
@@ -154,6 +155,12 @@ export default function AddGlossary() {
         // Generate short form from term if missing
         item.short_form = term.split(' ').map(word => word[0]).join('').toUpperCase();
         console.log(`Generated short_form '${item.short_form}' for item ${i}`);
+      }
+      
+      // Add missing color if needed
+      if (!item.color) {
+        item.color = '#000000';
+        console.log(`Added default color '${item.color}' for item ${i}`);
       }
       
       if (!term || !category || !item.description) {
@@ -442,6 +449,30 @@ export default function AddGlossary() {
                       {categoriesLoading && (
                         <small className="text-muted">Loading categories from server...</small>
                       )}
+                    </div>
+
+                    <div className="col-md-6">
+                      <label className="form-label">Color</label>
+                      <div className="d-flex align-items-center">
+                        <input 
+                          type="color" 
+                          className="form-control form-control-color me-2" 
+                          style={{ width: '60px', height: '38px' }}
+                          name="color"
+                          value={formData.color}
+                          onChange={handleInputChange}
+                        />
+                        <input 
+                          type="text" 
+                          className="form-control" 
+                          placeholder="#941efd"
+                          name="color"
+                          value={formData.color}
+                          onChange={handleInputChange}
+                          style={{ maxWidth: '120px' }}
+                        />
+                      </div>
+                      <small className="text-muted">Choose a color for this glossary term</small>
                     </div>
 
                     <div className="col-md-12">
