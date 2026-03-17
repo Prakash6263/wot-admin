@@ -167,11 +167,15 @@ export default function GlossaryCategories() {
               <div className="list-btn">
                 <ul className="filter-list">
                    <li>
+                    <Link className="btn btn-primary" to="/glossaries"><i className="fa fa-arrow-left me-2"></i>Back</Link>
+                  </li>
+                  <li>
                     <Link className="btn btn-primary" to="/add-glossary"><i className="fa fa-plus-circle me-2"></i>Add Glossary</Link>
                   </li>
                   <li>
                     <Link className="btn btn-primary" to="/add-glossary-category"><i className="fa fa-plus-circle me-2"></i>Add Category</Link>
                   </li>
+                 
                 </ul>
               </div>
             </div>
