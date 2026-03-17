@@ -7,6 +7,8 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
 import DurationPicker from '../components/DurationPicker';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 export default function AddLesson() {
   const navigate = useNavigate();
@@ -113,7 +115,7 @@ export default function AddLesson() {
       return;
     }
 
-    if (formData.content_type === 'text' && !formData.text_content.trim()) {
+    if (formData.content_type === 'text' && !formData.text_content.trim() && formData.text_content.replace(/<[^>]*>/g, '').trim() === '') {
       Swal.fire({
         icon: 'warning',
         title: 'Validation Error',
@@ -285,15 +287,25 @@ export default function AddLesson() {
                         </div>
                         <div className="col-md-12">
                           <label className="form-label">Text Content <span className="text-danger">*</span></label>
-                          <textarea 
-                            className="form-control" 
-                            rows="6" 
-                            placeholder="Enter text content for the lesson"
-                            name="text_content"
-                            value={formData.text_content}
-                            onChange={handleInputChange}
-                            required
-                          ></textarea>
+                          <div className="editor-container">
+                            <ReactQuill
+                              theme="snow"
+                              value={formData.text_content}
+                              onChange={(value) => setFormData(prev => ({ ...prev, text_content: value }))}
+                              placeholder="Enter text content for the lesson..."
+                              modules={{
+                                toolbar: [
+                                  [{ 'header': [1, 2, 3, false] }],
+                                  ['bold', 'italic', 'underline', 'strike'],
+                                  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                  [{ 'color': [] }, { 'background': [] }],
+                                  ['link', 'image'],
+                                  ['clean']
+                                ]
+                              }}
+                              style={{ minHeight: '200px' }}
+                            />
+                          </div>
                         </div>
                       </>
                     )}
