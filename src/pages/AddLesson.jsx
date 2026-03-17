@@ -35,7 +35,7 @@ export default function AddLesson() {
     media: null,
   });
 
-  const contentTypeOptions = ['text', 'video', 'audio', 'doc', 'pdf'];
+  const contentTypeOptions = ['text', 'video', 'audio'];
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -418,7 +418,7 @@ export default function AddLesson() {
                       )}
                     </div>
 
-                    {['video', 'audio', 'doc', 'pdf'].includes(formData.content_type) && (
+                    {['video', 'audio'].includes(formData.content_type) && (
                       <div className="col-md-12">
                         <label className="form-label">
                           Media File <span className="text-danger"> *</span>
@@ -427,7 +427,7 @@ export default function AddLesson() {
                           type="file" 
                           className="form-control"
                           onChange={handleMediaChange}
-                          accept="video/*,audio/*,.pdf,.doc,.docx"
+                          accept="video/*,audio/*"
                           required
                         />
                         {formData.media && (
