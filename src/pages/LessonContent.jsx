@@ -289,6 +289,14 @@ export default function LessonContent() {
                   </li>
                   <li>
                     <button 
+                      className="btn btn-success"
+                      onClick={() => navigate(`/courses/admin/lesson/${lessonId}/page/add`)}
+                    >
+                      <i className="fa fa-file-alt me-2"></i>Add More Content
+                    </button>
+                  </li>
+                  <li>
+                    <button 
                       className="btn btn-primary"
                       onClick={() => navigate(-1)}
                     >
@@ -310,6 +318,94 @@ export default function LessonContent() {
                     <div className="mb-4">
                       {renderContent()}
                     </div>
+
+                    {/* Pages Section */}
+                    {lesson?.content?.pages && lesson.content.pages.length > 0 && (
+                      <div className="mt-4 pt-4 border-top">
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                          <h6 className="fw-bold mb-0">
+                            <i className="fa fa-file-alt me-2"></i>Lesson Pages ({lesson.content.pages.length})
+                          </h6>
+                          <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => navigate(`/courses/admin/lesson/${lessonId}/pages`)}
+                          >
+                            <i className="fa fa-list me-1"></i>View All Pages
+                          </button>
+                        </div>
+                        
+                        <div className="row">
+                          {lesson.content.pages.slice(0, 6).map((page) => (
+                            <div key={page.id} className="col-md-6 col-lg-4 mb-3">
+                              <div className="card h-100 border shadow-sm">
+                                <div className="card-body p-3">
+                                  <div className="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 className="card-title small mb-0">{page.title}</h6>
+                                    <span className="badge bg-primary">Page {page.page_number}</span>
+                                  </div>
+                                  
+                                  {page.html_content && (
+                                    <div className="mb-2">
+                                      <small className="text-muted d-block">Content Preview:</small>
+                                      <small className="text-muted">
+                                        {(() => {
+                                          const tempDiv = document.createElement('div');
+                                          tempDiv.innerHTML = page.html_content;
+                                          const text = tempDiv.textContent || tempDiv.innerText || '';
+                                          return text.length > 80 ? text.substring(0, 80) + '...' : text;
+                                        })()}
+                                      </small>
+                                    </div>
+                                  )}
+
+                                  {page.image && (
+                                    <div className="mb-2">
+                                      <small className="text-success">
+                                        <i className="fa fa-image me-1"></i>Has Image
+                                      </small>
+                                    </div>
+                                  )}
+
+                                  <button
+                                    className="btn btn-sm btn-outline-primary w-100"
+                                    onClick={() => {
+                                      Swal.fire({
+                                        title: page.title,
+                                        html: `
+                                          <div style="text-align: left;">
+                                            <p><strong>Page Number:</strong> ${page.page_number}</p>
+                                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin: 10px 0;">
+                                              ${page.html_content}
+                                            </div>
+                                            ${page.image ? `<img src="${page.image}" style="max-width: 100%; height: auto;" />` : ''}
+                                          </div>
+                                        `,
+                                        width: '800px',
+                                        showCloseButton: true,
+                                        showConfirmButton: false
+                                      });
+                                    }}
+                                  >
+                                    <i className="fa fa-eye me-1"></i>View Content
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {lesson.content.pages.length > 6 && (
+                          <div className="text-center mt-3">
+                            <button
+                              className="btn btn-outline-primary"
+                              onClick={() => navigate(`/courses/admin/lesson/${lessonId}/pages`)}
+                            >
+                              <i className="fa fa-arrow-right me-2"></i>View All {lesson.content.pages.length} Pages
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -414,6 +510,33 @@ export default function LessonContent() {
                         </span>
                       </p>
                     </div>
+
+                    {lesson?.content?.pages && lesson.content.pages.length > 0 && (
+                      <div className="mb-3">
+                        <label className="text-muted small">Pages</label>
+                        <p className="mb-0">
+                          <span className="badge bg-info">{lesson.content.pages.length} Pages</span>
+                          <button
+                            className="btn btn-sm btn-outline-info ms-2"
+                            onClick={() => navigate(`/courses/admin/lesson/${lessonId}/pages`)}
+                          >
+                            <i className="fa fa-eye me-1"></i>View
+                          </button>
+                        </p>
+                        <div className="mt-2">
+                          {lesson.content.pages.slice(0, 3).map((page, index) => (
+                            <small key={page.id} className="d-block text-muted">
+                              Page {page.page_number}: {page.title}
+                            </small>
+                          ))}
+                          {lesson.content.pages.length > 3 && (
+                            <small className="text-muted">
+                              ...and {lesson.content.pages.length - 3} more
+                            </small>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
                     {content.created_at && (
                       <div className="mb-3 pt-3 border-top">

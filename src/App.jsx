@@ -40,6 +40,8 @@ import AddCouponCategory from './pages/AddCouponCategory'
 import EditCouponCategory from './pages/EditCouponCategory'
 import GlossaryCategories from './pages/GlossaryCategories'
 import AddGlossaryCategory from './pages/AddGlossaryCategory'
+import AddContentPage from './pages/AddContentPage'
+import LessonPages from './pages/LessonPages'
 
 export default function App() {
   return (
@@ -93,6 +95,8 @@ export default function App() {
         <Route path="/edit-coupon-category/:categoryId" element={<ProtectedRoute><EditCouponCategory /></ProtectedRoute>} />
         <Route path="/glossary-categories" element={<ProtectedRoute><GlossaryCategories /></ProtectedRoute>} />
         <Route path="/add-glossary-category" element={<ProtectedRoute><AddGlossaryCategory /></ProtectedRoute>} />
+        <Route path="/courses/admin/lesson/:lessonId/page/add" element={<ProtectedRoute><AddContentPage /></ProtectedRoute>} />
+        <Route path="/courses/admin/lesson/:lessonId/pages" element={<ProtectedRoute><LessonPages /></ProtectedRoute>} />
       </Routes>
     </AuthProvider>
   )

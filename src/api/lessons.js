@@ -559,3 +559,106 @@ export const getLessonAdmin = async (lessonId, token) => {
     };
   }
 };
+
+// Create lesson page at /courses/admin/lesson/{lesson_id}/page
+export const createLessonPage = async (lessonId, pageData, token) => {
+  try {
+    console.log('[v0] Creating lesson page:', lessonId);
+    const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}/page`;
+    
+    const formData = new FormData();
+    formData.append('title', pageData.title);
+    formData.append('html_content', pageData.html_content);
+    
+    if (pageData.image instanceof File) {
+      formData.append('image', pageData.image);
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[v0] Create Page HTTP Error:', response.status, errorText);
+      return {
+        success: false,
+        message: `HTTP Error: ${response.status}`,
+      };
+    }
+
+    const data = await response.json();
+    console.log('[v0] Create lesson page response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.data,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to create lesson page',
+      };
+    }
+  } catch (error) {
+    console.error('Create Lesson Page API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while creating lesson page',
+    };
+  }
+};
+
+// Delete lesson page at /courses/admin/lesson/{lesson_id}/page/{page_id}
+export const deleteLessonPage = async (lessonId, pageId, token) => {
+  try {
+    console.log('[v0] Deleting lesson page:', pageId, 'for lesson:', lessonId);
+    const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}/page/${pageId}`;
+    
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[v0] Delete Page HTTP Error:', response.status, errorText);
+      return {
+        success: false,
+        message: `HTTP Error: ${response.status}`,
+      };
+    }
+
+    const data = await response.json();
+    console.log('[v0] Delete lesson page response:', data);
+
+    if (data.status === 1) {
+      return {
+        success: true,
+        data: data.data,
+        message: data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to delete lesson page',
+      };
+    }
+  } catch (error) {
+    console.error('Delete Lesson Page API Error:', error);
+    return {
+      success: false,
+      message: error.message || 'An error occurred while deleting lesson page',
+    };
+  }
+};
