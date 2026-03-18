@@ -226,13 +226,7 @@ export default function LessonContent() {
           </div>
         ) : null;
       case 'text':
-        return content.text_content ? (
-          <div
-            className="card-text text-dark"
-            style={{ wordWrap: 'break-word' }}
-            dangerouslySetInnerHTML={{ __html: unescapeHTML(content.text_content) }}
-          />
-        ) : null;
+        return null;
       case 'pdf':
       case 'doc':
         return content.file_url ? (
@@ -273,12 +267,14 @@ export default function LessonContent() {
                     )}
                   </li>
                   <li>
-                    <button
-                      className="btn btn-success"
-                      onClick={() => navigate(`/courses/admin/lesson/${lessonId}/page/add`)}
-                    >
-                      <i className="fa fa-file-alt me-2"></i>Add More Content
-                    </button>
+                    {content && content.content_type !== 'video' && (
+                      <button
+                        className="btn btn-success"
+                        onClick={() => navigate(`/courses/admin/lesson/${lessonId}/page/add`)}
+                      >
+                        <i className="fa fa-file-alt me-2"></i>Add More Content
+                      </button>
+                    )}
                   </li>
                   <li>
                     <button className="btn btn-primary" onClick={() => navigate(-1)}>
@@ -297,7 +293,7 @@ export default function LessonContent() {
               <div className="col-lg-8">
                 <div className="card border-0 shadow-soft">
                   <div className="card-body p-4">
-                    {/* <div className="mb-4">{renderContent()}</div> */}
+                    <div className="mb-4">{renderContent()}</div>
 
                     {lesson?.content?.pages && lesson.content.pages.length > 0 && (
                       <div className="mt-4 pt-4 border-top">
