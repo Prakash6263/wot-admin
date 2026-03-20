@@ -126,7 +126,6 @@ export default function Coupons() {
                         <th>Category</th>
                         <th>Expires At</th>
                         <th>Status</th>
-                        <th>Usage</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
@@ -154,11 +153,6 @@ export default function Coupons() {
                             </td>
                             <td>{formatDate(coupon.expires_at)}</td>
                             <td>{getStatusBadge(coupon.is_active)}</td>
-                            <td>
-                              <small>
-                                {coupon.total_used}/{coupon.total_assigned}
-                              </small>
-                            </td>
                             <td>
                               <div className="d-flex gap-2">
                                 <button
