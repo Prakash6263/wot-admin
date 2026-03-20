@@ -57,8 +57,8 @@ export default function EditQuiz() {
         setFormData({
           title: quiz.title || '',
           description: quiz.description || '',
-          start_datetime: quiz.start_datetime ? new Date(quiz.start_datetime).toISOString().slice(0, 16) : '',
-          end_datetime: quiz.end_datetime ? new Date(quiz.end_datetime).toISOString().slice(0, 16) : '',
+          start_datetime: quiz.start_datetime ,
+          end_datetime: quiz.end_datetime ,
           max_participants: quiz.max_participants || 0,
           entry_type: quiz.entry_type || 'FREE',
           entry_fee: quiz.entry_fee || 0,

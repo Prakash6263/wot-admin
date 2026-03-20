@@ -40,7 +40,6 @@ export default function AddQuiz() {
     max_attempts: 2,
     is_featured: false,
     is_sponsored: false,
-    featured_order: 0,
     top10_coupon_id: '',
     image: null,
   });
@@ -232,7 +231,6 @@ export default function AddQuiz() {
       max_attempts: 2,
       is_featured: false,
       is_sponsored: false,
-      featured_order: 0,
       image: null,
     });
     setImagePreview(null);
@@ -456,6 +454,7 @@ export default function AddQuiz() {
                         />
                       </div>
 
+                      {formData.entry_type === 'PAID' && (
                       <div className="col-md-6">
                         <label className="form-label">Entry Fee (for Paid) <span className="text-danger">*</span></label>
                         <input
@@ -470,6 +469,7 @@ export default function AddQuiz() {
                         />
                         <small className="text-muted">Maximum entry fee is 250 coins</small>
                       </div>
+                      )}
 
                       <div className="col-md-6">
                         <label className="form-label">Prize Pool</label>
@@ -499,7 +499,6 @@ export default function AddQuiz() {
                             </option>
                           ))}
                         </select>
-                        <small className="text-muted">Coupon to reward top 10 participants</small>
                       </div>
 
                       <div className="col-md-12">
@@ -627,19 +626,6 @@ export default function AddQuiz() {
                         </div>
                       </div>
 
-                      <div className="col-md-4">
-                        <label className="form-label">Featured Order</label>
-                        <input
-                          type="number"
-                          className="form-control"
-                          placeholder="0"
-                          name="featured_order"
-                          value={formData.featured_order}
-                          onChange={handleFormChange}
-                          min="0"
-                        />
-                        <small className="text-muted">Order for featured quizzes (0 = no order)</small>
-                      </div>
 
                       <div className="col-md-12 text-end mt-3">
                         <button
