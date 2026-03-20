@@ -142,7 +142,7 @@ export default function NewsList() {
                 </p>
               </div>
               <div className="col-auto">
-                <button 
+                <button
                   className="btn btn-danger"
                   onClick={handleDeleteAll}
                   disabled={loading || news.length === 0}
@@ -225,19 +225,19 @@ export default function NewsList() {
                             <div className="d-flex align-items-center gap-2">
                               <div
                                 className="form-check form-switch mb-0"
-                                title={`Click to ${article.status === 'published' ? 'unpublish' : 'publish'} news`}
+                                title={`Click to ${article.is_published ? 'unpublish' : 'publish'} news`}
                               >
                                 <input
                                   className="form-check-input"
                                   type="checkbox"
                                   role="switch"
-                                  checked={article.status === 'published'}
+                                  checked={article.is_published}
                                   onChange={() => handlePublish(article.id)}
                                   style={{ cursor: 'pointer', width: '40px', height: '20px' }}
                                 />
                               </div>
-                              <span className={`badge ${article.status === 'published' ? 'bg-success' : 'bg-warning'}`}>
-                                {article.status === 'published' ? 'Published' : 'Draft'}
+                              <span className={`badge ${article.is_published ? 'bg-success' : 'bg-warning'}`}>
+                                {article.is_published ? 'Published' : 'Draft'}
                               </span>
                             </div>
                           </td>
