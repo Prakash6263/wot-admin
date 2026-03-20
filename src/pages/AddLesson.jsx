@@ -192,7 +192,7 @@ export default function AddLesson() {
               <div className="card">
                 <div className="card-body">
                   <form className="row g-3" onSubmit={handleSubmit}>
-                    <div className="col-md-8">
+                    <div className="col-md-6">
                       <label className="form-label">Lesson Title <span className="text-danger">*</span></label>
                       <input 
                         type="text" 
@@ -205,7 +205,7 @@ export default function AddLesson() {
                       />
                     </div>
 
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                       <label className="form-label">Lesson Number</label>
                       <input 
                         type="number" 
@@ -349,43 +349,43 @@ export default function AddLesson() {
                       />
                     </div>
 
-                    <div className="col-md-3">
-                      <label className="form-check-label">
-                        <input 
-                          type="checkbox" 
-                          className="form-check-input"
-                          name="is_preview"
-                          checked={formData.is_preview}
-                          onChange={handleInputChange}
-                        />
-                        Is Preview
-                      </label>
+                    <div className="col-md-6">
+                      <label className="form-label">Is Preview</label>
+                      <select 
+                        className="form-control"
+                        name="is_preview"
+                        value={formData.is_preview}
+                        onChange={handleInputChange}
+                      >
+                        <option value={false}>No</option>
+                        <option value={true}>Yes</option>
+                      </select>
                     </div>
 
                     <div className="col-md-3">
-                      <label className="form-check-label">
-                        <input 
-                          type="checkbox" 
-                          className="form-check-input"
-                          name="is_locked"
-                          checked={formData.is_locked}
-                          onChange={handleInputChange}
-                        />
-                        Is Locked
-                      </label>
+                      <label className="form-label">Is Locked</label>
+                      <select 
+                        className="form-control"
+                        name="is_locked"
+                        value={formData.is_locked}
+                        onChange={handleInputChange}
+                      >
+                        <option value={false}>No</option>
+                        <option value={true}>Yes</option>
+                      </select>
                     </div>
 
                     <div className="col-md-3">
-                      <label className="form-check-label">
-                        <input 
-                          type="checkbox" 
-                          className="form-check-input"
-                          name="quiz_available"
-                          checked={formData.quiz_available}
-                          onChange={handleInputChange}
-                        />
-                        Quiz Available
-                      </label>
+                      <label className="form-label">Quiz Available</label>
+                      <select 
+                        className="form-control"
+                        name="quiz_available"
+                        value={formData.quiz_available}
+                        onChange={handleInputChange}
+                      >
+                        <option value={false}>No</option>
+                        <option value={true}>Yes</option>
+                      </select>
                     </div>
 
                     <div className="col-md-3">
