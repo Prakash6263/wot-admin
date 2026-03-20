@@ -182,8 +182,6 @@ export default function NewsList() {
                         <th>Category</th>
                         <th>Tags</th>
                         <th>Scheduled At</th>
-                        <th>Status</th>
-                        <th>Views</th>
                         <th>Publish</th>
                         <th>Feature</th>
                         <th>Actions</th>
@@ -222,14 +220,6 @@ export default function NewsList() {
                           </td>
                           <td>
                             <small>{formatDate(article.payload?.scheduled_at)}</small>
-                          </td>
-                          <td>
-                            <span className={`badge bg-${article.status === 'saved' ? 'success' : 'warning'}`}>
-                              {article.status}
-                            </span>
-                          </td>
-                          <td>
-                            <span className="badge bg-info">{article.views || 0}</span>
                           </td>
                           <td>
                             <div className="d-flex align-items-center gap-2">
