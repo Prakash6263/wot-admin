@@ -32,7 +32,6 @@ export default function EditQuiz() {
     max_attempts: 2,
     is_featured: false,
     is_sponsored: false,
-    featured_order: 0,
     image: null,
     coupon_id: '',
   });
@@ -70,7 +69,6 @@ export default function EditQuiz() {
           max_attempts: quiz.max_attempts || 2,
           is_featured: quiz.is_featured || false,
           is_sponsored: quiz.is_sponsored || false,
-          featured_order: quiz.featured_order || 0,
           image: null,
           coupon_id: couponId,
         });
@@ -360,18 +358,20 @@ export default function EditQuiz() {
                       )}
                     </div>
 
-                    <div className="col-md-6">
-                      <label className="form-label">Entry Fee (for Paid) <span className="text-danger">*</span></label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        placeholder="0"
-                        name="entry_fee"
-                        value={formData.entry_fee}
-                        onChange={handleFormChange}
-                        min="0"
-                      />
-                    </div>
+                    {formData.entry_type === 'PAID' && (
+                      <div className="col-md-6">
+                        <label className="form-label">Entry Fee (for Paid) <span className="text-danger">*</span></label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="0"
+                          name="entry_fee"
+                          value={formData.entry_fee}
+                          onChange={handleFormChange}
+                          min="0"
+                        />
+                      </div>
+                    )}
 
                     <div className="col-md-6">
                       <label className="form-label">Prize Pool</label>
@@ -510,20 +510,6 @@ export default function EditQuiz() {
                           Sponsored Quiz
                         </label>
                       </div>
-                    </div>
-
-                    <div className="col-md-4">
-                      <label className="form-label">Featured Order</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        placeholder="0"
-                        name="featured_order"
-                        value={formData.featured_order}
-                        onChange={handleFormChange}
-                        min="0"
-                      />
-                      <small className="text-muted">Order for featured quizzes (0 = no order)</small>
                     </div>
 
                     <div className="col-md-12 text-end mt-4">
