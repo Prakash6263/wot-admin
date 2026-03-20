@@ -340,9 +340,9 @@ export default function ChapterLessons() {
                                 </button>
                               </td>
                               <td>
-                                <span className={`badge ${getStatusBadge(lesson.status)}`}>
-                                  {lesson.creat_at ? new Date(lesson.creat_at).toLocaleDateString() : '-'}
-                                </span>
+                               
+                                  {lesson.created_at ? new Date(lesson.created_at).toLocaleDateString() : '-'}
+                              
                               </td>
                               <td>
                                 <span className={`badge ${getStatusBadge(lesson.status)}`}>
