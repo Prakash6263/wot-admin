@@ -591,10 +591,6 @@ export default function AddQuiz() {
                         />
                       </div>
 
-                      <div className="col-md-12">
-                        <h6 className="mb-3 mt-4">Featured & Sponsored Options</h6>
-                      </div>
-
                       <div className="col-md-6">
                         <label className="form-label">Featured Quiz</label>
                         <select
