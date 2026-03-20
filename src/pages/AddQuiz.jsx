@@ -131,6 +131,8 @@ export default function AddQuiz() {
       finalValue = parseInt(value) || 0;
     } else if (type === 'checkbox') {
       finalValue = checked;
+    } else if (name === 'is_featured' || name === 'is_sponsored') {
+      finalValue = value === 'true';
     }
 
     setFormData(prev => ({
@@ -380,7 +382,7 @@ export default function AddQuiz() {
                             <h6 className="mb-4">Step 2: Configure Quiz</h6>
                           </div>
 
-                      <div className="col-md-8">
+                      <div className="col-md-6">
                         <label className="form-label">Quiz Title <span className="text-danger">*</span></label>
                         <input
                           type="text"
@@ -393,7 +395,7 @@ export default function AddQuiz() {
                         />
                       </div>
 
-                      <div className="col-md-4">
+                      <div className="col-md-6">
                         <label className="form-label">Entry Type <span className="text-danger">*</span></label>
                         <select
                           className="form-control"
@@ -489,6 +491,7 @@ export default function AddQuiz() {
                           name="top10_coupon_id"
                           value={formData.top10_coupon_id}
                           onChange={handleFormChange}
+                           style={{ appearance: "auto" }}
                         >
                           <option value="">Select a coupon (optional)</option>
                           {coupons.map((coupon) => (
@@ -592,36 +595,32 @@ export default function AddQuiz() {
                         <h6 className="mb-3 mt-4">Featured & Sponsored Options</h6>
                       </div>
 
-                      <div className="col-md-4">
-                        <div className="form-check mt-4">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            name="is_featured"
-                            id="is_featured"
-                            checked={formData.is_featured}
-                            onChange={handleFormChange}
-                          />
-                          <label className="form-check-label" htmlFor="is_featured">
-                            Featured Quiz
-                          </label>
-                        </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Featured Quiz</label>
+                        <select
+                          className="form-control"
+                          name="is_featured"
+                          value={formData.is_featured}
+                          onChange={handleFormChange}
+                          style={{ appearance: "auto" }}
+                        >
+                          <option value="false">No</option>
+                          <option value="true">Yes</option>
+                        </select>
                       </div>
 
-                      <div className="col-md-4">
-                        <div className="form-check mt-4">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            name="is_sponsored"
-                            id="is_sponsored"
-                            checked={formData.is_sponsored}
-                            onChange={handleFormChange}
-                          />
-                          <label className="form-check-label" htmlFor="is_sponsored">
-                            Sponsored Quiz
-                          </label>
-                        </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Sponsored Quiz</label>
+                        <select
+                          className="form-control"
+                          name="is_sponsored"
+                          value={formData.is_sponsored}
+                          onChange={handleFormChange}
+                          style={{ appearance: "auto" }}
+                        >
+                          <option value="false">No</option>
+                          <option value="true">Yes</option>
+                        </select>
                       </div>
 
 
