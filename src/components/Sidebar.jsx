@@ -58,6 +58,13 @@ export default function Sidebar() {
             </li>
 
             <li>
+              <Link to="/plans" className={isActive("/plans")}>
+                <i className="fas fa-credit-card me-2"></i>
+                <span>Plans</span>
+              </Link>
+            </li>
+
+            <li>
               <Link to="/courses" className={isActive("/courses")}>
                 <i className="fas fa-book me-2"></i>
                 <span>Courses</span>
@@ -107,7 +114,7 @@ export default function Sidebar() {
             </li> */}
 
             <li className="border-top mt-3 pt-3">
-              <button 
+              <button
                 onClick={handleLogout}
                 className="btn btn-outline-danger w-100"
                 style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', padding: '0.5rem 0.75rem' }}

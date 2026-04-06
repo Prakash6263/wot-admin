@@ -45,6 +45,9 @@ import EditContentPage from './pages/EditContentPage'
 import NewsList from './pages/NewsList'
 import NewsShow from './pages/NewsShow'
 import EditNews from './pages/EditNews'
+import Plans from './pages/Plans'
+import AddPlan from './pages/AddPlan'
+import EditPlan from './pages/EditPlan'
 
 export default function App() {
   return (
@@ -103,6 +106,9 @@ export default function App() {
         <Route path="/news" element={<ProtectedRoute><NewsList /></ProtectedRoute>} />
         <Route path="/news/:newsId" element={<ProtectedRoute><NewsShow /></ProtectedRoute>} />
         <Route path="/news/:newsId/edit" element={<ProtectedRoute><EditNews /></ProtectedRoute>} />
+        <Route path="/plans" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
+        <Route path="/add-plan" element={<ProtectedRoute><AddPlan /></ProtectedRoute>} />
+        <Route path="/edit-plan/:planId" element={<ProtectedRoute><EditPlan /></ProtectedRoute>} />
       </Routes>
     </AuthProvider>
   )
