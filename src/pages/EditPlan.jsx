@@ -11,10 +11,10 @@ export default function EditPlan() {
   const [formData, setFormData] = useState({
     name: '',
     plan_type: '',
-    price: 0,
-    quota_coach_ai: 0,
-    quota_chart_analyzer: 0,
-    quota_trade_analyzer: 0,
+    price: '',
+    quota_coach_ai: '',
+    quota_chart_analyzer: '',
+    quota_trade_analyzer: '',
     is_active: true,
     is_trial_eligible: false
   })
@@ -66,8 +66,7 @@ export default function EditPlan() {
     const { name, value, type } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'number' ? parseFloat(value) || 0 : 
-              name === 'is_active' || name === 'is_trial_eligible' ? value === 'true' : value
+     [name]: type === 'number' ? (value === '' ? '' : parseFloat(value)) : value
     }))
   }
 

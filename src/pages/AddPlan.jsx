@@ -11,10 +11,10 @@ export default function AddPlan() {
   const [formData, setFormData] = useState({
     name: '',
     plan_type: '',
-    price: 0,
-    quota_coach_ai: 0,
-    quota_chart_analyzer: 0,
-    quota_trade_analyzer: 0,
+    price: '',
+    quota_coach_ai: '',
+    quota_chart_analyzer: '',
+    quota_trade_analyzer: '',
     is_active: true,
     is_trial_eligible: false
   })
@@ -127,8 +127,6 @@ export default function AddPlan() {
                           name="price"
                           value={formData.price}
                           onChange={handleChange}
-                          step="0.01"
-                          min="0"
                           required
                         />
                       </div>
