@@ -21,7 +21,7 @@ export default function AddCourse() {
     duration_in_minutes: '',
     level: 'Beginner',
     language: 'English',
-    price: 0,
+    price: '',
     is_free: true,
     is_featured: false,
     status: 'draft',

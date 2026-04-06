@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import DurationPicker from '../components/DurationPicker';
 
 export default function EditChapter() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function EditChapter() {
   const { token } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [showDurationPicker, setShowDurationPicker] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -76,6 +78,21 @@ export default function EditChapter() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
+  };
+
+  const handleDurationClick = () => {
+    setShowDurationPicker(true);
+  };
+
+  const handleDurationChange = (duration) => {
+    setFormData(prev => ({
+      ...prev,
+      duration: duration
+    }));
+  };
+
+  const handleDurationClose = () => {
+    setShowDurationPicker(false);
   };
 
   const handleCancel = () => {
@@ -226,14 +243,26 @@ export default function EditChapter() {
 
                     <div className="col-md-4">
                       <label className="form-label">Duration</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="duration"
-                        value={formData.duration}
-                        onChange={handleInputChange}
-                        placeholder="e.g., 2 hours"
-                      />
+                      <div className="input-group">
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="duration"
+                          value={formData.duration}
+                          onChange={handleInputChange}
+                          placeholder="Click to select duration"
+                          readOnly
+                          style={{ cursor: 'pointer' }}
+                          onClick={handleDurationClick}
+                        />
+                        <button 
+                          className="btn btn-outline-secondary" 
+                          type="button"
+                          onClick={handleDurationClick}
+                        >
+                          <i className="fa fa-clock"></i>
+                        </button>
+                      </div>
                     </div>
 
                     <div className="col-md-4">
@@ -292,6 +321,14 @@ export default function EditChapter() {
         </div>
       </div>
       <Footer />
+      
+      {showDurationPicker && (
+        <DurationPicker
+          value={formData.duration}
+          onChange={handleDurationChange}
+          onClose={handleDurationClose}
+        />
+      )}
     </div>
   );
 }
