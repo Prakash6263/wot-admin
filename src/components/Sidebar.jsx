@@ -105,6 +105,12 @@ export default function Sidebar() {
                 <span>Coupons</span>
               </Link>
             </li>
+            <li>
+              <Link to="/faq" className={isActive("/faq")}>
+                <i className="fas fa-question-circle me-2"></i>
+                <span>FAQ</span>
+              </Link>
+            </li>
 
             <li>
               <Link to="/news" className={isActive("/news")}>
