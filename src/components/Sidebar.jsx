@@ -106,6 +106,12 @@ export default function Sidebar() {
               </Link>
             </li>
             <li>
+              <Link to="/packs" className={isActive("/packs")}>
+                <i className="fas fa-box me-2"></i>
+                <span>Recharge Packs</span>
+              </Link>
+            </li>
+            <li>
               <Link to="/faq" className={isActive("/faq")}>
                 <i className="fas fa-question-circle me-2"></i>
                 <span>FAQ</span>

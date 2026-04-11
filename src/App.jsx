@@ -50,6 +50,9 @@ import AddPlan from './pages/AddPlan'
 import EditPlan from './pages/EditPlan'
 import ToolFlags from './pages/ToolFlags'
 import FAQ from './pages/Faq'
+import Pack from './pages/Pack'
+
+
 
 export default function App() {
   return (
@@ -113,6 +116,7 @@ export default function App() {
         <Route path="/edit-plan/:planId" element={<ProtectedRoute><EditPlan /></ProtectedRoute>} />
         <Route path="/tool-flags" element={<ProtectedRoute><ToolFlags /></ProtectedRoute>} />
         <Route path="/faq" element={<ProtectedRoute><FAQ /></ProtectedRoute>} />
+        <Route path="/packs" element={<ProtectedRoute><Pack /></ProtectedRoute>} />
       </Routes>
     </AuthProvider>
   )
