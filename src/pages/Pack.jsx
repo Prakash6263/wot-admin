@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import Swal from 'sweetalert2';
 import { useAuth } from '../context/AuthContext';
+import GlobalLoader from '../components/GlobalLoader';
 
 export default function Pack() {
   const { token } = useAuth();
@@ -174,9 +175,7 @@ export default function Pack() {
 
           {loading ? (
             <div className="text-center py-5">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
+              <GlobalLoader visible={loading} size="medium" />
             </div>
           ) : (
             <div className="row">
@@ -205,8 +204,8 @@ export default function Pack() {
                           <td>${pack.paid_price}</td>
                           <td>
                             <small>
-                              Coach AI: {pack.credits?.coach_ai || 0}<br/>
-                              Chart: {pack.credits?.chart_analyzer || 0}<br/>
+                              Coach AI: {pack.credits?.coach_ai || 0}<br />
+                              Chart: {pack.credits?.chart_analyzer || 0}<br />
                               Trade: {pack.credits?.trade_analyzer || 0}
                             </small>
                           </td>

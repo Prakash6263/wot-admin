@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import Swal from 'sweetalert2';
 import { useAuth } from '../context/AuthContext';
+import GlobalLoader from '../components/GlobalLoader';
 
 export default function FAQ() {
   const { token } = useAuth();
@@ -125,11 +126,7 @@ export default function FAQ() {
           </div>
 
           {loading ? (
-            <div className="text-center py-5">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </div>
+            <GlobalLoader visible={loading} size="medium" />
           ) : (
             <div className="row">
               <div className="col-md-12">
