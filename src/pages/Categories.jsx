@@ -25,13 +25,11 @@ export default function Categories() {
   const fetchData = async () => {
     setIsLoading(true);
     
-    // Fetch course details
     const courseResult = await getCourseById(courseId, token);
     if (courseResult.success) {
       setCourse(courseResult.data);
     }
     
-    // Fetch categories for the course
     const categoriesResult = await getCategoriesByCourse(courseId, token);
     if (categoriesResult.success) {
       setCategories(categoriesResult.data || []);
@@ -69,7 +67,6 @@ export default function Categories() {
       cancelButtonText: 'Cancel',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        // TODO: Implement delete category API call when endpoint is available
         Swal.fire({
           icon: 'info',
           title: 'Delete Feature',
@@ -135,27 +132,33 @@ export default function Categories() {
             <div className="col-sm-12">
               <div className="card">
                 <div className="card-body">
-                  {isLoading ? (
-                    <GlobalLoader visible={true} size="medium" />
-                  ) : categories.length === 0 ? (
-                    <div className="text-center py-5">
-                      <p className="text-muted">No categories found for this course</p>
-                    </div>
-                  ) : (
-                    <div className="table-responsive">
-                      <table className="table table-striped">
-                        <thead>
+                  <div className="table-responsive">
+                    <table className="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Category Title</th>
+                          <th>Order</th>
+                          <th>Chapters</th>
+                          <th>Status</th>
+                          <th>Created Date</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {isLoading ? (
                           <tr>
-                            <th>Category Title</th>
-                            <th>Order</th>
-                            <th>Chapters</th>
-                            <th>Status</th>
-                            <th>Created Date</th>
-                            <th>Action</th>
+                            <td colSpan="6" className="text-center py-5">
+                              <GlobalLoader visible={true} size="medium" />
+                            </td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {categories.map((category) => (
+                        ) : categories.length === 0 ? (
+                          <tr>
+                            <td colSpan="6" className="text-center py-5">
+                              <p className="text-muted">No categories found for this course</p>
+                            </td>
+                          </tr>
+                        ) : (
+                          categories.map((category) => (
                             <tr key={category.id}>
                               <td>
                                 <div>
@@ -203,11 +206,11 @@ export default function Categories() {
                                 </div>
                               </td>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

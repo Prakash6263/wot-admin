@@ -99,7 +99,6 @@ export default function Courses() {
     });
   };
 
-  // Map status to badge color
   const getStatusBadge = (status) => {
     const statusMap = {
       active: 'bg-success',
@@ -111,13 +110,12 @@ export default function Courses() {
     return statusMap[status?.toLowerCase()] || 'bg-secondary';
   };
 
-  // Map level to badge color
   const getLevelBadge = (level) => {
     const levelMap = {
       beginner: 'bg-success',
       intermediate: 'bg-primary',
       advanced: 'bg-danger',
-      'beginer': 'bg-success', // handle typo from API
+      'beginer': 'bg-success',
     };
     return levelMap[level?.toLowerCase()] || 'bg-secondary';
   };
@@ -168,28 +166,34 @@ export default function Courses() {
             <div className="col-sm-12">
               <div className="card">
                 <div className="card-body">
-                  {isLoading ? (
-                    <GlobalLoader visible={true} size="medium" />
-                  ) : courses.length === 0 ? (
-                    <div className="text-center py-5">
-                      <p className="text-muted">No courses found</p>
-                    </div>
-                  ) : (
-                    <div className="table-responsive">
-                      <table className="table table-striped">
-                        <thead>
+                  <div className="table-responsive">
+                    <table className="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Course Title</th>
+                          <th>Level</th>
+                          <th>Duration</th>
+                          <th>Chepter</th>
+                          <th>Enrolled</th>
+                          <th>Status</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {isLoading ? (
                           <tr>
-                            <th>Course Title</th>
-                            <th>Level</th>
-                            <th>Duration</th>
-                            <th>Chepter</th>
-                            <th>Enrolled</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <td colSpan="7" className="text-center py-5">
+                              <GlobalLoader visible={true} size="medium" />
+                            </td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {courses.map((course) => (
+                        ) : courses.length === 0 ? (
+                          <tr>
+                            <td colSpan="7" className="text-center py-5">
+                              <p className="text-muted">No courses found</p>
+                            </td>
+                          </tr>
+                        ) : (
+                          courses.map((course) => (
                             <tr key={course.id}>
                               <td>
                                 <div className="d-flex align-items-center">
@@ -225,7 +229,6 @@ export default function Courses() {
                                   title="View Chapters"
                                 >
                                   View
-                                  {/* <span className="ms-1">{course.chapter_count || 0}</span> */}
                                 </button>
                               </td>
                               <td>{course.enrolled_count || 0}</td>
@@ -260,11 +263,11 @@ export default function Courses() {
                                 </div>
                               </td>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

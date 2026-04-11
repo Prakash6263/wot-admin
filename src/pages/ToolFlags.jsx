@@ -5,6 +5,7 @@ import Footer from '../components/Footer'
 import { getAllToolFlags, updateToolFlag } from '../api/tools'
 import { useAuth } from '../context/AuthContext'
 import Swal from 'sweetalert2'
+import GlobalLoader from '../components/GlobalLoader'
 
 export default function ToolFlags() {
   const [tools, setTools] = useState([])
@@ -68,7 +69,7 @@ export default function ToolFlags() {
             response.message, 
             'success'
           )
-          fetchToolFlags() // Refresh the list
+          fetchToolFlags()
         } else {
           Swal.fire('Error', response.message, 'error')
         }
@@ -117,31 +118,33 @@ export default function ToolFlags() {
                   <h3 className="card-title">All Tools</h3>
                 </div>
                 <div className="card-body">
-                  {loading ? (
-                    <div className="text-center">
-                      <div className="spinner-border" role="status">
-                        <span className="sr-only">Loading...</span>
-                      </div>
-                    </div>
-                  ) : tools.length === 0 ? (
-                    <div className="text-center text-muted">
-                      No tools found
-                    </div>
-                  ) : (
-                    <div className="table-responsive">
-                      <table className="table table-bordered table-striped">
-                        <thead>
+                  <div className="table-responsive">
+                    <table className="table table-bordered table-striped">
+                      <thead>
+                        <tr>
+                          <th>Tool Name</th>
+                          <th>Status</th>
+                          <th>Disabled Reason</th>
+                          <th>Toggled By</th>
+                          <th>Toggled At</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {loading ? (
                           <tr>
-                            <th>Tool Name</th>
-                            <th>Status</th>
-                            <th>Disabled Reason</th>
-                            <th>Toggled By</th>
-                            <th>Toggled At</th>
-                            <th>Actions</th>
+                            <td colSpan="6" className="text-center py-4">
+                              <GlobalLoader visible={loading} size="medium" />
+                            </td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {tools.map((tool) => (
+                        ) : tools.length === 0 ? (
+                          <tr>
+                            <td colSpan="6" className="text-center text-muted py-4">
+                              No tools found
+                            </td>
+                          </tr>
+                        ) : (
+                          tools.map((tool) => (
                             <tr key={tool.tool_name}>
                               <td>
                                 <strong>{formatToolName(tool.tool_name)}</strong>
@@ -185,11 +188,11 @@ export default function ToolFlags() {
                                 </button>
                               </td>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

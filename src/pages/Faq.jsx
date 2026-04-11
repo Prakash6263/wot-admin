@@ -125,23 +125,33 @@ export default function FAQ() {
             </div>
           </div>
 
-          {loading ? (
-            <GlobalLoader visible={loading} size="medium" />
-          ) : (
-            <div className="row">
-              <div className="col-md-12">
-                <div className="table-responsive">
-                  <table className="table table-striped custom-table">
-                    <thead>
+          <div className="row">
+            <div className="col-md-12">
+              <div className="table-responsive">
+                <table className="table table-striped custom-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Question</th>
+                      <th>Answer</th>
+                      <th className="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading ? (
                       <tr>
-                        <th>#</th>
-                        <th>Question</th>
-                        <th>Answer</th>
-                        <th className="text-end">Actions</th>
+                        <td colSpan="4" className="text-center py-5">
+                          <GlobalLoader visible={loading} size="medium" />
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {faqs.map((faq, index) => (
+                    ) : faqs.length === 0 ? (
+                      <tr>
+                        <td colSpan="4" className="text-center py-4">
+                          No FAQs found
+                        </td>
+                      </tr>
+                    ) : (
+                      faqs.map((faq, index) => (
                         <tr key={faq.id}>
                           <td>{index + 1}</td>
                           <td>{faq.question}</td>
@@ -161,20 +171,13 @@ export default function FAQ() {
                             </button>
                           </td>
                         </tr>
-                      ))}
-                      {faqs.length === 0 && (
-                        <tr>
-                          <td colSpan="4" className="text-center py-4">
-                            No FAQs found
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
-          )}
+          </div>
 
           {showModal && (
             <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>

@@ -36,7 +36,6 @@ export default function Glossaries() {
     fetchCategories();
   }, []);
 
-  // Debounce search - 500ms after user stops typing
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (searchTerm.trim()) {
@@ -246,7 +245,6 @@ export default function Glossaries() {
               <div className="card">
                 <div className="card-body">
 
-                  {/* Search Bar */}
                   <div className="row mb-3">
                     <div className="col-md-5">
                       <div className="input-group">
@@ -278,40 +276,42 @@ export default function Glossaries() {
                     </div>
                   </div>
 
-                  {isLoading ? (
-                    <GlobalLoader visible={true} size="medium" />
-                  ) : glossaries.length === 0 ? (
-                    <div className="text-center py-5">
-                      <p className="text-muted">
-                        {isSearching ? `No results found for "${searchTerm}"` : 'No glossaries found'}
-                      </p>
-                      {isSearching && (
-                        <button className="btn btn-sm btn-outline-secondary mt-2" onClick={handleClearSearch}>
-                          Clear Search
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="table-responsive">
-                      <table className="table table-striped">
-                        <thead>
+                  <div className="table-responsive">
+                    <table className="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Term</th>
+                          <th>Category</th>
+                          <th>Description</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {isLoading ? (
                           <tr>
-                            <th>Term</th>
-                            {/* <th>Short Form</th> */}
-                            <th>Category</th>
-                            <th>Description</th>
-                            <th>Action</th>
+                            <td colSpan="4" className="text-center py-5">
+                              <GlobalLoader visible={true} size="medium" />
+                            </td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {glossaries.map((glossary) => (
+                        ) : glossaries.length === 0 ? (
+                          <tr>
+                            <td colSpan="4" className="text-center py-5">
+                              <p className="text-muted">
+                                {isSearching ? `No results found for "${searchTerm}"` : 'No glossaries found'}
+                              </p>
+                              {isSearching && (
+                                <button className="btn btn-sm btn-outline-secondary mt-2" onClick={handleClearSearch}>
+                                  Clear Search
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ) : (
+                          glossaries.map((glossary) => (
                             <tr key={glossary.id}>
                               <td>
                                 <strong>{glossary.term}</strong>
                               </td>
-                              {/* <td>
-                                <span className="badge bg-info">{glossary.short_form}</span>
-                              </td> */}
                               <td>
                                 <span className="badge bg-secondary">{glossary.category}</span>
                               </td>
@@ -340,17 +340,16 @@ export default function Glossaries() {
                                 </div>
                               </td>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && glossaries.length > 0 && (
             <div className="row mt-3">
               <div className="col-sm-12">
@@ -404,7 +403,6 @@ export default function Glossaries() {
         </div>
       </div>
 
-      {/* Edit Modal */}
       <div
         className={`modal fade ${showEditModal ? 'show' : ''}`}
         style={{ display: showEditModal ? 'block' : 'none' }}
@@ -430,17 +428,6 @@ export default function Glossaries() {
                     required
                   />
                 </div>
-                {/* <div className="mb-3">
-                  <label className="form-label">Short Form <span className="text-danger">*</span></label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="short_form"
-                    value={editFormData.short_form}
-                    onChange={handleEditInputChange}
-                    required
-                  />
-                </div> */}
                 <div className="mb-3">
                   <label className="form-label">Category <span className="text-danger">*</span></label>
                   <select
@@ -496,7 +483,6 @@ export default function Glossaries() {
         </div>
       </div>
 
-      {/* Modal Backdrop */}
       {showEditModal && <div className="modal-backdrop fade show"></div>}
 
       <Footer />

@@ -6,6 +6,7 @@ import { getAllPlans, deletePlan } from '../api/plans'
 import { useAuth } from '../context/AuthContext'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
+import GlobalLoader from '../components/GlobalLoader'
 
 export default function Plans() {
   const [plans, setPlans] = useState([])
@@ -106,33 +107,35 @@ export default function Plans() {
                   <h3 className="card-title">All Plans</h3>
                 </div>
                 <div className="card-body">
-                  {loading ? (
-                    <div className="text-center">
-                      <div className="spinner-border" role="status">
-                        <span className="sr-only">Loading...</span>
-                      </div>
-                    </div>
-                  ) : plans.length === 0 ? (
-                    <div className="text-center text-muted">
-                      No plans found
-                    </div>
-                  ) : (
-                    <div className="table-responsive">
-                      <table className="table table-bordered table-striped">
-                        <thead>
+                  <div className="table-responsive">
+                    <table className="table table-bordered table-striped">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Type</th>
+                          <th>Price</th>
+                          <th>Coach AI</th>
+                          <th>Chart Analyzer</th>
+                          <th>Trade Analyzer</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {loading ? (
                           <tr>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Price</th>
-                            <th>Coach AI</th>
-                            <th>Chart Analyzer</th>
-                            <th>Trade Analyzer</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <td colSpan="8" className="text-center py-4">
+                              <GlobalLoader visible={loading} size="medium" />
+                            </td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {plans.map((plan) => (
+                        ) : plans.length === 0 ? (
+                          <tr>
+                            <td colSpan="8" className="text-center text-muted py-4">
+                              No plans found
+                            </td>
+                          </tr>
+                        ) : (
+                          plans.map((plan) => (
                             <tr key={plan.id}>
                               <td>{plan.name}</td>
                               <td>{getPlanTypeBadge(plan.plan_type)}</td>
@@ -156,11 +159,11 @@ export default function Plans() {
                                 </button>
                               </td>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

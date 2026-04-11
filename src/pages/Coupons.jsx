@@ -6,6 +6,7 @@ import { getAllCoupons, deleteCoupon } from '../api/coupons'
 import { useAuth } from '../context/AuthContext'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
+import GlobalLoader from '../components/GlobalLoader'
 
 export default function Coupons() {
   const [coupons, setCoupons] = useState([])
@@ -85,7 +86,6 @@ export default function Coupons() {
       <div className="page-wrapper">
         <div className="content container-fluid">
 
-          {/* Page Header */}
           <div className="page-header">
             <div className="row align-items-center">
               <div className="col">
@@ -106,78 +106,75 @@ export default function Coupons() {
             </div>
           </div>
 
-          {/* Coupons Table */}
           <div className="card">
             <div className="card-body">
-              {loading ? (
-                <div className="text-center py-4">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="table-responsive">
-                  <table className="table table-hover">
-                    <thead>
+              <div className="table-responsive">
+                <table className="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Title</th>
+                      <th>Description</th>
+                      <th>Category</th>
+                      <th>Expires At</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading ? (
                       <tr>
-                        <th>Code</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Category</th>
-                        <th>Expires At</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <td colSpan="7" className="text-center py-4">
+                          <GlobalLoader visible={loading} size="medium" />
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {coupons.length === 0 ? (
-                        <tr>
-                          <td colSpan="8" className="text-center py-4">
-                            No coupons found
+                    ) : coupons.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" className="text-center py-4">
+                          No coupons found
+                        </td>
+                      </tr>
+                    ) : (
+                      coupons.map((coupon) => (
+                        <tr key={coupon.coupon_id}>
+                          <td>
+                            <strong>{coupon.code}</strong>
+                          </td>
+                          <td>{coupon.title}</td>
+                          <td>
+                            <span className="text-truncate d-block" style={{ maxWidth: '200px' }}>
+                              {coupon.description}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="badge bg-info">{coupon.category}</span>
+                          </td>
+                          <td>{formatDate(coupon.expires_at)}</td>
+                          <td>{getStatusBadge(coupon.is_active)}</td>
+                          <td>
+                            <div className="d-flex gap-2">
+                              <button
+                                className="btn btn-sm btn-outline-primary"
+                                title="Edit"
+                                onClick={() => navigate(`/edit-coupon/${coupon.coupon_id}`)}
+                              >
+                                <i className="fas fa-edit"></i>
+                              </button>
+                              <button
+                                className="btn btn-sm btn-outline-danger"
+                                title="Delete"
+                                onClick={() => handleDelete(coupon.coupon_id)}
+                              >
+                                <i className="fas fa-trash"></i>
+                              </button>
+                            </div>
                           </td>
                         </tr>
-                      ) : (
-                        coupons.map((coupon) => (
-                          <tr key={coupon.coupon_id}>
-                            <td>
-                              <strong>{coupon.code}</strong>
-                            </td>
-                            <td>{coupon.title}</td>
-                            <td>
-                              <span className="text-truncate d-block" style={{ maxWidth: '200px' }}>
-                                {coupon.description}
-                              </span>
-                            </td>
-                            <td>
-                              <span className="badge bg-info">{coupon.category}</span>
-                            </td>
-                            <td>{formatDate(coupon.expires_at)}</td>
-                            <td>{getStatusBadge(coupon.is_active)}</td>
-                            <td>
-                              <div className="d-flex gap-2">
-                                <button
-                                  className="btn btn-sm btn-outline-primary"
-                                  title="Edit"
-                                  onClick={() => navigate(`/edit-coupon/${coupon.coupon_id}`)}
-                                >
-                                  <i className="fas fa-edit"></i>
-                                </button>
-                                <button
-                                  className="btn btn-sm btn-outline-danger"
-                                  title="Delete"
-                                  onClick={() => handleDelete(coupon.coupon_id)}
-                                >
-                                  <i className="fas fa-trash"></i>
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
 

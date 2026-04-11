@@ -173,29 +173,37 @@ export default function Pack() {
             </div>
           </div>
 
-          {loading ? (
-            <div className="text-center py-5">
-              <GlobalLoader visible={loading} size="medium" />
-            </div>
-          ) : (
-            <div className="row">
-              <div className="col-md-12">
-                <div className="table-responsive">
-                  <table className="table table-striped custom-table">
-                    <thead>
+          <div className="row">
+            <div className="col-md-12">
+              <div className="table-responsive">
+                <table className="table table-striped custom-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      <th>Label</th>
+                      <th>Coin Price</th>
+                      <th>Paid Price</th>
+                      <th>Credits</th>
+                      <th>Status</th>
+                      <th className="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading ? (
                       <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Label</th>
-                        <th>Coin Price</th>
-                        <th>Paid Price</th>
-                        <th>Credits</th>
-                        <th>Status</th>
-                        <th className="text-end">Actions</th>
+                        <td colSpan="8" className="text-center py-5">
+                          <GlobalLoader visible={loading} size="medium" />
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {packs.map((pack, index) => (
+                    ) : packs.length === 0 ? (
+                      <tr>
+                        <td colSpan="8" className="text-center py-4">
+                          No packs found
+                        </td>
+                      </tr>
+                    ) : (
+                      packs.map((pack, index) => (
                         <tr key={pack.id}>
                           <td>{index + 1}</td>
                           <td>{pack.name}</td>
@@ -229,20 +237,13 @@ export default function Pack() {
                             </button>
                           </td>
                         </tr>
-                      ))}
-                      {packs.length === 0 && (
-                        <tr>
-                          <td colSpan="8" className="text-center py-4">
-                            No packs found
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
-          )}
+          </div>
 
           {showModal && (
             <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>

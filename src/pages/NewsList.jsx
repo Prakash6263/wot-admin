@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { getNews, deleteNews, deleteAllNews, publishNews, featureNews } from '../api';
 import { useAuth } from '../context/AuthContext';
+import GlobalLoader from '../components/GlobalLoader';
 
 export default function NewsList() {
   const [news, setNews] = useState([]);
@@ -23,7 +24,7 @@ export default function NewsList() {
     try {
       const response = await getNews(token);
       if (response.success) {
-        setNews(response.data.data || []); // Data is nested under data.data for list
+        setNews(response.data.data || []);
       } else {
         setError(response.message || 'Failed to fetch news');
       }
@@ -92,7 +93,6 @@ export default function NewsList() {
     try {
       const response = await publishNews(token, newsId);
       if (response.success) {
-        // Use the message from API response or default based on is_published status
         const message = response.message || 'News status updated successfully';
         Swal.fire('Success!', message, 'success');
         fetchNews();
@@ -108,7 +108,6 @@ export default function NewsList() {
     try {
       const response = await featureNews(token, newsId);
       if (response.success) {
-        // Use the message from API response or default based on is_featured status
         const message = response.message || 'News status updated successfully';
         Swal.fire('Success!', message, 'success');
         fetchNews();
@@ -161,21 +160,9 @@ export default function NewsList() {
           {/* News List */}
           <div className="card">
             <div className="card-body">
-              {loading ? (
-                <div className="text-center py-4">
-                  <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                </div>
-              ) : error ? (
+              {error ? (
                 <div className="alert alert-danger" role="alert">
                   {error}
-                </div>
-              ) : news.length === 0 ? (
-                <div className="text-center py-4">
-                  <i className="fas fa-newspaper fa-3x text-muted mb-3"></i>
-                  <h5>No News Articles Found</h5>
-                  <p className="text-muted">There are currently no news articles to display.</p>
                 </div>
               ) : (
                 <div className="table-responsive">
@@ -192,106 +179,122 @@ export default function NewsList() {
                       </tr>
                     </thead>
                     <tbody>
-                      {news.map((article) => (
-                        <tr key={article.id}>
-                          <td>
-                            <div>
-                              <strong>{truncateText(article.payload?.article?.title || 'No Title', 50)}</strong>
-                              <br />
-                              <small className="text-muted">
-                                {truncateText(article.payload?.article?.summary || 'No Summary', 80)}
-                              </small>
-                            </div>
-                          </td>
-                          <td>
-                            <span className="badge bg-primary">
-                              {article.payload?.primary_category || 'N/A'}
-                            </span>
-                          </td>
-                          <td>
-                            <div className="d-flex flex-wrap gap-1">
-                              {article.payload?.tags?.slice(0, 3).map((tag, index) => (
-                                <span key={index} className="badge bg-secondary" style={{ fontSize: '0.75rem' }}>
-                                  {tag}
-                                </span>
-                              ))}
-                              {article.payload?.tags?.length > 3 && (
-                                <span className="badge bg-secondary" style={{ fontSize: '0.75rem' }}>
-                                  +{article.payload.tags.length - 3}
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td>
-                            <small>{formatDate(article.payload?.scheduled_at)}</small>
-                          </td>
-                          <td>
-                            <div className="d-flex align-items-center gap-2">
-                              <div
-                                className="form-check form-switch mb-0"
-                                title={`Click to ${article.is_published ? 'unpublish' : 'publish'} news`}
-                              >
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  role="switch"
-                                  checked={article.is_published}
-                                  onChange={() => handlePublish(article.id)}
-                                  style={{ cursor: 'pointer', width: '40px', height: '20px' }}
-                                />
-                              </div>
-                              <span className={`badge ${article.is_published ? 'bg-success' : 'bg-warning'}`}>
-                                {article.is_published ? 'Published' : 'Draft'}
-                              </span>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="d-flex align-items-center gap-2">
-                              <div
-                                className="form-check form-switch mb-0"
-                                title={`Click to ${article.is_featured ? 'unfeature' : 'feature'} news`}
-                              >
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  role="switch"
-                                  checked={article.is_featured || false}
-                                  onChange={() => handleFeature(article.id)}
-                                  style={{ cursor: 'pointer', width: '40px', height: '20px' }}
-                                />
-                              </div>
-                              <span className={`badge ${article.is_featured ? 'bg-warning' : 'bg-secondary'}`}>
-                                {article.is_featured ? 'Featured' : 'Normal'}
-                              </span>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="btn-group">
-                              <button
-                                className="btn btn-sm btn-outline-success"
-                                onClick={() => navigate(`/news/${article.id}`)}
-                                title="View"
-                              >
-                                <i className="fas fa-eye"></i>
-                              </button>
-                              <button
-                                className="btn btn-sm btn-outline-info"
-                                onClick={() => navigate(`/news/${article.id}/edit`)}
-                                title="Edit"
-                              >
-                                <i className="fas fa-edit"></i>
-                              </button>
-                              <button
-                                className="btn btn-sm btn-outline-danger"
-                                onClick={() => handleDelete(article.id)}
-                                title="Delete"
-                              >
-                                <i className="fas fa-trash"></i>
-                              </button>
-                            </div>
+                      {loading ? (
+                        <tr>
+                          <td colSpan="7" className="text-center py-4">
+                            <GlobalLoader visible={loading} size="medium" />
                           </td>
                         </tr>
-                      ))}
+                      ) : news.length === 0 ? (
+                        <tr>
+                          <td colSpan="7" className="text-center py-4">
+                            <i className="fas fa-newspaper fa-3x text-muted mb-3"></i>
+                            <h5>No News Articles Found</h5>
+                            <p className="text-muted">There are currently no news articles to display.</p>
+                          </td>
+                        </tr>
+                      ) : (
+                        news.map((article) => (
+                          <tr key={article.id}>
+                            <td>
+                              <div>
+                                <strong>{truncateText(article.payload?.article?.title || 'No Title', 50)}</strong>
+                                <br />
+                                <small className="text-muted">
+                                  {truncateText(article.payload?.article?.summary || 'No Summary', 80)}
+                                </small>
+                              </div>
+                            </td>
+                            <td>
+                              <span className="badge bg-primary">
+                                {article.payload?.primary_category || 'N/A'}
+                              </span>
+                            </td>
+                            <td>
+                              <div className="d-flex flex-wrap gap-1">
+                                {article.payload?.tags?.slice(0, 3).map((tag, index) => (
+                                  <span key={index} className="badge bg-secondary" style={{ fontSize: '0.75rem' }}>
+                                    {tag}
+                                  </span>
+                                ))}
+                                {article.payload?.tags?.length > 3 && (
+                                  <span className="badge bg-secondary" style={{ fontSize: '0.75rem' }}>
+                                    +{article.payload.tags.length - 3}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              <small>{formatDate(article.payload?.scheduled_at)}</small>
+                            </td>
+                            <td>
+                              <div className="d-flex align-items-center gap-2">
+                                <div
+                                  className="form-check form-switch mb-0"
+                                  title={`Click to ${article.is_published ? 'unpublish' : 'publish'} news`}
+                                >
+                                  <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    role="switch"
+                                    checked={article.is_published}
+                                    onChange={() => handlePublish(article.id)}
+                                    style={{ cursor: 'pointer', width: '40px', height: '20px' }}
+                                  />
+                                </div>
+                                <span className={`badge ${article.is_published ? 'bg-success' : 'bg-warning'}`}>
+                                  {article.is_published ? 'Published' : 'Draft'}
+                                </span>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="d-flex align-items-center gap-2">
+                                <div
+                                  className="form-check form-switch mb-0"
+                                  title={`Click to ${article.is_featured ? 'unfeature' : 'feature'} news`}
+                                >
+                                  <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    role="switch"
+                                    checked={article.is_featured || false}
+                                    onChange={() => handleFeature(article.id)}
+                                    style={{ cursor: 'pointer', width: '40px', height: '20px' }}
+                                  />
+                                </div>
+                                <span className={`badge ${article.is_featured ? 'bg-warning' : 'bg-secondary'}`}>
+                                  {article.is_featured ? 'Featured' : 'Normal'}
+                                </span>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="btn-group">
+                                <button
+                                  className="btn btn-sm btn-outline-success"
+                                  onClick={() => navigate(`/news/${article.id}`)}
+                                  title="View"
+                                >
+                                  <i className="fas fa-eye"></i>
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-outline-info"
+                                  onClick={() => navigate(`/news/${article.id}/edit`)}
+                                  title="Edit"
+                                >
+                                  <i className="fas fa-edit"></i>
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-outline-danger"
+                                  onClick={() => handleDelete(article.id)}
+                                  title="Delete"
+                                >
+                                  <i className="fas fa-trash"></i>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>

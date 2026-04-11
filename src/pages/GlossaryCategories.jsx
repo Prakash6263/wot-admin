@@ -175,7 +175,6 @@ export default function GlossaryCategories() {
                   <li>
                     <Link className="btn btn-primary" to="/add-glossary-category"><i className="fa fa-plus-circle me-2"></i>Add Category</Link>
                   </li>
-                 
                 </ul>
               </div>
             </div>
@@ -185,42 +184,34 @@ export default function GlossaryCategories() {
             <div className="col-sm-14">
               <div className="card">
                 <div className="card-body">
-
-                  {isLoading ? (
-                    <GlobalLoader visible={true} size="medium" />
-                  ) : categories.length === 0 ? (
-                    <div className="text-center py-5">
-                      <p className="text-muted">No glossary categories found</p>
-                    </div>
-                  ) : (
-                    <div className="table-responsive">
-                      <table className="table table-striped">
-                        <thead>
+                  <div className="table-responsive">
+                    <table className="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Color</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {isLoading ? (
                           <tr>
-                            <th>Name</th>
-                            {/* <th>Description</th> */}
-                            <th>Color</th>
-                            <th>Action</th>
+                            <td colSpan="3" className="text-center py-5">
+                              <GlobalLoader visible={true} size="medium" />
+                            </td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {categories.map((category) => (
+                        ) : categories.length === 0 ? (
+                          <tr>
+                            <td colSpan="3" className="text-center py-5">
+                              <p className="text-muted">No glossary categories found</p>
+                            </td>
+                          </tr>
+                        ) : (
+                          categories.map((category) => (
                             <tr key={category.id}>
                               <td>
                                 <strong>{category.name}</strong>
                               </td>
-                              {/* <td>
-                                <small title={category.description}>
-                                  {category.description ? (
-                                    <>
-                                      {category.description.substring(0, 80)}
-                                      {category.description.length > 80 ? '...' : ''}
-                                    </>
-                                  ) : (
-                                    <span className="text-muted">No description</span>
-                                  )}
-                                </small>
-                              </td> */}
                               <td>
                                 {category.color ? (
                                   <div className="d-flex align-items-center gap-2">
@@ -258,11 +249,11 @@ export default function GlossaryCategories() {
                                 </div>
                               </td>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -319,7 +310,6 @@ export default function GlossaryCategories() {
         </div>
       </div>
 
-      {/* Edit Modal */}
       <div className={`modal fade ${showEditModal ? 'show' : ''}`} style={{ display: showEditModal ? 'block' : 'none' }} tabIndex="-1" role="dialog">
         <div className="modal-dialog modal-dialog-centered" role="document">
           <div className="modal-content">
@@ -383,7 +373,6 @@ export default function GlossaryCategories() {
         </div>
       </div>
 
-      {/* Modal Backdrop */}
       {showEditModal && <div className="modal-backdrop fade show"></div>}
 
       <Footer />
