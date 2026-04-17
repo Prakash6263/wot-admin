@@ -53,7 +53,8 @@ body {
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1)) !important;
 }
 
-.hour-circle, .minute-circle {
+.hour-circle,
+.minute-circle {
   transition: all 0.2s ease !important;
   cursor: pointer !important;
 }
@@ -62,7 +63,8 @@ body {
   transform: scale(1.1) !important;
 } */
 
-.hour-text, .minute-text {
+.hour-text,
+.minute-text {
   pointer-events: none !important;
   user-select: none !important;
   cursor: pointer !important;
@@ -143,7 +145,7 @@ body {
     max-width: none !important;
     width: calc(100% - 40px) !important;
   }
-  
+
   .clock-svg {
     width: 180px !important;
     height: 180px !important;
@@ -203,3 +205,31 @@ body {
   background-color: #f8f9fa;
 }
 
+/* Sidebar Scroll Styles */
+.sidebar {
+  position: fixed !important;
+  top: 60px !important; /* Header height */
+  bottom: 0 !important;
+  overflow-y: auto !important;
+  z-index: 1001 !important;
+}
+
+.sidebar-inner, .sidebar-menu {
+  height: auto;
+  overflow: visible;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
