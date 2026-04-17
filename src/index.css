@@ -232,4 +232,35 @@ body {
 .sidebar::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* Premium UI Utilities */
+.btn-soft-primary {
+  background-color: rgba(28, 73, 224, 0.1) !important;
+  color: #1c49e0 !important;
+  border: none !important;
+}
+
+.btn-soft-primary:hover {
+  background-color: rgba(28, 73, 224, 0.2) !important;
+}
+
+.bg-primary-light {
+  background-color: rgba(28, 73, 224, 0.1) !important;
+}
+
+.transition-all {
+  transition: all 0.3s ease !important;
+}
+
+.bg-light-gray {
+  background-color: #f8f9fa !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.rounded-3 {
+  border-radius: 0.75rem !important;
+}
 
