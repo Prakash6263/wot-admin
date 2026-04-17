@@ -51,6 +51,7 @@ import EditPlan from './pages/EditPlan'
 import ToolFlags from './pages/ToolFlags'
 import FAQ from './pages/Faq'
 import Pack from './pages/Pack'
+import Notifications from './pages/Notifications'
 
 
 
@@ -117,6 +118,7 @@ export default function App() {
         <Route path="/tool-flags" element={<ProtectedRoute><ToolFlags /></ProtectedRoute>} />
         <Route path="/faq" element={<ProtectedRoute><FAQ /></ProtectedRoute>} />
         <Route path="/packs" element={<ProtectedRoute><Pack /></ProtectedRoute>} />
+        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
       </Routes>
     </AuthProvider>
   )

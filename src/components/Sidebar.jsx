@@ -125,6 +125,13 @@ export default function Sidebar() {
               </Link>
             </li>
 
+            <li>
+              <Link to="/notifications" className={isActive("/notifications")}>
+                <i className="fas fa-bell me-2"></i>
+                <span>Notifications</span>
+              </Link>
+            </li>
+
             {/* <li>
               <Link to="/coupon-categories" className={isActive("/coupon-categories")}>
                 <i className="fas fa-layer-group me-2"></i>

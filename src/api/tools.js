@@ -31,6 +31,41 @@ export const getAllToolFlags = async (token) => {
   }
 };
 
+export const broadcastNotification = async (token, notificationData) => {
+  try {
+    const response = await fetch('https://api.wayoftrading.com/aitredding/admin/tools/broadcast-notification', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(notificationData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      return {
+        success: true,
+        message: data.message || 'Notification sent successfully',
+        data: data.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: data.message || 'Failed to send notification',
+      };
+    }
+  } catch (error) {
+    console.error('Error broadcasting notification:', error);
+    return {
+      success: false,
+      message: 'An error occurred while broadcasting notification',
+    };
+  }
+};
+
 export const updateToolFlag = async (token, toolName, isEnabled, disabledReason = null) => {
   try {
     const formData = new URLSearchParams();
