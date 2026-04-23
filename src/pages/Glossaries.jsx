@@ -227,7 +227,7 @@ export default function Glossaries() {
               <div className="list-btn">
                 <ul className="filter-list">
                   <li>
-                   <Link className="btn btn-primary" to="/glossary-categories">View Categories</Link>
+                    <Link className="btn btn-primary" to="/glossary-categories">View Categories</Link>
                   </li>
                   <li>
                     <Link className="btn btn-primary" to="/add-glossary-category"><i className="fa fa-plus-circle me-2"></i>Add Glossary Category</Link>
@@ -324,14 +324,14 @@ export default function Glossaries() {
                               <td>
                                 <div className="d-flex gap-2">
                                   <button
-                                    className="btn btn-sm btn-outline-warning"
+                                    className="btn btn-sm btn-info me-1"
                                     onClick={() => handleEditClick(glossary)}
                                     title="Edit Glossary"
                                   >
                                     <i className="fas fa-edit"></i>
                                   </button>
                                   <button
-                                    className="btn btn-sm btn-outline-danger"
+                                    className="btn btn-sm btn-danger"
                                     onClick={() => handleDeleteGlossary(glossary.id, glossary.term)}
                                     title="Delete Glossary"
                                   >

@@ -481,14 +481,14 @@ export default function Quizes() {
                                     <i className="fas fa-list"></i>
                                   </button>
                                   <button
-                                    className="btn btn-sm btn-outline-warning"
+                                    className="btn btn-sm btn-info me-1"
                                     title="Edit Quiz"
                                     onClick={() => handleEditQuiz(quiz.quiz_id)}
                                   >
                                     <i className="fas fa-edit"></i>
                                   </button>
                                   <button
-                                    className="btn btn-sm btn-outline-danger"
+                                    className="btn btn-sm btn-danger"
                                     title="Delete Quiz"
                                     onClick={() => handleDeleteQuiz(quiz.quiz_id, quiz.title)}
                                   >

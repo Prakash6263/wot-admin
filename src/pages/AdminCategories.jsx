@@ -20,7 +20,7 @@ export default function AdminCategories() {
 
   const fetchCategories = async () => {
     setIsLoading(true);
-    
+
     const result = await getAllAdminCategories(token);
     if (result.success) {
       setCategories(result.data || []);
@@ -31,7 +31,7 @@ export default function AdminCategories() {
         text: result.message || 'An error occurred while fetching categories',
       });
     }
-    
+
     setIsLoading(false);
   };
 
@@ -52,7 +52,7 @@ export default function AdminCategories() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const deleteResult = await deleteAdminCategory(categoryId, token);
-        
+
         if (deleteResult.success) {
           Swal.fire({
             icon: 'success',
@@ -86,7 +86,7 @@ export default function AdminCategories() {
               <div className="list-btn">
                 <ul className="filter-list">
                   <li>
-                    <button 
+                    <button
                       className="btn btn-primary"
                       onClick={() => navigate('/add-admin-category')}
                     >
@@ -115,7 +115,7 @@ export default function AdminCategories() {
               </div>
             </div>
           </div>
-          
+
           <div className="row">
             <div className="col-sm-12">
               <div className="card">
@@ -125,7 +125,7 @@ export default function AdminCategories() {
                   ) : categories.length === 0 ? (
                     <div className="text-center py-5">
                       <p className="text-muted">No categories found</p>
-                      <button 
+                      <button
                         className="btn btn-primary"
                         onClick={() => navigate('/add-admin-category')}
                       >
@@ -152,8 +152,8 @@ export default function AdminCategories() {
                               <td>
                                 <div className="d-flex align-items-center">
                                   {category.icon && (
-                                    <img 
-                                      src={category.icon} 
+                                    <img
+                                      src={category.icon}
                                       alt={category.name}
                                       className="me-2"
                                       style={{ width: '30px', height: '30px', objectFit: 'cover', borderRadius: '4px' }}
@@ -183,15 +183,15 @@ export default function AdminCategories() {
                               </td>
                               <td>
                                 <div className="d-flex gap-2">
-                                  <button 
-                                    className="btn btn-sm btn-outline-warning"
+                                  <button
+                                    className="btn btn-sm btn-info me-1"
                                     onClick={() => navigate(`/edit-admin-category/${category.id}`)}
                                     title="Edit Category"
                                   >
                                     <i className="fas fa-edit"></i>
                                   </button>
-                                  <button 
-                                    className="btn btn-sm btn-outline-danger"
+                                  <button
+                                    className="btn btn-sm btn-danger"
                                     onClick={() => handleDeleteCategory(category.id, category.name)}
                                     title="Delete Category"
                                   >

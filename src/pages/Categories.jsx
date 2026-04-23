@@ -24,12 +24,12 @@ export default function Categories() {
 
   const fetchData = async () => {
     setIsLoading(true);
-    
+
     const courseResult = await getCourseById(courseId, token);
     if (courseResult.success) {
       setCourse(courseResult.data);
     }
-    
+
     const categoriesResult = await getCategoriesByCourse(courseId, token);
     if (categoriesResult.success) {
       setCategories(categoriesResult.data || []);
@@ -40,7 +40,7 @@ export default function Categories() {
         text: categoriesResult.message || 'An error occurred while fetching categories',
       });
     }
-    
+
     setIsLoading(false);
   };
 
@@ -90,7 +90,7 @@ export default function Categories() {
               <div className="list-btn">
                 <ul className="filter-list">
                   <li>
-                    <button 
+                    <button
                       className="btn btn-primary"
                       onClick={() => navigate(`/course/${courseId}/add-category`)}
                     >
@@ -98,7 +98,7 @@ export default function Categories() {
                     </button>
                   </li>
                   <li>
-                    <button 
+                    <button
                       className="btn btn-outline-secondary"
                       onClick={() => navigate(`/courses`)}
                     >
@@ -127,7 +127,7 @@ export default function Categories() {
               </div>
             </div>
           </div>
-          
+
           <div className="row">
             <div className="col-sm-12">
               <div className="card">
@@ -171,7 +171,7 @@ export default function Categories() {
                                 <span className="badge bg-secondary">{category.order_number}</span>
                               </td>
                               <td>
-                                <button 
+                                <button
                                   className="btn btn-sm btn-outline-primary"
                                   onClick={() => navigate(`/course/${courseId}/category/${category.id}/chapters`)}
                                   title="View Chapters"
@@ -189,14 +189,14 @@ export default function Categories() {
                               </td>
                               <td>
                                 <div className="d-flex gap-2">
-                                  <button 
+                                  <button
                                     className="btn btn-sm btn-outline-warning"
                                     onClick={() => navigate(`/course/${courseId}/category/${category.id}/edit`)}
                                     title="Edit Category"
                                   >
                                     <i className="fas fa-edit"></i>
                                   </button>
-                                  <button 
+                                  <button
                                     className="btn btn-sm btn-outline-danger"
                                     onClick={() => handleDeleteCategory(category.id, category.title)}
                                     title="Delete Category"

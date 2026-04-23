@@ -247,14 +247,14 @@ export default function Courses() {
                                     <i className="fas fa-eye"></i>
                                   </button>
                                   <button
-                                    className="btn btn-sm btn-outline-warning"
+                                    className="btn btn-sm btn-info me-1"
                                     onClick={() => navigate(`/edit-course/${course.id}`)}
                                     title="Edit Course"
                                   >
                                     <i className="fas fa-edit"></i>
                                   </button>
                                   <button
-                                    className="btn btn-sm btn-outline-danger"
+                                    className="btn btn-sm btn-danger"
                                     onClick={() => handleDeleteCourse(course.id, course.title)}
                                     title="Delete Course"
                                   >

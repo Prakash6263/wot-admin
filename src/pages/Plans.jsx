@@ -91,7 +91,7 @@ export default function Plans() {
               <div className="list-btn">
                 <ul className="filter-list">
                   <li>
-                    <a className="btn btn-primary" onClick={() => navigate('/add-plan')} style={{cursor: 'pointer'}}>
+                    <a className="btn btn-primary" onClick={() => navigate('/add-plan')} style={{ cursor: 'pointer' }}>
                       <i className="fas fa-plus me-2"></i>Add New Plan
                     </a>
                   </li>

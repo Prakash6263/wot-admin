@@ -154,14 +154,14 @@ export default function Coupons() {
                           <td>
                             <div className="d-flex gap-2">
                               <button
-                                className="btn btn-sm btn-outline-primary"
+                                className="btn btn-sm btn-info me-1"
                                 title="Edit"
                                 onClick={() => navigate(`/edit-coupon/${coupon.coupon_id}`)}
                               >
                                 <i className="fas fa-edit"></i>
                               </button>
                               <button
-                                className="btn btn-sm btn-outline-danger"
+                                className="btn btn-sm btn-danger"
                                 title="Delete"
                                 onClick={() => handleDelete(coupon.coupon_id)}
                               >
