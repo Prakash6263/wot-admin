@@ -139,3 +139,32 @@ export const updateUser = async (token, userId, userData) => {
     body: JSON.stringify(userData),
   });
 };
+
+// Update user coins
+export const updateUserCoins = async (token, userId, coins) => {
+  try {
+    const response = await fetch(`https://api.wayoftrading.com/aitredding/admin/tools/user-coins`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'accept': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        coins: parseInt(coins)
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { success: false, message: data.message || 'Failed to update user coins' };
+    }
+
+    return { success: true, data, message: data.message || 'Coins updated successfully' };
+  } catch (error) {
+    console.error('Update User Coins Error:', error);
+    return { success: false, message: error.message || 'An error occurred while updating user coins' };
+  }
+};

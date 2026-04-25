@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import GlobalLoader from "../components/GlobalLoader";
-import { getUsers, updateUserStatus } from "../api/users";
+import { getUsers, updateUserStatus, updateUserCoins } from "../api/users";
 import { useAuth } from "../context/AuthContext";
 import Swal from "sweetalert2";
 
@@ -135,6 +135,56 @@ export default function UserList() {
       }
     }
   };
+
+  const handleCoinUpdate = async (userId, currentCoins) => {
+    const { value: coinsToAdd } = await Swal.fire({
+      title: "Add User Coins",
+      input: "number",
+      inputLabel: "Enter the number of coins to add",
+      inputValue: 0,
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return "You need to write something!";
+        }
+      },
+    });
+
+    if (coinsToAdd !== undefined && coinsToAdd !== null && coinsToAdd !== "") {
+      try {
+        const result = await updateUserCoins(token, userId, coinsToAdd);
+        if (result.success) {
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user.user_id === userId
+                ? { ...user, coins: (user.coins || 0) + parseInt(coinsToAdd) }
+                : user,
+            ),
+          );
+          Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: result.message || "Coins added successfully",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: result.message || "Failed to add coins",
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "An error occurred while adding coins",
+        });
+      }
+    }
+  };
+
 
   const getStatusBadge = (isActive, userId) => {
     return (
@@ -288,10 +338,25 @@ export default function UserList() {
                                 {user.country_code} {user.phone_number}
                               </td>
                               <td>
-                                <span className="badge bg-info">
-                                  <i className="fas fa-coins me-1"></i>
-                                  {user.coins}
-                                </span>
+                                <div className="d-flex align-items-center gap-2">
+                                  <span className="badge bg-info">
+                                    <i className="fas fa-coins me-1"></i>
+                                    {user.coins}
+                                  </span>
+                                  <button
+                                    className="btn btn-sm btn-outline-primary"
+                                    onClick={() =>
+                                      handleCoinUpdate(user.user_id, user.coins)
+                                    }
+                                    title="Update Coins"
+                                    style={{
+                                      padding: "2px 6px",
+                                      fontSize: "12px",
+                                    }}
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </button>
+                                </div>
                               </td>
                               <td>
                                 {getStatusBadge(user.is_active, user.user_id)}
