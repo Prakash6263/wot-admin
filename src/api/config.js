@@ -9,7 +9,6 @@ export const apiConfig = {
   },
 };
 
-// Helper function to make API calls
 export const apiCall = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
   const defaultOptions = {
@@ -19,7 +18,7 @@ export const apiCall = async (endpoint, options = {}) => {
 
   try {
     const response = await fetch(url, defaultOptions);
-    
+
     // Handle 401 Unauthorized
     if (response.status === 401) {
       localStorage.removeItem('access_token');

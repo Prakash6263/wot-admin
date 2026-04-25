@@ -1,6 +1,3 @@
-import { apiCall } from './config';
-
-// Get news list with pagination
 export const getNews = async (token, limit = 50) => {
   try {
     const response = await fetch(`https://api.wayoftrading.com/aitredding/api/admin/news?limit=${limit}`, {
@@ -33,7 +30,6 @@ export const getNews = async (token, limit = 50) => {
   }
 };
 
-// Get news by ID
 export const getNewsById = async (token, newsId) => {
   try {
     const response = await fetch(`https://api.wayoftrading.com/aitredding/api/admin/news/${newsId}`, {
@@ -66,7 +62,6 @@ export const getNewsById = async (token, newsId) => {
   }
 };
 
-// Update news by ID
 export const updateNews = async (token, newsId, newsData) => {
   try {
     const response = await fetch(`https://api.wayoftrading.com/aitredding/api/admin/news/${newsId}`, {
@@ -101,7 +96,6 @@ export const updateNews = async (token, newsId, newsData) => {
   }
 };
 
-// Delete news by ID
 export const deleteNews = async (token, newsId) => {
   try {
     const response = await fetch(`https://api.wayoftrading.com/aitredding/api/admin/news/${newsId}`, {
@@ -134,7 +128,6 @@ export const deleteNews = async (token, newsId) => {
   }
 };
 
-// Delete all news
 export const deleteAllNews = async (token) => {
   try {
     const response = await fetch(`https://api.wayoftrading.com/aitredding/api/admin/news`, {
@@ -167,7 +160,6 @@ export const deleteAllNews = async (token) => {
   }
 };
 
-// Publish news by ID
 export const publishNews = async (token, newsId) => {
   try {
     const response = await fetch(`https://api.wayoftrading.com/aitredding/api/admin/news/${newsId}/publish`, {
@@ -201,7 +193,6 @@ export const publishNews = async (token, newsId) => {
   }
 };
 
-// Feature news by ID
 export const featureNews = async (token, newsId) => {
   try {
     const response = await fetch(`https://api.wayoftrading.com/aitredding/api/admin/news/${newsId}/feature`, {

@@ -1,13 +1,11 @@
 const API_BASE_URL = 'https://api.wayoftrading.com/aitredding';
 
-// Add new glossary term
 export const addGlossary = async (glossaryData, token) => {
   try {
     const url = `${API_BASE_URL}/admin/create-TradingGlossary`;
-    
+
     const payload = {
       term: glossaryData.term,
-      // short_form: glossaryData.short_form,
       category: glossaryData.category,
       description: glossaryData.description,
     };
@@ -53,11 +51,10 @@ export const addGlossary = async (glossaryData, token) => {
   }
 };
 
-// Get all glossary terms with pagination
 export const getAllGlossaries = async (token, page = 1, limit = 10) => {
   try {
     const url = `${API_BASE_URL}/admin/TradingGlossary?page=${page}&limit=${limit}`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -108,7 +105,6 @@ export const getAllGlossaries = async (token, page = 1, limit = 10) => {
   }
 };
 
-// Search glossary terms
 export const searchGlossaries = async (token, query, page = 1, limit = 10) => {
   try {
     const url = `${API_BASE_URL}/admin/glossary/search?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`;
@@ -163,11 +159,10 @@ export const searchGlossaries = async (token, query, page = 1, limit = 10) => {
   }
 };
 
-// Get single glossary term
 export const getGlossaryById = async (glossaryId, token) => {
   try {
     const url = `${API_BASE_URL}/admin/get-TradingGlossary/${glossaryId}`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -199,14 +194,12 @@ export const getGlossaryById = async (glossaryId, token) => {
   }
 };
 
-// Update glossary term
 export const updateGlossary = async (glossaryId, glossaryData, token) => {
   try {
     const url = `${API_BASE_URL}/admin/update-tradingGlossary/${glossaryId}`;
-    
+
     const payload = {
       term: glossaryData.term,
-      // short_form: glossaryData.short_form,
       category: glossaryData.category,
       description: glossaryData.description,
       color: glossaryData.color,
@@ -254,11 +247,10 @@ export const updateGlossary = async (glossaryId, glossaryData, token) => {
   }
 };
 
-// Delete glossary term
 export const deleteGlossary = async (glossaryId, token) => {
   try {
     const url = `${API_BASE_URL}/admin/delete-tradingGlossary/${glossaryId}`;
-    
+
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
@@ -299,11 +291,10 @@ export const deleteGlossary = async (glossaryId, token) => {
   }
 };
 
-// Import glossary from JSON file
 export const importGlossaryFromJSON = async (file, token) => {
   try {
     const url = `${API_BASE_URL}/admin/import-glossary`;
-    
+
     const formData = new FormData();
     formData.append('file', file);
 
@@ -348,13 +339,10 @@ export const importGlossaryFromJSON = async (file, token) => {
   }
 };
 
-// ===== GLOSSARY CATEGORY API FUNCTIONS =====
-
-// Add new glossary category
 export const addGlossaryCategory = async (categoryData, token) => {
   try {
     const url = `${API_BASE_URL}/admin/glossary-category`;
-    
+
     const formData = new URLSearchParams();
     formData.append('name', categoryData.name);
     formData.append('description', categoryData.description || '');
@@ -401,12 +389,11 @@ export const addGlossaryCategory = async (categoryData, token) => {
   }
 };
 
-// Get all glossary categories with pagination and search
 export const getAllGlossaryCategories = async (token, page = 1, limit = 10, search = '') => {
   try {
     const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
     const url = `${API_BASE_URL}/admin/glossary-category?page=${page}&limit=${limit}${searchParam}`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -457,11 +444,10 @@ export const getAllGlossaryCategories = async (token, page = 1, limit = 10, sear
   }
 };
 
-// Get single glossary category by ID
 export const getGlossaryCategoryById = async (categoryId, token) => {
   try {
     const url = `${API_BASE_URL}/admin/glossary-category/${categoryId}`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -493,11 +479,10 @@ export const getGlossaryCategoryById = async (categoryId, token) => {
   }
 };
 
-// Update glossary category
 export const updateGlossaryCategory = async (categoryId, categoryData, token) => {
   try {
     const url = `${API_BASE_URL}/admin/glossary-category/${categoryId}`;
-    
+
     const formData = new URLSearchParams();
     formData.append('name', categoryData.name);
     formData.append('description', categoryData.description || '');
@@ -545,11 +530,10 @@ export const updateGlossaryCategory = async (categoryId, categoryData, token) =>
   }
 };
 
-// Delete glossary category
 export const deleteGlossaryCategory = async (categoryId, token) => {
   try {
     const url = `${API_BASE_URL}/admin/glossary-category/${categoryId}`;
-    
+
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {

@@ -2,12 +2,9 @@ import { apiConfig } from './config';
 
 const API_BASE_URL = 'https://api.wayoftrading.com/aitredding';
 
-// Add new course
 export const addCourse = async (courseData, token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/course`;
-    
-    // Create FormData for multipart/form-data
     const formData = new FormData();
     formData.append('title', courseData.title);
     formData.append('slug', courseData.slug);
@@ -22,8 +19,7 @@ export const addCourse = async (courseData, token) => {
     formData.append('is_featured', courseData.is_featured || false);
     formData.append('status', courseData.status || 'draft');
     formData.append('certificate_available', courseData.certificate_available || false);
-    
-    // Append files if provided
+
     if (courseData.image instanceof File) {
       formData.append('image', courseData.image);
     }
@@ -66,11 +62,10 @@ export const addCourse = async (courseData, token) => {
   }
 };
 
-// Get all courses
 export const getAllCourses = async (token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/courses`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -102,11 +97,10 @@ export const getAllCourses = async (token) => {
   }
 };
 
-// Get single course
 export const getCourseById = async (courseId, token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/course/${courseId}`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -138,11 +132,10 @@ export const getCourseById = async (courseId, token) => {
   }
 };
 
-// Update course
 export const updateCourse = async (courseId, courseData, token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/course/${courseId}`;
-    
+
     const formData = new FormData();
     formData.append('title', courseData.title);
     formData.append('slug', courseData.slug);
@@ -157,7 +150,7 @@ export const updateCourse = async (courseId, courseData, token) => {
     formData.append('is_featured', String(courseData.is_featured === true || courseData.is_featured === 'true'));
     formData.append('status', courseData.status || 'draft');
     formData.append('certificate_available', String(courseData.certificate_available === true || courseData.certificate_available === 'true'));
-    
+
     if (courseData.image instanceof File) {
       formData.append('image', courseData.image);
     }
@@ -200,11 +193,10 @@ export const updateCourse = async (courseId, courseData, token) => {
   }
 };
 
-// Delete course
 export const deleteCourse = async (courseId, token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/course/${courseId}`;
-    
+
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
@@ -236,11 +228,10 @@ export const deleteCourse = async (courseId, token) => {
   }
 };
 
-// Get categories by course ID
 export const getCategoriesByCourse = async (courseId, token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/course/category/${courseId}`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -272,12 +263,11 @@ export const getCategoriesByCourse = async (courseId, token) => {
   }
 };
 
-// Add new category
 export const addCategory = async (courseId, categoryData, token) => {
   try {
     console.log('[v0] Adding category for course:', courseId);
     const url = `${API_BASE_URL}/courses/admin/course/${courseId}/category`;
-    
+
     const formData = new FormData();
     formData.append('name', categoryData.name);
     formData.append('description', categoryData.description || '');
@@ -322,12 +312,11 @@ export const addCategory = async (courseId, categoryData, token) => {
   }
 };
 
-// Get chapters by category ID
 export const getChaptersByCategory = async (categoryId, token) => {
   try {
     console.log('[v0] Fetching chapters for category:', categoryId);
     const url = `${API_BASE_URL}/courses/admin/category/${categoryId}/chapters`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -361,12 +350,11 @@ export const getChaptersByCategory = async (categoryId, token) => {
   }
 };
 
-// Get lessons by chapter ID
 export const getLessonsByChapter = async (chapterId, token) => {
   try {
     console.log('[v0] Fetching lessons for chapter:', chapterId);
     const url = `${API_BASE_URL}/courses/admin/chapter/${chapterId}/lessons`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -400,12 +388,11 @@ export const getLessonsByChapter = async (chapterId, token) => {
   }
 };
 
-// Create chapter in category
 export const createChapter = async (categoryId, chapterData, token) => {
   try {
     console.log('[v0] Creating chapter for category:', categoryId);
     const url = `${API_BASE_URL}/courses/admin/category/${categoryId}/chapter`;
-    
+
     const formData = new FormData();
     formData.append('title', chapterData.title);
     formData.append('description', chapterData.description || '');
@@ -450,12 +437,11 @@ export const createChapter = async (categoryId, chapterData, token) => {
   }
 };
 
-// Create chapter directly for course
 export const createCourseChapter = async (courseId, chapterData, token) => {
   try {
     console.log('[v0] Creating chapter for course:', courseId);
     const url = `${API_BASE_URL}/courses/admin/course/${courseId}/chapter`;
-    
+
     const formData = new FormData();
     formData.append('title', chapterData.title);
     formData.append('category', chapterData.category);
@@ -497,12 +483,11 @@ export const createCourseChapter = async (courseId, chapterData, token) => {
   }
 };
 
-// Get course chapters grouped by categories
 export const getCourseChapters = async (courseId, token) => {
   try {
     console.log('[v0] Fetching chapters for course:', courseId);
     const url = `${API_BASE_URL}/courses/admin/course/${courseId}/chapters`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -535,12 +520,11 @@ export const getCourseChapters = async (courseId, token) => {
   }
 };
 
-// Update chapter
 export const updateCourseChapter = async (chapterId, chapterData, token) => {
   try {
     console.log('[v0] Updating chapter:', chapterId);
     const url = `${API_BASE_URL}/courses/admin/chapter/${chapterId}`;
-    
+
     const formData = new FormData();
     formData.append('title', chapterData.title);
     formData.append('category', chapterData.category);
@@ -583,12 +567,11 @@ export const updateCourseChapter = async (chapterId, chapterData, token) => {
   }
 };
 
-// Delete chapter
 export const deleteCourseChapter = async (chapterId, token) => {
   try {
     console.log('[v0] Deleting chapter:', chapterId);
     const url = `${API_BASE_URL}/courses/admin/chapter/${chapterId}`;
-    
+
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
@@ -621,11 +604,10 @@ export const deleteCourseChapter = async (chapterId, token) => {
   }
 };
 
-// Get all admin categories
 export const getAllAdminCategories = async (token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/categories`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -657,11 +639,10 @@ export const getAllAdminCategories = async (token) => {
   }
 };
 
-// Create admin category
 export const createAdminCategory = async (categoryData, token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/category`;
-    
+
     const formData = new FormData();
     formData.append('name', categoryData.name);
     if (categoryData.description) {
@@ -707,11 +688,10 @@ export const createAdminCategory = async (categoryData, token) => {
   }
 };
 
-// Get admin category by ID
 export const getAdminCategoryById = async (categoryId, token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/category/${categoryId}`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -743,11 +723,10 @@ export const getAdminCategoryById = async (categoryId, token) => {
   }
 };
 
-// Update admin category
 export const updateAdminCategory = async (categoryId, categoryData, token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/category/${categoryId}`;
-    
+
     const formData = new FormData();
     formData.append('name', categoryData.name);
     if (categoryData.description !== undefined) {
@@ -793,11 +772,10 @@ export const updateAdminCategory = async (categoryId, categoryData, token) => {
   }
 };
 
-// Delete admin category
 export const deleteAdminCategory = async (categoryId, token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/category/${categoryId}`;
-    
+
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
@@ -829,12 +807,11 @@ export const deleteAdminCategory = async (categoryId, token) => {
   }
 };
 
-// Delete lesson
 export const deleteLesson = async (lessonId, token) => {
   try {
     console.log('[v0] Deleting lesson:', lessonId);
     const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}`;
-    
+
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {

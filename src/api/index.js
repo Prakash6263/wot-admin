@@ -1,4 +1,3 @@
-// API index file - export all API services from here
 export * from './auth';
 export * from './courses';
 export * from './lessons';

@@ -1,13 +1,10 @@
 const API_BASE_URL = 'https://api.wayoftrading.com/aitredding/api';
 const FAQ_API_URL = '/admin/support/faq';
 
-
-
-// Get all FAQs
 export const getFAQs = async (token) => {
   try {
     const url = `${API_BASE_URL}${FAQ_API_URL}`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -41,11 +38,10 @@ export const getFAQs = async (token) => {
   }
 };
 
-// Create new FAQ
 export const createFAQ = async (data, token) => {
   try {
     const url = `${API_BASE_URL}${FAQ_API_URL}`;
-    
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -87,11 +83,10 @@ export const createFAQ = async (data, token) => {
   }
 };
 
-// Update FAQ
 export const updateFAQ = async (id, data, token) => {
   try {
     const url = `${API_BASE_URL}${FAQ_API_URL}/${id}`;
-    
+
     const response = await fetch(url, {
       method: 'PUT',
       headers: {
@@ -134,11 +129,10 @@ export const updateFAQ = async (id, data, token) => {
   }
 };
 
-// Delete FAQ
 export const deleteFAQ = async (id, token) => {
   try {
     const url = `${API_BASE_URL}${FAQ_API_URL}/${id}`;
-    
+
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {

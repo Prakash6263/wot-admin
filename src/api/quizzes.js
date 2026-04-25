@@ -113,7 +113,6 @@ export const editQuizQuestions = async (quizId, questions) => {
   }
 };
 
-// ── POST /quiz/{quiz_id}/question/{question_id}/image ─────────────────────────
 export const uploadQuestionImage = async (quizId, questionId, imageFile) => {
   try {
     console.log('[v0] Uploading image for question:', questionId, 'in quiz:', quizId);
@@ -133,7 +132,6 @@ export const uploadQuestionImage = async (quizId, questionId, imageFile) => {
   }
 };
 
-// ── DELETE /quiz/{quiz_id}/question/{question_id}/image ───────────────────────
 export const deleteQuestionImage = async (quizId, questionId) => {
   try {
     console.log('[v0] Deleting image for question:', questionId, 'in quiz:', quizId);

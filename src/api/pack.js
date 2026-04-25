@@ -1,11 +1,10 @@
 const API_BASE_URL = 'https://api.wayoftrading.com/aitredding';
 const PACKS_API_URL = '/admin/tools/recharge-packs';
 
-// Get all recharge packs
 export const getPacks = async (token) => {
   try {
     const url = `${API_BASE_URL}${PACKS_API_URL}`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -40,11 +39,10 @@ export const getPacks = async (token) => {
   }
 };
 
-// Create new pack
 export const createPack = async (data, token) => {
   try {
     const url = `${API_BASE_URL}${PACKS_API_URL}`;
-    
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -87,11 +85,10 @@ export const createPack = async (data, token) => {
   }
 };
 
-// Update pack
 export const updatePack = async (id, data, token) => {
   try {
     const url = `${API_BASE_URL}${PACKS_API_URL}/${id}`;
-    
+
     const response = await fetch(url, {
       method: 'PATCH',
       headers: {
@@ -134,11 +131,10 @@ export const updatePack = async (id, data, token) => {
   }
 };
 
-// Delete pack
 export const deletePack = async (id, token) => {
   try {
     const url = `${API_BASE_URL}${PACKS_API_URL}/${id}`;
-    
+
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {

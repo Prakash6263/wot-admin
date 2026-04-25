@@ -1,4 +1,3 @@
-// Plans API Service
 export const getAllPlans = async (token) => {
   try {
     const response = await fetch('https://api.wayoftrading.com/aitredding/admin/tools/plans', {

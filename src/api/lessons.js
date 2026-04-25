@@ -1,10 +1,9 @@
 const API_BASE_URL = 'https://api.wayoftrading.com/aitredding';
 
-// Get all lessons for a course
 export const getLessonsByCourse = async (courseId, token) => {
   try {
     const url = `${API_BASE_URL}/courses/${courseId}/lessons`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -36,11 +35,10 @@ export const getLessonsByCourse = async (courseId, token) => {
   }
 };
 
-// Get single lesson
 export const getLessonById = async (lessonId, token) => {
   try {
     const url = `${API_BASE_URL}/courses/lessons/${lessonId}`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -72,11 +70,10 @@ export const getLessonById = async (lessonId, token) => {
   }
 };
 
-// Update lesson
 export const updateLesson = async (courseId, lessonId, lessonData, token) => {
   try {
     const url = `${API_BASE_URL}/courses/lessons/${lessonId}/update`;
-    
+
     const formData = new FormData();
     formData.append('title', lessonData.title);
     formData.append('description', lessonData.description);
@@ -84,7 +81,7 @@ export const updateLesson = async (courseId, lessonId, lessonData, token) => {
     formData.append('content_type', lessonData.content_type);
     formData.append('duration', lessonData.duration || '');
     formData.append('order', lessonData.order);
-    
+
     if (lessonData.media instanceof File) {
       formData.append('media', lessonData.media);
     }
@@ -121,11 +118,10 @@ export const updateLesson = async (courseId, lessonId, lessonData, token) => {
   }
 };
 
-// Delete lesson
 export const deleteLesson = async (lessonId, token) => {
   try {
     const url = `${API_BASE_URL}/courses/lessons/${lessonId}/delete`;
-    
+
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
@@ -157,14 +153,13 @@ export const deleteLesson = async (lessonId, token) => {
   }
 };
 
-// Get lesson content
 export const getLessonContent = async (lessonId, token) => {
   try {
     console.log('[v0] Fetching lesson content for lessonId:', lessonId);
     const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}/content`;
     console.log('[v0] API URL:', url);
     console.log('[v0] Token present:', !!token);
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -205,11 +200,10 @@ export const getLessonContent = async (lessonId, token) => {
   }
 };
 
-// Add new lesson
 export const addLesson = async (courseId, lessonData, token) => {
   try {
     const url = `${API_BASE_URL}/courses/${courseId}/lessons/add`;
-    
+
     const formData = new FormData();
     formData.append('title', lessonData.title);
     formData.append('description', lessonData.description);
@@ -254,15 +248,14 @@ export const addLesson = async (courseId, lessonData, token) => {
   }
 };
 
-// Create lesson content
 export const createLessonContent = async (lessonId, contentData, token) => {
   try {
     const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}/content`;
-    
+
     const formData = new FormData();
     formData.append('title', contentData.title);
     formData.append('content_type', contentData.content_type);
-    
+
     if (contentData.text_content) {
       formData.append('text_content', contentData.text_content);
     }
@@ -323,12 +316,11 @@ export const createLessonContent = async (lessonId, contentData, token) => {
   }
 };
 
-// Create lesson in chapter
 export const createLesson = async (chapterId, lessonData, token) => {
   try {
     console.log('[v0] Creating lesson for chapter:', chapterId);
     const url = `${API_BASE_URL}/courses/admin/chapter/${chapterId}/lesson`;
-    
+
     const formData = new FormData();
     formData.append('title', lessonData.title);
     formData.append('description', lessonData.description);
@@ -391,12 +383,11 @@ export const createLesson = async (chapterId, lessonData, token) => {
   }
 };
 
-// Update lesson at /courses/admin/lesson/{lesson_id}
 export const updateLessonAdmin = async (lessonId, lessonData, token) => {
   try {
     console.log('[v0] Updating lesson:', lessonId);
     const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}`;
-    
+
     const formData = new FormData();
     formData.append('title', lessonData.title);
     formData.append('description', lessonData.description);
@@ -446,12 +437,11 @@ export const updateLessonAdmin = async (lessonId, lessonData, token) => {
   }
 };
 
-// Add lesson to chapter at /courses/admin/chapter/{chapter_id}/lesson
 export const addLessonToChapter = async (chapterId, lessonData, token) => {
   try {
     console.log('[v0] Adding lesson to chapter:', chapterId);
     const url = `${API_BASE_URL}/courses/admin/chapter/${chapterId}/lesson`;
-    
+
     const formData = new FormData();
     formData.append('title', lessonData.title);
     formData.append('description', lessonData.description);
@@ -522,12 +512,11 @@ export const addLessonToChapter = async (chapterId, lessonData, token) => {
   }
 };
 
-// Get lesson details at /courses/admin/lesson/{lesson_id}
 export const getLessonAdmin = async (lessonId, token) => {
   try {
     console.log('[v0] Fetching lesson details:', lessonId);
     const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}`;
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -560,16 +549,15 @@ export const getLessonAdmin = async (lessonId, token) => {
   }
 };
 
-// Create lesson page at /courses/admin/lesson/{lesson_id}/page
 export const createLessonPage = async (lessonId, pageData, token) => {
   try {
     console.log('[v0] Creating lesson page:', lessonId);
     const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}/page`;
-    
+
     const formData = new FormData();
     formData.append('title', pageData.title);
     formData.append('html_content', pageData.html_content);
-    
+
     if (pageData.image instanceof File) {
       formData.append('image', pageData.image);
     }
@@ -616,12 +604,11 @@ export const createLessonPage = async (lessonId, pageData, token) => {
   }
 };
 
-// Delete lesson page at /courses/admin/lesson/{lesson_id}/page/{page_id}
 export const deleteLessonPage = async (lessonId, pageId, token) => {
   try {
     console.log('[v0] Deleting lesson page:', pageId, 'for lesson:', lessonId);
     const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}/page/${pageId}`;
-    
+
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
@@ -663,20 +650,19 @@ export const deleteLessonPage = async (lessonId, pageId, token) => {
   }
 };
 
-// Update lesson page at /courses/admin/lesson/{lesson_id}/page/{page_id}
 export const updateLessonPage = async (lessonId, pageId, pageData, token) => {
   try {
     console.log('[v0] Updating lesson page:', pageId, 'for lesson:', lessonId);
     const url = `${API_BASE_URL}/courses/admin/lesson/${lessonId}/page/${pageId}`;
-    
+
     const formData = new FormData();
     formData.append('title', pageData.title);
     formData.append('html_content', pageData.html_content);
-    
+
     if (pageData.image instanceof File) {
       formData.append('image', pageData.image);
     }
-    
+
     if (pageData.remove_image !== undefined && pageData.remove_image !== null) {
       formData.append('remove_image', pageData.remove_image);
     }

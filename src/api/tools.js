@@ -1,4 +1,3 @@
-// Tools API Service
 export const getAllToolFlags = async (token) => {
   try {
     const response = await fetch('https://api.wayoftrading.com/aitredding/admin/tools/flags', {

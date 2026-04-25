@@ -3,7 +3,6 @@ body {
   padding: 0;
 }
 
-/* Duration Picker Styles */
 .duration-picker-overlay {
   position: fixed !important;
   top: 0 !important;
@@ -58,10 +57,6 @@ body {
   transition: all 0.2s ease !important;
   cursor: pointer !important;
 }
-
-/* .hour-circle:hover, .minute-circle:hover {
-  transform: scale(1.1) !important;
-} */
 
 .hour-text,
 .minute-text {
@@ -152,7 +147,6 @@ body {
   }
 }
 
-/* React Quill Editor Styles */
 .editor-container .ql-toolbar {
   border-radius: 0.375rem 0.375rem 0 0;
   border-color: #dee2e6;
@@ -205,16 +199,16 @@ body {
   background-color: #f8f9fa;
 }
 
-/* Sidebar Scroll Styles */
 .sidebar {
   position: fixed !important;
-  top: 60px !important; /* Header height */
+  top: 60px !important;
   bottom: 0 !important;
   overflow-y: auto !important;
   z-index: 1001 !important;
 }
 
-.sidebar-inner, .sidebar-menu {
+.sidebar-inner,
+.sidebar-menu {
   height: auto;
   overflow: visible;
 }
@@ -233,7 +227,6 @@ body {
   background: transparent;
 }
 
-/* Premium UI Utilities */
 .btn-soft-primary {
   background-color: rgba(28, 73, 224, 0.1) !important;
   color: #1c49e0 !important;
@@ -263,4 +256,3 @@ body {
 .rounded-3 {
   border-radius: 0.75rem !important;
 }
-

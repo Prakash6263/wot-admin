@@ -1,7 +1,3 @@
-// Coupon API Service
-import { apiCall } from './config';
-
-// Helper function to get authorization headers
 const getAuthHeaders = () => {
   const token = localStorage.getItem('access_token');
   if (!token) {
@@ -14,11 +10,10 @@ const getAuthHeaders = () => {
   };
 };
 
-// Get all coupons
 export const getAllCoupons = async () => {
   try {
     console.log('[Coupons] Fetching all coupons');
-    
+
     const response = await fetch('https://api.wayoftrading.com/aitredding/coupon/admin/all', {
       method: 'GET',
       headers: getAuthHeaders(),
@@ -40,12 +35,9 @@ export const getAllCoupons = async () => {
   }
 };
 
-// Create a new coupon
 export const createCoupon = async (token, couponData) => {
   try {
     const formData = new FormData();
-    
-    // Append all coupon data to FormData
     Object.keys(couponData).forEach(key => {
       if (couponData[key] !== null && couponData[key] !== undefined) {
         formData.append(key, couponData[key]);
@@ -77,7 +69,6 @@ export const createCoupon = async (token, couponData) => {
   }
 };
 
-// Get all coupon categories
 export const getAllCouponCategories = async (token) => {
   try {
     const response = await fetch('https://api.wayoftrading.com/aitredding/coupon/admin/category/all', {
@@ -103,7 +94,6 @@ export const getAllCouponCategories = async (token) => {
   }
 };
 
-// Create a new coupon category
 export const createCouponCategory = async (token, categoryName) => {
   try {
     const response = await fetch('https://api.wayoftrading.com/aitredding/coupon/admin/category/create', {
@@ -134,7 +124,6 @@ export const createCouponCategory = async (token, categoryName) => {
   }
 };
 
-// Delete a coupon category
 export const deleteCouponCategory = async (token, categoryId) => {
   try {
     const response = await fetch(`https://api.wayoftrading.com/aitredding/coupon/admin/category/delete/${categoryId}`, {
@@ -161,7 +150,6 @@ export const deleteCouponCategory = async (token, categoryId) => {
   }
 };
 
-// Update a coupon category
 export const updateCouponCategory = async (token, categoryId, categoryName) => {
   try {
     const response = await fetch(`https://api.wayoftrading.com/aitredding/coupon/admin/category/edit/${categoryId}`, {
@@ -192,7 +180,7 @@ export const updateCouponCategory = async (token, categoryId, categoryName) => {
   }
 };
 
-// Delete a coupon
+
 export const deleteCoupon = async (token, couponId) => {
   try {
     const response = await fetch(`https://api.wayoftrading.com/aitredding/coupon/admin/delete/${couponId}`, {
@@ -219,12 +207,10 @@ export const deleteCoupon = async (token, couponId) => {
   }
 };
 
-// Update a coupon
+
 export const updateCoupon = async (token, couponId, couponData) => {
   try {
     const formData = new FormData();
-    
-    // Append all coupon data to FormData
     Object.keys(couponData).forEach(key => {
       if (couponData[key] !== null && couponData[key] !== undefined) {
         formData.append(key, couponData[key]);

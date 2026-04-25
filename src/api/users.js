@@ -1,8 +1,6 @@
 import { apiCall } from './config';
 const API_BASE_URL = 'https://api.wayoftrading.com/aitredding';
 
-
-// Get users list with pagination and filtering
 export const getUsers = async (token, page = 1, limit = 10, sortBy = 'id', order = 'desc', search = null, isActive = null) => {
   const params = new URLSearchParams({
     page: page.toString(),
@@ -80,7 +78,6 @@ export const setUserStatus = async (token, userId, isActive) => {
   }
 };
 
-// Get user details by ID
 export const getUserById = async (token, userId) => {
   return apiCall(`/admin/users/${userId}`, {
     method: 'GET',
@@ -91,7 +88,6 @@ export const getUserById = async (token, userId) => {
   });
 };
 
-// Update user status (activate/deactivate)
 export const updateUserStatus = async (token, userId, isActive, reason = '') => {
   const formData = new URLSearchParams();
   formData.append('is_active', isActive.toString());
@@ -116,7 +112,7 @@ export const updateUserStatus = async (token, userId, isActive, reason = '') => 
 
   return data;
 };
-// Delete user
+
 export const deleteUser = async (token, userId) => {
   return apiCall(`/admin/users/${userId}`, {
     method: 'DELETE',
@@ -127,7 +123,6 @@ export const deleteUser = async (token, userId) => {
   });
 };
 
-// Update user details
 export const updateUser = async (token, userId, userData) => {
   return apiCall(`/admin/users/${userId}`, {
     method: 'PUT',
@@ -140,7 +135,6 @@ export const updateUser = async (token, userId, userData) => {
   });
 };
 
-// Update user coins
 export const updateUserCoins = async (token, userId, coins) => {
   try {
     const response = await fetch(`https://api.wayoftrading.com/aitredding/admin/tools/user-coins`, {

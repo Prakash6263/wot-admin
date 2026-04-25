@@ -17,7 +17,7 @@ export const loginAdmin = async (email, password) => {
   try {
     const data = await postForm('/admin/login', { email, password });
 
-    if (data.status === 1) return { step: 'done',      data: data.data };
+    if (data.status === 1) return { step: 'done', data: data.data };
     if (data.status === 4) return { step: '2fa_setup', adminId: data.data.admin_id };
 
     if (data.status === 2 || data.status === 3) {
