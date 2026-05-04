@@ -121,131 +121,127 @@ export default function BrokerForm() {
   };
 
   return (
-    <div className="main-wrapper">
+    <div className="">
       <Header />
       <Sidebar />
 
-      <div className="page-wrapper">
-        <div className="content container-fluid">
-          {/* Header */}
-          <div className="page-header">
-            <div className="content-page-header">
-              <h5>{isEdit ? "Edit Broker" : "Add Broker"}</h5>
-            </div>
+    <div className="page-wrapper">
+  <div className="content px-4 w-100">
+    {/* Header */}
+    {/* <div className="page-header">
+      <div className="content-page-header">
+        <h5>{isEdit ? "Edit Broker" : "Add Broker"}</h5>
+      </div>
+    </div> */}
+
+    {/* Form */}
+    <div className="row">
+      <div className="col-12">
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">
+              {isEdit ? "Update Broker" :  "Add Broker"}
+            </h3>
           </div>
 
-          {/* Form */}
-          <div className="row">
-            <div className="col-md-8 col-lg-6 mx-auto">
-              <div className="card">
-                <div className="card-header">
-                  <h3 className="card-title">
-                    {isEdit ? "Update Broker" : "Broker Information"}
-                  </h3>
-                </div>
-
-                <div className="card-body">
-                  <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                      <label>Broker Code</label>
-                      <input
-                        type="text"
-                        name="code"
-                        value={formData.code}
-                        onChange={handleChange}
-                        className="form-control"
-                        required
-                      />
-                    </div>
-
-                    <div className="mb-3">
-                      <label>Display Name</label>
-                      <input
-                        type="text"
-                        name="display_name"
-                        value={formData.display_name}
-                        onChange={handleChange}
-                        className="form-control"
-                        required
-                      />
-                    </div>
-
-                    <div className="mb-3">
-                      <label>Affiliate Link</label>
-                      <input
-                        type="text"
-                        name="affiliate_link_template"
-                        value={formData.affiliate_link_template}
-                        onChange={handleChange}
-                        className="form-control"
-                        required
-                      />
-                    </div>
-
-                    {/* <div className="mb-3">
-                      <label>Regex</label>
-                      <input
-                        type="text"
-                        name="account_format_regex"
-                        value={formData.account_format_regex}
-                        onChange={handleChange}
-                        className="form-control"
-                      />
-                    </div> */}
-
-                    <div className="mb-3">
-                      <label>Data Source</label>
-                      <select
-                        name="data_source_type"
-                        value={formData.data_source_type}
-                        onChange={handleChange}
-                        className="form-select"
-                      >
-                        <option value="cellxpert">Cellxpert</option>
-                        <option value="manual">Manual</option>
-                      </select>
-                    </div>
-
-                    <div className="mb-3">
-                      <label>Status</label>
-                      <select
-                        name="is_active"
-                        value={formData.is_active}
-                        onChange={handleChange}
-                        className="form-select"
-                      >
-                        <option value="true">Active</option>
-                        <option value="false">Inactive</option>
-                      </select>
-                    </div>
-
-                    <div className="mb-4">
-                      <label>Broker Logo</label>
-                      <input
-                        type="file"
-                        onChange={handleFileChange}
-                        className="form-control"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="btn btn-primary w-100"
-                      disabled={loading}
-                    >
-                      {loading
-                        ? "Submitting..."
-                        : isEdit
-                          ? "Update Broker"
-                          : "Add Broker"}
-                    </button>
-                  </form>
-                </div>
+          <div className="card-body">
+            <form onSubmit={handleSubmit}>
+              {/* Broker Code */}
+              <div className="mb-3">
+                <label>Broker Code</label>
+                <input
+                  type="text"
+                  name="code"
+                  value={formData.code}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                />
               </div>
-            </div>
+
+              {/* Display Name */}
+              <div className="mb-3">
+                <label>Display Name</label>
+                <input
+                  type="text"
+                  name="display_name"
+                  value={formData.display_name}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+
+              {/* Affiliate Link */}
+              <div className="mb-3">
+                <label>Affiliate Link</label>
+                <input
+                  type="text"
+                  name="affiliate_link_template"
+                  value={formData.affiliate_link_template}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+
+              {/* Data Source */}
+              <div className="mb-3">
+                <label>Data Source</label>
+                <select
+                  name="data_source_type"
+                  value={formData.data_source_type}
+                  onChange={handleChange}
+                  className="form-select"
+                >
+                  <option value="cellxpert">Cellxpert</option>
+                  <option value="manual">Manual</option>
+                </select>
+              </div>
+
+              {/* Status */}
+              <div className="mb-3">
+                <label>Status</label>
+                <select
+                  name="is_active"
+                  value={formData.is_active}
+                  onChange={handleChange}
+                  className="form-select"
+                >
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
+                </select>
+              </div>
+
+              {/* Broker Logo */}
+              <div className="mb-4">
+                <label>Broker Logo</label>
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="form-control"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="btn btn-primary w-100"
+                disabled={loading}
+              >
+                {loading
+                  ? "Submitting..."
+                  : isEdit
+                  ? "Update Broker"
+                  : "Add Broker"}
+              </button>
+            </form>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
       <Footer />
     </div>
