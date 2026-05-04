@@ -14,7 +14,8 @@ export default function Brokers() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
-
+  const role = localStorage.getItem("role") || [];
+  console.log("User Roles:", role);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -88,7 +89,6 @@ export default function Brokers() {
 
       <div className="page-wrapper">
         <div className="content container-fluid">
-
           {/* Table */}
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -204,22 +204,25 @@ export default function Brokers() {
                             </a>
 
                             {/* Edit */}
-                            <button
-                              className="btn btn-sm btn-warning text-white"
-                              onClick={() =>
-                                navigate(`/broker/edit/${broker.id}`)
-                              }
-                            >
-                              Edit
-                            </button>
-
+                            {role === "super_admin" && (
+                              <button
+                                className="btn btn-sm btn-warning text-white"
+                                onClick={() =>
+                                  navigate(`/broker/edit/${broker.id}`)
+                                }
+                              >
+                                Edit
+                              </button>
+                            )}
+                            {role === "super_admin" && (
+                              <button
+                                className="btn btn-sm btn-danger text-white"
+                                onClick={() => handleDelete(broker.id)}
+                              >
+                                Delete
+                              </button>
+                            )}
                             {/* Delete */}
-                            <button
-                              className="btn btn-sm btn-danger text-white"
-                              onClick={() => handleDelete(broker.id)}
-                            >
-                              Delete
-                            </button>
                           </div>
                         </td>
                       </tr>

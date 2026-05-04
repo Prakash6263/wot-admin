@@ -16,13 +16,15 @@ const KEYS = {
   tokenType: 'token_type',
   adminId:   'admin_id',
   adminData: 'admin_data',
+  role:      'role',
 };
 
-const persistSession = ({ access_token, token_type, admin_id }) => {
+const persistSession = ({ access_token, token_type, admin_id, role }) => {
   localStorage.setItem(KEYS.token,     access_token);
   localStorage.setItem(KEYS.tokenType, token_type);
   localStorage.setItem(KEYS.adminId,   admin_id);
   localStorage.setItem(KEYS.adminData, JSON.stringify({ admin_id, token_type }));
+  localStorage.setItem(KEYS.role,      role);
 };
 
 const clearSession = () => Object.values(KEYS).forEach((k) => localStorage.removeItem(k));
