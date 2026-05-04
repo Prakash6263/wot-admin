@@ -57,7 +57,7 @@ import Notifications from './pages/Notifications'
 
 import EmailTemplates from './pages/EmailTemplates'
 import EditEmailTemplate from './pages/EditEmailTemplate'
-import Broker from './pages/Broker.JSX'
+import Broker from './pages/Broker.jsx'
 import AddBroker from './pages/AddBroker'
 
 export default function App() {
